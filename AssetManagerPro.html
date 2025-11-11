@@ -40,6 +40,41 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* ==================== LOADING SCREEN ==================== */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .loading-screen.hidden {
+            display: none;
+        }
+
         /* ==================== BEAUTIFUL DIALOG ==================== */
         .beautiful-dialog-overlay {
             position: fixed;
@@ -264,6 +299,27 @@
             text-decoration: underline;
         }
 
+        /* ==================== DEBUG INFO ==================== */
+        .debug-info {
+            background: #f3f4f6;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .debug-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
         /* ==================== MAIN APP ==================== */
         .app-container {
             display: none;
@@ -482,29 +538,6 @@
             padding: 10px 20px;
         }
 
-        /* ==================== LOADING SPINNER ==================== */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .spinner {
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 768px) {
             .app-header {
@@ -533,18 +566,25 @@
 </head>
 <body>
 
-<!-- LOADING OVERLAY -->
-<div id="loadingOverlay" class="loading-overlay">
+<!-- LOADING SCREEN -->
+<div id="loadingScreen" class="loading-screen">
     <div class="spinner"></div>
+    <div class="loading-text">Loading from GitHub...</div>
 </div>
 
 <!-- AUTH CONTAINER -->
 <div id="authContainer" class="auth-container">
     <!-- LOGIN FORM -->
-    <div id="loginForm" class="auth-box">
+    <div id="loginForm" class="auth-box" style="display: none;">
         <div class="auth-header">
             <h1>🔐 Asset Manager Pro</h1>
             <p>Professional Inventory System</p>
+        </div>
+
+        <!-- DEBUG INFO -->
+        <div id="debugInfo" class="debug-info" style="display: none;">
+            <div class="debug-title">⚙️ DEBUG INFO:</div>
+            <div id="debugContent"></div>
         </div>
 
         <form onsubmit="handleLogin(event)">
@@ -562,15 +602,15 @@
         </form>
 
         <div class="auth-footer">
-            New user? <a onclick="showSetup()">Create Admin Account</a>
+            Admin will add you to the system.
         </div>
     </div>
 
-    <!-- SETUP FORM -->
+    <!-- SETUP FORM (ONLY SHOWN IF NO ADMINS) -->
     <div id="setupForm" class="auth-box" style="display: none;">
         <div class="auth-header">
             <h1>🔧 First Time Setup</h1>
-            <p>You will be the admin</p>
+            <p>Create your admin account</p>
         </div>
 
         <form onsubmit="handleSetup(event)">
@@ -598,7 +638,7 @@
         </form>
 
         <div class="auth-footer">
-            Already registered? <a onclick="showLogin()">Sign In</a>
+            (Admin registration is only available on first setup)
         </div>
     </div>
 </div>
@@ -717,6 +757,18 @@
     let allItems = window.assetManagerData || { items: [], members: [], emails: [] };
     let currentUser = null;
 
+    // ==================== DEBUG LOGGING ====================
+    function addDebugLog(message) {
+        const debugContent = document.getElementById('debugContent');
+        const timestamp = new Date().toLocaleTimeString();
+        debugContent.textContent += `[${timestamp}] ${message}\n`;
+        console.log(message);
+    }
+
+    function showDebugInfo() {
+        document.getElementById('debugInfo').style.display = 'block';
+    }
+
     // ==================== BEAUTIFUL DIALOGS ====================
     function showBeautifulAlert(title, message) {
         return new Promise(resolve => {
@@ -776,6 +828,31 @@
         });
     }
 
+    // ==================== INITIALIZATION ====================
+    function initializeApp() {
+        const loadingScreen = document.getElementById('loadingScreen');
+        
+        addDebugLog('=== APP INITIALIZATION ===');
+        addDebugLog(`window.assetManagerData exists: ${typeof window.assetManagerData !== 'undefined'}`);
+        addDebugLog(`allItems: ${JSON.stringify(allItems)}`);
+        addDebugLog(`Members count: ${allItems.members ? allItems.members.length : 0}`);
+        
+        // Check if admins exist
+        if (!allItems.members || allItems.members.length === 0) {
+            addDebugLog('✓ NO ADMINS - Showing SETUP FORM');
+            document.getElementById('setupForm').style.display = 'block';
+        } else {
+            addDebugLog('✓ ADMINS EXIST - Showing LOGIN FORM');
+            addDebugLog(`Admins: ${JSON.stringify(allItems.members)}`);
+            document.getElementById('loginForm').style.display = 'block';
+            showDebugInfo();
+        }
+
+        // Hide loading screen
+        loadingScreen.classList.add('hidden');
+        addDebugLog('✓ App initialized');
+    }
+
     // ==================== DISPLAY ITEMS ====================
     function displayItems() {
         const tbody = document.getElementById('itemsTableBody');
@@ -817,31 +894,26 @@
     }
 
     // ==================== AUTH FUNCTIONS ====================
-    function showSetup() {
-        document.getElementById('loginForm').style.display = 'none';
-        document.getElementById('setupForm').style.display = 'block';
-    }
-
-    function showLogin() {
-        document.getElementById('loginForm').style.display = 'block';
-        document.getElementById('setupForm').style.display = 'none';
-    }
-
     async function handleLogin(e) {
         e.preventDefault();
 
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
 
+        addDebugLog(`Login attempt: ${email}`);
+        addDebugLog(`Checking against ${allItems.members.length} members`);
+
         const user = allItems.members && allItems.members.length > 0
             ? allItems.members.find(m => m && m.email === email && m.password === password)
             : null;
 
         if (!user) {
+            addDebugLog(`❌ Login FAILED for ${email}`);
             await showBeautifulAlert('❌ Login Failed', 'Invalid email or password');
             return;
         }
 
+        addDebugLog(`✓ Login SUCCESS for ${email}`);
         currentUser = user;
         showApp();
     }
@@ -872,16 +944,22 @@
         allItems.members.push(admin);
         currentUser = admin;
 
+        addDebugLog(`✓ Admin created: ${email}`);
+        addDebugLog(`Calling window.saveData()`);
+
         window.saveData(allItems);
-        await showBeautifulAlert('✅ Success', 'Admin account created!');
-        showApp();
+        await showBeautifulAlert('✅ Success', 'Admin account created! You can now login.');
+        
+        // Refresh to show login form
+        location.reload();
     }
 
     function logout() {
         currentUser = null;
         document.getElementById('authContainer').style.display = 'flex';
         document.getElementById('mainApp').style.display = 'none';
-        showLogin();
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
     }
 
     function showApp() {
@@ -1018,14 +1096,6 @@
         document.getElementById(modalId).style.display = 'none';
     }
 
-    function showLoading() {
-        document.getElementById('loadingOverlay').style.display = 'flex';
-    }
-
-    function hideLoading() {
-        document.getElementById('loadingOverlay').style.display = 'none';
-    }
-
     // ==================== UTILITY FUNCTIONS ====================
     window.onclick = function (event) {
         if (event.target.classList.contains('modal')) {
@@ -1033,8 +1103,9 @@
         }
     };
 
+    // Initialize on load
     window.addEventListener('load', () => {
-        hideLoading();
+        initializeApp();
     });
 </script>
 
