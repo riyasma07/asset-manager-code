@@ -851,7 +851,7 @@ async function renderItems() {
           <button class="btn-icon" onclick="startEditItem(${item.id})" title="Edit">✏️</button>
           <button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>
           ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">📤</button>` : `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">📥</button>`}
-		  ${item.assignedTo ? `<button class="btn-sm btn-info" onclick="openNotifyModal(${item.id})" title="Send Notification">🔔</button>` : ''}
+		  ${item.assignedTo ? `<button class="btn-icon" onclick="openNotifyModal(${item.id})" title="Send Notification">🔔</button>` : ''}
         `;
       } else {
         actionButtons = `<button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>`;
@@ -1095,7 +1095,12 @@ document.getElementById('memberForm').addEventListener('submit', async (e) => {
     alert('✅ Member added!');
 	const sendEmail = confirm(`Send welcome email to ${formData.get("email")}?`);
 	if (sendEmail) {
-		// [Add code for queueing/sending the email here.]
+    queueNotification({
+        recipient: formData.get("email"),
+        subject: "Welcome to Asset Manager",
+        body: `Hi ${formData.get("name")},\n\nYour account has been created...`,
+        timestamp: new Date().toISOString()
+    });
 	}
     e.target.reset();
     closeModal('addMemberModal');
