@@ -451,6 +451,7 @@
 <input type="file" id="fileInput" accept="application/json" style="display: none;">
 
 <script>
+let allEmails = [];
 // ==================== GITHUB CONFIG (REPLACE THESE 4 VALUES) ====================
 const GITHUB_RAW_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/asset-manager-db/main/data.json";
 const GITHUB_USERNAME = "YOUR_USERNAME";
@@ -1322,7 +1323,7 @@ function openNotifyModal(itemId) {
 
 function queueNotification(notification) {
     // Add to your notifications queue (IndexedDB or your storage method)
-    db.notifications.add({
+    allEmails.push({
         ...notification,
         status: 'pending',
         id: Date.now()
