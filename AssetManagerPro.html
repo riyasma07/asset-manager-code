@@ -4,587 +4,174 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset Manager Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-        }
-
-        /* ==================== AUTH SCREEN ==================== */
-        .auth-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .auth-box {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            max-width: 450px;
-            width: 100%;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .auth-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .auth-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .auth-header h1 {
-            font-size: 28px;
-            color: #1f2937;
-            margin-bottom: 5px;
-        }
-
-        .auth-header p {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #374151;
-            font-weight: 600;
-            font-size: 13px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn-auth {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: all 0.3s;
-        }
-
-        .btn-auth:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .auth-footer {
-            text-align: center;
-            margin-top: 15px;
-            color: #6b7280;
-            font-size: 13px;
-        }
-
-        .auth-footer a {
-            color: #667eea;
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        /* ==================== MAIN APP ==================== */
-        .app-container {
-            display: none;
-            min-height: 100vh;
-            background: white;
-        }
-
-        .app-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .app-header h1 {
-            font-size: 24px;
-        }
-
-        .user-info {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .btn-logout {
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid white;
-            color: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-logout:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .app-content {
-            display: flex;
-        }
-
-        .sidebar {
-            width: 220px;
-            background: #f9fafb;
-            border-right: 1px solid #e5e7eb;
-            padding: 20px;
-            min-height: calc(100vh - 70px);
-        }
-
-        .menu-section {
-            margin-bottom: 25px;
-        }
-
-        .menu-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #6b7280;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            letter-spacing: 0.5px;
-        }
-
-        .menu-item {
-            padding: 10px 12px;
-            color: #374151;
-            cursor: pointer;
-            border-radius: 6px;
-            margin-bottom: 5px;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .menu-item:hover {
-            background: #e5e7eb;
-        }
-
-        .menu-item.active {
-            background: #667eea;
-            color: white;
-            font-weight: 600;
-        }
-
-        .main {
-            flex: 1;
-            padding: 40px;
-        }
-
-        .main-title {
-            font-size: 28px;
-            color: #1f2937;
-            margin-bottom: 20px;
-        }
-
-        .button-group {
-            margin-bottom: 20px;
-        }
-
-        .btn-primary {
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-right: 10px;
-            font-size: 14px;
-        }
-
-        .btn-primary:hover {
-            background: #5568d3;
-        }
-
-        /* ==================== ITEMS TABLE ==================== */
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .items-table thead {
-            background: #f3f4f6;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .items-table th {
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            color: #374151;
-            font-size: 13px;
-        }
-
-        .items-table td {
-            padding: 12px;
-            border-bottom: 1px solid #e5e7eb;
-            color: #374151;
-            font-size: 14px;
-        }
-
-        .items-table tr:hover {
-            background: #f9fafb;
-        }
-
-        /* ==================== CONDITION BADGE ==================== */
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge.working {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge.notworking {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .badge.na {
-            background: #fed7aa;
-            color: #b45309;
-        }
-
-        /* ==================== ACTION BUTTONS ==================== */
-        .btn-small {
-            padding: 6px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 5px;
-        }
-
-        .btn-assign {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-delete {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-notify {
-            background: #3b82f6;
-            color: white;
-        }
-
-        /* ==================== MODAL ==================== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 450px;
-            width: 90%;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
-            font-size: 20px;
-            color: #1f2937;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #9ca3af;
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        .btn-cancel {
-            padding: 10px 20px;
-            background: #e5e7eb;
-            color: #374151;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-confirm {
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        /* ==================== DIALOG ==================== */
-        .dialog-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .dialog-overlay.active {
-            display: flex;
-        }
-
-        .dialog {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .dialog-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .dialog-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 10px;
-        }
-
-        .dialog-message {
-            color: #6b7280;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .dialog-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        /* ==================== RESPONSIVE ==================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f0f0; }
+        
+        .container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card { background: white; border-radius: 10px; padding: 40px; width: 100%; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .card h1 { text-align: center; font-size: 28px; color: #333; margin-bottom: 10px; }
+        .card p { text-align: center; color: #888; font-size: 14px; margin-bottom: 30px; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; color: #333; font-weight: 600; margin-bottom: 5px; font-size: 13px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        
+        .btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102,126,234,0.4); }
+        .btn-small { padding: 6px 12px; font-size: 12px; margin-right: 5px; }
+        .link { text-align: center; margin-top: 15px; font-size: 14px; }
+        .link a { color: #667eea; cursor: pointer; text-decoration: none; font-weight: 600; }
+        .link a:hover { text-decoration: underline; }
+        
+        .hidden { display: none !important; }
+        
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 24px; }
+        .header .right { display: flex; gap: 15px; align-items: center; }
+        
+        .app { display: flex; min-height: 100vh; background: white; }
+        .sidebar { width: 200px; background: #f8f8f8; border-right: 1px solid #ddd; padding: 20px; }
+        .menu-group { margin-bottom: 20px; }
+        .menu-title { font-size: 12px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 10px; }
+        .menu-item { padding: 10px; cursor: pointer; border-radius: 5px; color: #333; font-size: 14px; margin-bottom: 5px; transition: 0.2s; }
+        .menu-item:hover { background: #e0e0e0; }
+        .menu-item.active { background: #667eea; color: white; font-weight: 600; }
+        
+        .main { flex: 1; padding: 40px; overflow-y: auto; }
+        .title { font-size: 28px; color: #333; margin-bottom: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 5px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        thead { background: #f8f8f8; border-bottom: 2px solid #ddd; }
+        th { padding: 12px; text-align: left; font-weight: 600; color: #333; font-size: 13px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; color: #333; font-size: 14px; }
+        tr:hover { background: #f9f9f9; }
+        
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+        .badge-working { background: #dcfce7; color: #166534; }
+        .badge-notworking { background: #fee2e2; color: #991b1b; }
+        .badge-na { background: #fed7aa; color: #b45309; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 10px; padding: 30px; max-width: 450px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h2 { font-size: 20px; color: #333; }
+        .close { background: none; border: none; font-size: 28px; cursor: pointer; color: #999; }
+        .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .btn-cancel { background: #e0e0e0; color: #333; padding: 10px 20px; }
+        
+        .alert { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .alert.active { display: flex; }
+        .alert-box { background: white; border-radius: 10px; padding: 30px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .alert-icon { font-size: 48px; margin-bottom: 15px; }
+        .alert-title { font-size: 18px; font-weight: 700; color: #333; margin-bottom: 10px; }
+        .alert-message { color: #666; margin-bottom: 20px; }
+        
         @media (max-width: 768px) {
-            .app-content {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid #e5e7eb;
-                min-height: auto;
-                padding: 15px;
-            }
-
-            .main {
-                padding: 20px;
-            }
+            .app { flex-direction: column; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #ddd; }
         }
     </style>
 </head>
 <body>
 
 <!-- AUTH SCREEN -->
-<div id="authContainer" class="auth-container">
-    <!-- LOGIN FORM -->
-    <div id="loginForm" class="auth-box" style="display: none;">
-        <div class="auth-header">
-            <div class="auth-icon">🔐</div>
-            <h1>Asset Manager Pro</h1>
-            <p>Professional Inventory System</p>
-        </div>
-
+<div id="auth" class="container">
+    <!-- LOGIN -->
+    <div id="loginCard" class="card hidden">
+        <h1>🔐 Asset Manager Pro</h1>
+        <p>Professional Inventory System</p>
         <form onsubmit="handleLogin(event)">
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" id="loginEmail" placeholder="your@email.com" required>
+                <input type="email" id="loginEmail" required>
             </div>
-
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter password" required>
+                <input type="password" id="loginPassword" required>
             </div>
-
-            <button type="submit" class="btn-auth">🔓 Sign In</button>
+            <button type="submit" class="btn">🔓 Sign In</button>
+            <div class="link">New user? Ask your admin to add you.</div>
         </form>
-
-        <div class="auth-footer">
-            New user? Ask your admin to add you.
-        </div>
     </div>
 
-    <!-- SETUP FORM -->
-    <div id="setupForm" class="auth-box" style="display: none;">
-        <div class="auth-header">
-            <div class="auth-icon">🔧</div>
-            <h1>First Time Setup</h1>
-            <p>You will be the admin</p>
-        </div>
-
+    <!-- SETUP -->
+    <div id="setupCard" class="card hidden">
+        <h1>🔧 First Time Setup</h1>
+        <p>You will be the admin</p>
         <form onsubmit="handleSetup(event)">
             <div class="form-group">
                 <label>Full Name *</label>
-                <input type="text" id="setupFullName" placeholder="Your name" required>
+                <input type="text" id="setupFullName" required>
             </div>
-
             <div class="form-group">
                 <label>Email *</label>
-                <input type="email" id="setupEmail" placeholder="your@email.com" required>
+                <input type="email" id="setupEmail" required>
             </div>
-
             <div class="form-group">
                 <label>Mobile</label>
-                <input type="tel" id="setupMobile" placeholder="Phone number">
+                <input type="tel" id="setupMobile">
             </div>
-
             <div class="form-group">
                 <label>Designation</label>
-                <input type="text" id="setupDesignation" placeholder="Your designation">
+                <input type="text" id="setupDesignation">
             </div>
-
             <div class="form-group">
                 <label>Department</label>
-                <input type="text" id="setupDepartment" placeholder="Your department">
+                <input type="text" id="setupDepartment">
             </div>
-
             <div class="form-group">
                 <label>Password * (Min 6)</label>
-                <input type="password" id="setupPassword" placeholder="Min 6 characters" required minlength="6">
+                <input type="password" id="setupPassword" required minlength="6">
             </div>
-
             <div class="form-group">
                 <label>Confirm Password *</label>
-                <input type="password" id="setupConfirmPassword" placeholder="Confirm password" required>
+                <input type="password" id="setupConfirmPassword" required>
             </div>
-
-            <button type="submit" class="btn-auth">👑 Create Admin Account</button>
+            <button type="submit" class="btn">👑 Create Admin Account</button>
+            <div class="link"><a onclick="toggleAuth()">Already registered? Sign In</a></div>
         </form>
-
-        <div class="auth-footer">
-            Already registered? <a onclick="showLogin()">Sign In</a>
-        </div>
     </div>
 </div>
 
-<!-- MAIN APP -->
-<div id="mainApp" class="app-container">
-    <div class="app-header">
+<!-- APP SCREEN -->
+<div id="appScreen" class="hidden">
+    <div class="header">
         <h1 id="pageTitle">📦 Inventory Items</h1>
-        <div class="user-info">
+        <div class="right">
             <span id="userName">User</span>
-            <button class="btn-logout" onclick="logout()">Logout</button>
+            <button class="btn btn-small" onclick="logout()">Logout</button>
         </div>
     </div>
 
-    <div class="app-content">
+    <div class="app">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="menu-section">
+            <div class="menu-group">
                 <div class="menu-title">📋 Menu</div>
-                <div class="menu-item active" onclick="showPage('items')">View Items</div>
-                <div class="menu-item" onclick="showPage('addItem')">Add Item</div>
-                <div class="menu-item" onclick="showPage('members')">View Members</div>
-                <div class="menu-item" onclick="showPage('addMember')">Add Member</div>
+                <div class="menu-item active" onclick="showPage('items')">📦 View Items</div>
+                <div class="menu-item" onclick="showPage('addItem')">➕ Add Item</div>
+                <div class="menu-item" onclick="showPage('members')">👥 View Members</div>
+                <div class="menu-item" onclick="showPage('addMember')">👤 Add Member</div>
             </div>
-
-            <div class="menu-section">
+            <div class="menu-group">
                 <div class="menu-title">⚙️ Settings</div>
-                <div class="menu-item" onclick="editProfile()">Edit Profile</div>
-                <div class="menu-item" onclick="changePassword()">Change Password</div>
+                <div class="menu-item" onclick="editProfile()">✏️ Edit Profile</div>
+                <div class="menu-item" onclick="changePassword()">🔐 Change Password</div>
             </div>
         </div>
 
-        <!-- MAIN CONTENT -->
+        <!-- MAIN -->
         <div class="main">
             <!-- ITEMS PAGE -->
             <div id="itemsPage">
-                <div class="main-title">📦 Inventory Items</div>
-                <div class="button-group">
-                    <button class="btn-primary" onclick="openModal('addItemModal')">➕ Add Item</button>
-                </div>
-                <p style="margin-bottom: 15px; color: #6b7280;">Total Items: <strong id="itemCount">0</strong></p>
-                <table class="items-table">
+                <div class="title">📦 Inventory Items</div>
+                <button class="btn" style="width: auto; margin-bottom: 20px;" onclick="openModal('addItemModal')">➕ Add Item</button>
+                <p style="margin-bottom: 15px; color: #666;">Total Items: <strong id="itemCount">0</strong></p>
+                <table>
                     <thead>
                         <tr>
                             <th>Item Name</th>
@@ -595,47 +182,47 @@
                         </tr>
                     </thead>
                     <tbody id="itemsTableBody">
-                        <tr><td colspan="5" style="text-align: center; color: #9ca3af;">No items found</td></tr>
+                        <tr><td colspan="5" style="text-align: center; color: #999;">No items found</td></tr>
                     </tbody>
                 </table>
             </div>
 
             <!-- ADD ITEM PAGE -->
-            <div id="addItemPage" style="display: none;">
-                <div class="main-title">➕ Add Item</div>
-                <form onsubmit="handleAddItem(event)" style="max-width: 500px;">
-                    <div class="form-group">
-                        <label>Item Name *</label>
-                        <input type="text" id="addItemName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Serial Number *</label>
-                        <input type="text" id="addItemSerial" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Condition *</label>
-                        <select id="addItemCondition" required>
-                            <option value="">Select Condition</option>
-                            <option value="✓ Working">✓ Working</option>
-                            <option value="✗ Not Working">✗ Not Working</option>
-                            <option value="N/A">N/A</option>
-                        </select>
-                    </div>
-                    <div style="margin-top: 20px;">
-                        <button type="button" class="btn-cancel" onclick="showPage('items')">Cancel</button>
-                        <button type="submit" class="btn-confirm" style="margin-left: 10px;">Add Item</button>
-                    </div>
-                </form>
+            <div id="addItemPage" class="hidden">
+                <div class="title">➕ Add Item</div>
+                <div style="max-width: 500px;">
+                    <form onsubmit="handleAddItem(event)">
+                        <div class="form-group">
+                            <label>Item Name *</label>
+                            <input type="text" id="formItemName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Serial Number *</label>
+                            <input type="text" id="formItemSerial" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Condition *</label>
+                            <select id="formItemCondition" required>
+                                <option value="">Select Condition</option>
+                                <option value="✓ Working">✓ Working</option>
+                                <option value="✗ Not Working">✗ Not Working</option>
+                                <option value="N/A">N/A</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="btn btn-cancel" onclick="showPage('items')">Cancel</button>
+                            <button type="submit" class="btn">Add Item</button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <!-- MEMBERS PAGE -->
-            <div id="membersPage" style="display: none;">
-                <div class="main-title">👥 Members</div>
-                <div class="button-group">
-                    <button class="btn-primary" onclick="showPage('addMember')">👤 Add Member</button>
-                </div>
-                <p style="margin-bottom: 15px; color: #6b7280;">Total Members: <strong id="memberCount">0</strong></p>
-                <table class="items-table">
+            <div id="membersPage" class="hidden">
+                <div class="title">👥 Members</div>
+                <button class="btn" style="width: auto; margin-bottom: 20px;" onclick="showPage('addMember')">👤 Add Member</button>
+                <p style="margin-bottom: 15px; color: #666;">Total Members: <strong id="memberCount">0</strong></p>
+                <table>
                     <thead>
                         <tr>
                             <th>Full Name</th>
@@ -646,59 +233,61 @@
                         </tr>
                     </thead>
                     <tbody id="membersTableBody">
-                        <tr><td colspan="5" style="text-align: center; color: #9ca3af;">No members found</td></tr>
+                        <tr><td colspan="5" style="text-align: center; color: #999;">No members found</td></tr>
                     </tbody>
                 </table>
             </div>
 
             <!-- ADD MEMBER PAGE -->
-            <div id="addMemberPage" style="display: none;">
-                <div class="main-title">👤 Add Member</div>
-                <form onsubmit="handleAddMember(event)" style="max-width: 500px;">
-                    <div class="form-group">
-                        <label>Full Name *</label>
-                        <input type="text" id="addMemberName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email *</label>
-                        <input type="email" id="addMemberEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Mobile</label>
-                        <input type="tel" id="addMemberMobile">
-                    </div>
-                    <div class="form-group">
-                        <label>Designation</label>
-                        <input type="text" id="addMemberDesignation">
-                    </div>
-                    <div class="form-group">
-                        <label>Department</label>
-                        <input type="text" id="addMemberDepartment">
-                    </div>
-                    <div class="form-group">
-                        <label>Password * (Min 6)</label>
-                        <input type="password" id="addMemberPassword" required minlength="6">
-                    </div>
-                    <div class="form-group">
-                        <label>Confirm Password *</label>
-                        <input type="password" id="addMemberConfirmPassword" required>
-                    </div>
-                    <div style="margin-top: 20px;">
-                        <button type="button" class="btn-cancel" onclick="showPage('members')">Cancel</button>
-                        <button type="submit" class="btn-confirm" style="margin-left: 10px;">Add Member</button>
-                    </div>
-                </form>
+            <div id="addMemberPage" class="hidden">
+                <div class="title">👤 Add Member</div>
+                <div style="max-width: 500px;">
+                    <form onsubmit="handleAddMember(event)">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" id="formMemberName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="formMemberEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile</label>
+                            <input type="tel" id="formMemberMobile">
+                        </div>
+                        <div class="form-group">
+                            <label>Designation</label>
+                            <input type="text" id="formMemberDesignation">
+                        </div>
+                        <div class="form-group">
+                            <label>Department</label>
+                            <input type="text" id="formMemberDepartment">
+                        </div>
+                        <div class="form-group">
+                            <label>Password * (Min 6)</label>
+                            <input type="password" id="formMemberPassword" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm Password *</label>
+                            <input type="password" id="formMemberConfirmPassword" required>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="btn btn-cancel" onclick="showPage('members')">Cancel</button>
+                            <button type="submit" class="btn">Add Member</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- ADD ITEM MODAL -->
-<div id="addItemModal" class="modal-overlay">
-    <div class="modal">
+<div id="addItemModal" class="modal">
+    <div class="modal-content">
         <div class="modal-header">
             <h2>➕ Add Item</h2>
-            <button class="modal-close" onclick="closeModal('addItemModal')">×</button>
+            <button class="close" onclick="closeModal('addItemModal')">×</button>
         </div>
         <form onsubmit="handleAddItemModal(event)">
             <div class="form-group">
@@ -719,21 +308,21 @@
                 </select>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeModal('addItemModal')">Cancel</button>
-                <button type="submit" class="btn-confirm">Add Item</button>
+                <button type="button" class="btn btn-cancel" onclick="closeModal('addItemModal')">Cancel</button>
+                <button type="submit" class="btn">Add Item</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- ASSIGN ITEM MODAL -->
-<div id="assignItemModal" class="modal-overlay">
-    <div class="modal">
+<!-- ASSIGN MODAL -->
+<div id="assignModal" class="modal">
+    <div class="modal-content">
         <div class="modal-header">
             <h2>📤 Assign Item</h2>
-            <button class="modal-close" onclick="closeModal('assignItemModal')">×</button>
+            <button class="close" onclick="closeModal('assignModal')">×</button>
         </div>
-        <form onsubmit="handleAssignItem(event)">
+        <form onsubmit="handleAssign(event)">
             <div class="form-group">
                 <label>Select Member *</label>
                 <select id="assignMemberSelect" required>
@@ -741,52 +330,50 @@
                 </select>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeModal('assignItemModal')">Cancel</button>
-                <button type="submit" class="btn-confirm">Assign</button>
+                <button type="button" class="btn btn-cancel" onclick="closeModal('assignModal')">Cancel</button>
+                <button type="submit" class="btn">Assign</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- DELETE ITEM MODAL -->
-<div id="deleteItemModal" class="modal-overlay">
-    <div class="modal">
-        <div class="modal-header">
-            <h2>🗑️ Delete Item</h2>
-            <button class="modal-close" onclick="closeModal('deleteItemModal')">×</button>
-        </div>
-        <p style="margin: 20px 0; color: #6b7280;">This action cannot be undone. Are you sure?</p>
-        <div class="modal-footer">
-            <button type="button" class="btn-cancel" onclick="closeModal('deleteItemModal')">Cancel</button>
-            <button type="button" class="btn-confirm" onclick="confirmDelete()">Delete</button>
-        </div>
-    </div>
-</div>
-
-<!-- NOTIFICATION MODAL -->
-<div id="notificationModal" class="modal-overlay">
-    <div class="modal">
+<!-- NOTIFY MODAL -->
+<div id="notifyModal" class="modal">
+    <div class="modal-content">
         <div class="modal-header">
             <h2>📧 Send Notification</h2>
-            <button class="modal-close" onclick="closeModal('notificationModal')">×</button>
+            <button class="close" onclick="closeModal('notifyModal')">×</button>
         </div>
-        <p id="notificationMessage" style="margin: 20px 0; color: #6b7280;"></p>
+        <p id="notifyMessage" style="margin: 15px 0; color: #666;"></p>
         <div class="modal-footer">
-            <button type="button" class="btn-cancel" onclick="closeModal('notificationModal')">Cancel</button>
-            <button type="button" class="btn-confirm" onclick="confirmNotification()">Send</button>
+            <button type="button" class="btn btn-cancel" onclick="closeModal('notifyModal')">Cancel</button>
+            <button type="button" class="btn" onclick="confirmNotify()">Send</button>
         </div>
     </div>
 </div>
 
-<!-- ALERT DIALOG -->
-<div id="alertDialog" class="dialog-overlay">
-    <div class="dialog">
-        <div class="dialog-icon" id="alertIcon"></div>
-        <div class="dialog-title" id="alertTitle"></div>
-        <div class="dialog-message" id="alertMessage"></div>
-        <div class="dialog-buttons">
-            <button class="btn-confirm" onclick="closeAlert()">OK</button>
+<!-- DELETE MODAL -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🗑️ Delete Item</h2>
+            <button class="close" onclick="closeModal('deleteModal')">×</button>
         </div>
+        <p style="margin: 15px 0; color: #666;">This action cannot be undone. Are you sure?</p>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
+            <button type="button" class="btn" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- ALERT -->
+<div id="alert" class="alert">
+    <div class="alert-box">
+        <div class="alert-icon" id="alertIcon"></div>
+        <div class="alert-title" id="alertTitle"></div>
+        <div class="alert-message" id="alertMessage"></div>
+        <button class="btn" onclick="closeAlert()" style="margin-top: 15px;">OK</button>
     </div>
 </div>
 
@@ -794,13 +381,13 @@
     let allItems = { items: [], members: [], emails: [] };
     let currentUser = null;
     let appInitialized = false;
-    let pendingDeleteIndex = null;
-    let pendingAssignIndex = null;
-    let pendingNotifyIndex = null;
+    let pendingDeleteIdx = null;
+    let pendingAssignIdx = null;
+    let pendingNotifyIdx = null;
 
-    // ==================== WAIT FOR LOADER DATA ====================
+    // Wait for loader data
     function waitForData() {
-        if (typeof window.assetManagerData !== 'undefined' && window.assetManagerData) {
+        if (typeof window.assetManagerData !== 'undefined') {
             allItems = window.assetManagerData;
             console.log('✓ Data loaded:', allItems);
             initializeApp();
@@ -809,53 +396,51 @@
         }
     }
 
-    // ==================== INITIALIZE ==================== 
     function initializeApp() {
         if (appInitialized) return;
         appInitialized = true;
 
-        console.log('Initializing app. Members:', allItems.members ? allItems.members.length : 0);
-
         if (!allItems.members || allItems.members.length === 0) {
-            console.log('✓ No admins - showing setup');
-            document.getElementById('setupForm').style.display = 'block';
-            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('setupCard').classList.remove('hidden');
+            document.getElementById('loginCard').classList.add('hidden');
         } else {
-            console.log('✓ Admins exist - showing login');
-            document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('setupForm').style.display = 'none';
+            document.getElementById('loginCard').classList.remove('hidden');
+            document.getElementById('setupCard').classList.add('hidden');
         }
     }
 
-    // ==================== AUTH ==================== 
-    function showLogin() {
-        document.getElementById('setupForm').style.display = 'none';
-        document.getElementById('loginForm').style.display = 'block';
+    function toggleAuth() {
+        document.getElementById('loginCard').classList.toggle('hidden');
+        document.getElementById('setupCard').classList.toggle('hidden');
     }
 
     async function handleLogin(e) {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-
-        const user = allItems.members && allItems.members.find(m => m && m.email === email && m.password === password);
-
+        const pwd = document.getElementById('loginPassword').value;
+        const user = allItems.members && allItems.members.find(m => m && m.email === email && m.password === pwd);
         if (!user) {
-            await showAlert('❌ Login Failed', 'Invalid email or password', 'error');
+            await showAlert('❌ Error', 'Invalid credentials', 'error');
             return;
         }
-
         currentUser = user;
         showApp();
     }
 
     async function handleSetup(e) {
         e.preventDefault();
+        const pwd = document.getElementById('setupPassword').value;
+        const confirm = document.getElementById('setupConfirmPassword').value;
+        if (pwd !== confirm) {
+            await showAlert('❌ Error', 'Passwords do not match', 'error');
+            return;
+        }
+
         const admin = {
             id: Date.now(),
             fullName: document.getElementById('setupFullName').value,
             email: document.getElementById('setupEmail').value,
-            password: document.getElementById('setupPassword').value,
+            password: pwd,
             mobile: document.getElementById('setupMobile').value,
             designation: document.getElementById('setupDesignation').value,
             department: document.getElementById('setupDepartment').value,
@@ -863,78 +448,67 @@
             createdDate: new Date().toISOString()
         };
 
-        if (admin.password !== document.getElementById('setupConfirmPassword').value) {
-            await showAlert('❌ Error', 'Passwords do not match', 'error');
-            return;
-        }
-
         if (!allItems.members) allItems.members = [];
         allItems.members.push(admin);
         currentUser = admin;
-
         window.saveData(allItems);
         await showAlert('✅ Success', 'Admin created!', 'success');
         location.reload();
     }
 
+    function showApp() {
+        document.getElementById('auth').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        document.getElementById('userName').textContent = currentUser.fullName;
+        showPage('items');
+    }
+
     function logout() {
         currentUser = null;
-        document.getElementById('authContainer').style.display = 'flex';
-        document.getElementById('mainApp').style.display = 'none';
+        document.getElementById('auth').classList.remove('hidden');
+        document.getElementById('appScreen').classList.add('hidden');
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
     }
 
-    function showApp() {
-        document.getElementById('authContainer').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('userName').textContent = currentUser.fullName;
-        displayItems();
-    }
-
-    // ==================== PAGE NAVIGATION ==================== 
     function showPage(page) {
-        document.getElementById('itemsPage').style.display = 'none';
-        document.getElementById('addItemPage').style.display = 'none';
-        document.getElementById('membersPage').style.display = 'none';
-        document.getElementById('addMemberPage').style.display = 'none';
+        document.querySelectorAll('[id$="Page"]').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
 
-        const menuItems = document.querySelectorAll('.menu-item');
-        menuItems.forEach(item => item.classList.remove('active'));
-
-        switch(page) {
-            case 'items':
-                document.getElementById('itemsPage').style.display = 'block';
-                document.getElementById('pageTitle').textContent = '📦 Inventory Items';
-                displayItems();
-                break;
-            case 'addItem':
-                document.getElementById('addItemPage').style.display = 'block';
-                document.getElementById('pageTitle').textContent = '➕ Add Item';
-                break;
-            case 'members':
-                document.getElementById('membersPage').style.display = 'block';
-                document.getElementById('pageTitle').textContent = '👥 Members';
-                displayMembers();
-                break;
-            case 'addMember':
-                document.getElementById('addMemberPage').style.display = 'block';
-                document.getElementById('pageTitle').textContent = '👤 Add Member';
-                break;
+        if (page === 'items') {
+            document.getElementById('itemsPage').classList.remove('hidden');
+            document.getElementById('pageTitle').textContent = '📦 Inventory Items';
+            document.querySelectorAll('.menu-item')[0].classList.add('active');
+            displayItems();
+        } else if (page === 'addItem') {
+            document.getElementById('addItemPage').classList.remove('hidden');
+            document.getElementById('pageTitle').textContent = '➕ Add Item';
+            document.querySelectorAll('.menu-item')[1].classList.add('active');
+        } else if (page === 'members') {
+            document.getElementById('membersPage').classList.remove('hidden');
+            document.getElementById('pageTitle').textContent = '👥 Members';
+            document.querySelectorAll('.menu-item')[2].classList.add('active');
+            displayMembers();
+        } else if (page === 'addMember') {
+            document.getElementById('addMemberPage').classList.remove('hidden');
+            document.getElementById('pageTitle').textContent = '👤 Add Member';
+            document.querySelectorAll('.menu-item')[3].classList.add('active');
         }
     }
 
-    // ==================== DISPLAY ==================== 
     function displayItems() {
         const tbody = document.getElementById('itemsTableBody');
         document.getElementById('itemCount').textContent = allItems.items ? allItems.items.length : 0;
 
         if (!allItems.items || allItems.items.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af;">No items found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">No items found</td></tr>';
             return;
         }
 
         tbody.innerHTML = allItems.items.map((item, idx) => {
             const holder = allItems.members && allItems.members.find(m => m && m.id === item.assignedTo);
-            const badgeClass = item.condition.includes('Working') ? 'working' : item.condition.includes('Not') ? 'notworking' : 'na';
+            const badgeClass = item.condition.includes('Working') && !item.condition.includes('Not') ? 'badge-working' : 
+                             item.condition.includes('Not') ? 'badge-notworking' : 'badge-na';
 
             return `<tr>
                 <td>${item.name}</td>
@@ -942,9 +516,9 @@
                 <td>${holder ? holder.fullName : 'Unassigned'}</td>
                 <td><span class="badge ${badgeClass}">${item.condition}</span></td>
                 <td>
-                    <button class="btn-small btn-assign" onclick="openAssign(${idx})">📤 Assign</button>
-                    ${item.assignedTo ? `<button class="btn-small btn-notify" onclick="openNotify(${idx})">🔔</button>` : ''}
-                    <button class="btn-small btn-delete" onclick="openDelete(${idx})">🗑️</button>
+                    <button class="btn btn-small" onclick="openAssignModal(${idx})">📤</button>
+                    ${item.assignedTo ? `<button class="btn btn-small" onclick="openNotifyModal(${idx})">🔔</button>` : ''}
+                    <button class="btn btn-small" onclick="openDeleteModal(${idx})">🗑️</button>
                 </td>
             </tr>`;
         }).join('');
@@ -955,7 +529,7 @@
         document.getElementById('memberCount').textContent = allItems.members ? allItems.members.length : 0;
 
         if (!allItems.members || allItems.members.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af;">No members found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">No members found</td></tr>';
             return;
         }
 
@@ -966,30 +540,6 @@
             <td>${m.designation || '-'}</td>
             <td>${m.department || '-'}</td>
         </tr>`).join('');
-    }
-
-    // ==================== ITEMS ==================== 
-    async function handleAddItem(e) {
-        e.preventDefault();
-        const item = {
-            id: Date.now(),
-            name: document.getElementById('addItemName').value,
-            serialNumber: document.getElementById('addItemSerial').value,
-            condition: document.getElementById('addItemCondition').value,
-            assignedTo: null,
-            createdDate: new Date().toISOString()
-        };
-
-        if (!allItems.items) allItems.items = [];
-        allItems.items.push(item);
-        window.saveData(allItems);
-
-        document.getElementById('addItemName').value = '';
-        document.getElementById('addItemSerial').value = '';
-        document.getElementById('addItemCondition').value = '';
-
-        showPage('items');
-        await showAlert('✅ Success', 'Item added!', 'success');
     }
 
     async function handleAddItemModal(e) {
@@ -1006,14 +556,32 @@
         if (!allItems.items) allItems.items = [];
         allItems.items.push(item);
         window.saveData(allItems);
-
         closeModal('addItemModal');
         displayItems();
         await showAlert('✅ Success', 'Item added!', 'success');
     }
 
-    function openAssign(idx) {
-        pendingAssignIndex = idx;
+    async function handleAddItem(e) {
+        e.preventDefault();
+        const item = {
+            id: Date.now(),
+            name: document.getElementById('formItemName').value,
+            serialNumber: document.getElementById('formItemSerial').value,
+            condition: document.getElementById('formItemCondition').value,
+            assignedTo: null,
+            createdDate: new Date().toISOString()
+        };
+
+        if (!allItems.items) allItems.items = [];
+        allItems.items.push(item);
+        window.saveData(allItems);
+
+        showPage('items');
+        await showAlert('✅ Success', 'Item added!', 'success');
+    }
+
+    function openAssignModal(idx) {
+        pendingAssignIdx = idx;
         const select = document.getElementById('assignMemberSelect');
         select.innerHTML = '<option value="">Choose member</option>';
         allItems.members.forEach((m, i) => {
@@ -1022,10 +590,10 @@
             opt.textContent = `${m.fullName} (${m.email})`;
             select.appendChild(opt);
         });
-        openModal('assignItemModal');
+        openModal('assignModal');
     }
 
-    async function handleAssignItem(e) {
+    async function handleAssign(e) {
         e.preventDefault();
         const memberIdx = parseInt(document.getElementById('assignMemberSelect').value);
         if (isNaN(memberIdx)) {
@@ -1033,76 +601,71 @@
             return;
         }
 
-        allItems.items[pendingAssignIndex].assignedTo = allItems.members[memberIdx].id;
+        allItems.items[pendingAssignIdx].assignedTo = allItems.members[memberIdx].id;
         window.saveData(allItems);
-        closeModal('assignItemModal');
+        closeModal('assignModal');
         displayItems();
-        await showAlert('✅ Assigned', 'Item assigned!', 'success');
+        await showAlert('✅ Success', 'Item assigned!', 'success');
     }
 
-    function openDelete(idx) {
-        pendingDeleteIndex = idx;
-        openModal('deleteItemModal');
+    function openDeleteModal(idx) {
+        pendingDeleteIdx = idx;
+        openModal('deleteModal');
     }
 
     async function confirmDelete() {
-        if (pendingDeleteIndex !== null) {
-            allItems.items.splice(pendingDeleteIndex, 1);
-            window.saveData(allItems);
-            closeModal('deleteItemModal');
-            displayItems();
-            await showAlert('✅ Deleted', 'Item deleted!', 'success');
-        }
+        allItems.items.splice(pendingDeleteIdx, 1);
+        window.saveData(allItems);
+        closeModal('deleteModal');
+        displayItems();
+        await showAlert('✅ Success', 'Item deleted!', 'success');
     }
 
-    function openNotify(idx) {
-        pendingNotifyIndex = idx;
+    function openNotifyModal(idx) {
+        pendingNotifyIdx = idx;
         const item = allItems.items[idx];
         const member = allItems.members.find(m => m && m.id === item.assignedTo);
-        document.getElementById('notificationMessage').textContent = `Send notification to ${member.fullName} at ${member.email}?`;
-        openModal('notificationModal');
+        document.getElementById('notifyMessage').textContent = `Send notification to ${member.fullName} at ${member.email}?`;
+        openModal('notifyModal');
     }
 
-    async function confirmNotification() {
-        const item = allItems.items[pendingNotifyIndex];
+    async function confirmNotify() {
+        const item = allItems.items[pendingNotifyIdx];
         const member = allItems.members.find(m => m && m.id === item.assignedTo);
 
-        const notification = {
+        if (!allItems.emails) allItems.emails = [];
+        allItems.emails.push({
             type: 'ITEM_ASSIGNMENT',
             recipient: member.email,
             subject: `Item Assigned: ${item.name}`,
-            body: `Item "${item.name}" assigned. Condition: ${item.condition}`,
+            body: `Item assigned. Condition: ${item.condition}`,
             timestamp: new Date().toISOString(),
             status: 'pending'
-        };
+        });
 
-        if (!allItems.emails) allItems.emails = [];
-        allItems.emails.push(notification);
         window.saveData(allItems);
-
-        closeModal('notificationModal');
-        await showAlert('✅ Sent', 'Notification queued!', 'success');
+        closeModal('notifyModal');
+        await showAlert('✅ Success', 'Notification queued!', 'success');
     }
 
-    // ==================== MEMBERS ==================== 
     async function handleAddMember(e) {
         e.preventDefault();
-        const password = document.getElementById('addMemberPassword').value;
-        const confirm = document.getElementById('addMemberConfirmPassword').value;
+        const pwd = document.getElementById('formMemberPassword').value;
+        const confirm = document.getElementById('formMemberConfirmPassword').value;
 
-        if (password !== confirm) {
+        if (pwd !== confirm) {
             await showAlert('❌ Error', 'Passwords do not match', 'error');
             return;
         }
 
         const member = {
             id: Date.now(),
-            fullName: document.getElementById('addMemberName').value,
-            email: document.getElementById('addMemberEmail').value,
-            password,
-            mobile: document.getElementById('addMemberMobile').value,
-            designation: document.getElementById('addMemberDesignation').value,
-            department: document.getElementById('addMemberDepartment').value,
+            fullName: document.getElementById('formMemberName').value,
+            email: document.getElementById('formMemberEmail').value,
+            password: pwd,
+            mobile: document.getElementById('formMemberMobile').value,
+            designation: document.getElementById('formMemberDesignation').value,
+            department: document.getElementById('formMemberDepartment').value,
             role: 'member',
             createdDate: new Date().toISOString()
         };
@@ -1114,31 +677,20 @@
         const sendEmail = await confirmDialog('📧 Send Email?', `Send credentials to ${member.email}?`);
 
         if (sendEmail) {
-            const email = {
+            if (!allItems.emails) allItems.emails = [];
+            allItems.emails.push({
                 type: 'WELCOME_EMAIL',
                 recipient: member.email,
                 subject: 'Asset Manager Pro - Account Created',
-                body: `Email: ${member.email}\nPassword: ${password}`,
+                body: `Email: ${member.email}\nPassword: ${pwd}`,
                 timestamp: new Date().toISOString(),
                 status: 'pending'
-            };
-
-            if (!allItems.emails) allItems.emails = [];
-            allItems.emails.push(email);
+            });
             window.saveData(allItems);
-
             await showAlert('✅ Success', 'Member added & email sent!', 'success');
         } else {
             await showAlert('✅ Success', 'Member added!', 'success');
         }
-
-        document.getElementById('addMemberName').value = '';
-        document.getElementById('addMemberEmail').value = '';
-        document.getElementById('addMemberPassword').value = '';
-        document.getElementById('addMemberConfirmPassword').value = '';
-        document.getElementById('addMemberMobile').value = '';
-        document.getElementById('addMemberDesignation').value = '';
-        document.getElementById('addMemberDepartment').value = '';
 
         showPage('members');
     }
@@ -1151,7 +703,6 @@
         await showAlert('🔐 Password', 'Feature coming soon', 'info');
     }
 
-    // ==================== MODAL ==================== 
     function openModal(id) {
         document.getElementById(id).classList.add('active');
     }
@@ -1160,21 +711,20 @@
         document.getElementById(id).classList.remove('active');
     }
 
-    // ==================== DIALOGS ==================== 
     async function showAlert(title, message, type) {
         return new Promise(resolve => {
             const icons = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
             document.getElementById('alertIcon').textContent = icons[type] || 'ℹ';
             document.getElementById('alertTitle').textContent = title;
             document.getElementById('alertMessage').textContent = message;
-            window.alertCallback = resolve;
-            document.getElementById('alertDialog').classList.add('active');
+            window.alertResolve = resolve;
+            document.getElementById('alert').classList.add('active');
         });
     }
 
     function closeAlert() {
-        document.getElementById('alertDialog').classList.remove('active');
-        if (window.alertCallback) window.alertCallback();
+        document.getElementById('alert').classList.remove('active');
+        if (window.alertResolve) window.alertResolve();
     }
 
     async function confirmDialog(title, message) {
@@ -1182,19 +732,13 @@
             document.getElementById('alertIcon').textContent = '❓';
             document.getElementById('alertTitle').textContent = title;
             document.getElementById('alertMessage').textContent = message;
-            window.alertCallback = resolve;
-            document.getElementById('alertDialog').classList.add('active');
+            window.alertResolve = resolve;
+            document.getElementById('alert').classList.add('active');
         });
     }
 
-    // ==================== STARTUP ==================== 
+    // Start
     waitForData();
-
-    window.onclick = e => {
-        if (e.target.classList.contains('modal-overlay')) {
-            e.target.classList.remove('active');
-        }
-    };
 </script>
 
 </body>
