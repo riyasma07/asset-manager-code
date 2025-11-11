@@ -1322,15 +1322,14 @@ function openNotifyModal(itemId) {
 }
 
 function queueNotification(notification) {
-    // Add to your notifications queue (IndexedDB or your storage method)
     allEmails.push({
         ...notification,
         status: 'pending',
         id: Date.now()
-    }).then(() => {
-        console.log('Notification queued:', notification);
     });
+    // Optionally persist to storage or save to server here
 }
+
 
 
 // ============= STARTUP WITH AUTO SYNC =============
