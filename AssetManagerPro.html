@@ -842,8 +842,7 @@ async function renderItems() {
       const statusDisplay = hasHolder ? '📤 Out' : '✓ Available';
       const statusClass = hasHolder ? 'badge-orange' : 'badge-green';
       
-	  <span class="badge ${item.condition === 'working' ? 'badge-green' : item.condition === 'not-working' ? 'badge-notworking' : 'badge-orange'}">${condDisplay}</span>
-
+      let condDisplay = item.condition === 'working' ? '✓ Working' : item.condition === 'not-working' ? '✗ Not Working' : 'N/A';
       
       let actionButtons = '';
       
@@ -863,7 +862,7 @@ async function renderItems() {
           <td id="serial-${item.id}">${item.serial}</td>
           <td>${item.holder || '-'}</td>
           <td><span class="badge ${statusClass}">${statusDisplay}</span></td>
-          <td id="cond-${item.id}"><span class="badge badge-green">${condDisplay}</span></td>
+          <td id="cond-${item.id}"><span class="badge ${item.condition === 'working' ? 'badge-green' : item.condition === 'not-working' ? 'badge-notworking' : 'badge-orange'}">${condDisplay}</span></td>
           <td><div class="action-buttons" id="actions-${item.id}">${actionButtons}</div></td>
         </tr>
       `;
@@ -980,7 +979,7 @@ document.getElementById('assignForm').addEventListener('submit', async (e) => {
     alert('✅ Item assigned!');
 	const sendNotify = confirm(`Send notification to ${member.name}?`);
 	if (sendNotify) {
-		// Queue notification for sending
+		// [Add code for queueing/sending the notification here.]
 	}
     closeModal('assignItemModal');
     renderItems();
@@ -1093,11 +1092,10 @@ document.getElementById('memberForm').addEventListener('submit', async (e) => {
     
     await addRecord('users', user);
     alert('✅ Member added!');
-	const sendEmail = confirm(`Send welcome email to ${formData.get('email')}?`);
+	const sendEmail = confirm(`Send welcome email to ${formData.get("email")}?`);
 	if (sendEmail) {
-		// Queue email for sending
+		// [Add code for queueing/sending the email here.]
 	}
-
     e.target.reset();
     closeModal('addMemberModal');
     await autoUploadToGithub();
