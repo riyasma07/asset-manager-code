@@ -649,10 +649,10 @@
     </div>
 </div>
 
-<!-- AUTH CONTAINER -->
-<div id="authContainer" class="auth-container" style="display: none;">
-    <!-- LOGIN FORM -->
-    <div id="loginForm" class="auth-box">
+<!-- AUTH CONTAINER - BOTH FORMS HIDDEN BY DEFAULT -->
+<div id="authContainer" class="auth-container">
+    <!-- LOGIN FORM - HIDDEN BY DEFAULT -->
+    <div id="loginForm" class="auth-box" style="display: none;">
         <div class="auth-header">
             <h1>🔐 Asset Manager Pro</h1>
             <p>Professional Inventory System</p>
@@ -677,7 +677,7 @@
         </div>
     </div>
 
-    <!-- SETUP FORM -->
+    <!-- SETUP FORM - HIDDEN BY DEFAULT -->
     <div id="setupForm" class="auth-box" style="display: none;">
         <div class="auth-header">
             <h1>🔧 First Time Setup</h1>
@@ -1027,9 +1027,27 @@
         if (window.closeAlertCallback) window.closeAlertCallback();
     }
 
+    // ==================== INITIALIZATION ====================
+    function initializeApp() {
+        console.log('Initializing app...');
+        console.log('allItems:', allItems);
+        console.log('Members count:', allItems.members ? allItems.members.length : 0);
+
+        // Check if any admins exist
+        if (!allItems.members || allItems.members.length === 0) {
+            console.log('No admins - showing setup form');
+            document.getElementById('setupForm').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'none';
+        } else {
+            console.log('Admins exist - showing login form');
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('setupForm').style.display = 'none';
+        }
+    }
+
     // ==================== MODAL FUNCTIONS ====================
     function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
+        document.getElementById(modalId).classList.remove('active');
     }
 
     function openAddItemModal() {
@@ -1438,14 +1456,9 @@
     }
 
     // ==================== INITIALIZATION ====================
-    window.addEventListener('load', () => {
-        if (!allItems.members || allItems.members.length === 0) {
-            document.getElementById('authContainer').style.display = 'flex';
-            document.getElementById('setupForm').style.display = 'block';
-        } else {
-            document.getElementById('authContainer').style.display = 'flex';
-            document.getElementById('loginForm').style.display = 'block';
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded fired');
+        initializeApp();
     });
 
     window.onclick = function (event) {
