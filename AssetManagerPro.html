@@ -649,9 +649,9 @@
     </div>
 </div>
 
-<!-- AUTH CONTAINER - BOTH FORMS HIDDEN BY DEFAULT -->
+<!-- AUTH CONTAINER -->
 <div id="authContainer" class="auth-container">
-    <!-- LOGIN FORM - HIDDEN BY DEFAULT -->
+    <!-- LOGIN FORM -->
     <div id="loginForm" class="auth-box" style="display: none;">
         <div class="auth-header">
             <h1>🔐 Asset Manager Pro</h1>
@@ -673,11 +673,11 @@
         </form>
 
         <div class="auth-footer">
-            New user? <a onclick="showSetup()">Create Admin Account</a>
+            New user? Ask your admin to add you.
         </div>
     </div>
 
-    <!-- SETUP FORM - HIDDEN BY DEFAULT -->
+    <!-- SETUP FORM -->
     <div id="setupForm" class="auth-box" style="display: none;">
         <div class="auth-header">
             <h1>🔧 First Time Setup</h1>
@@ -981,12 +981,28 @@
 
 <script>
     // ==================== DATA & STATE ====================
-    let allItems = window.assetManagerData || { items: [], members: [], emails: [] };
+    let allItems = { items: [], members: [], emails: [] };
     let currentUser = null;
     let currentPage = 'viewItems';
     let pendingDeleteIndex = null;
     let pendingAssignIndex = null;
     let confirmCallback = null;
+    let appInitialized = false;
+
+    // ==================== WAIT FOR LOADER INJECTION ====================
+    // This function waits for window.assetManagerData to be injected by the loader
+    function waitForLoaderData() {
+        if (typeof window.assetManagerData !== 'undefined' && window.assetManagerData !== null) {
+            // Data is ready! Use it
+            allItems = window.assetManagerData || { items: [], members: [], emails: [] };
+            console.log('✓ Data injected by loader:', allItems);
+            initializeApp();
+        } else if (!appInitialized) {
+            // Data not ready yet, wait and try again
+            console.log('Waiting for loader to inject data...');
+            setTimeout(waitForLoaderData, 500);
+        }
+    }
 
     // ==================== DIALOG FUNCTIONS ==================== 
     async function showConfirm(title, message, type = 'warning') {
@@ -1029,17 +1045,19 @@
 
     // ==================== INITIALIZATION ====================
     function initializeApp() {
+        if (appInitialized) return; // Prevent multiple initializations
+        appInitialized = true;
+        
         console.log('Initializing app...');
-        console.log('allItems:', allItems);
         console.log('Members count:', allItems.members ? allItems.members.length : 0);
 
         // Check if any admins exist
         if (!allItems.members || allItems.members.length === 0) {
-            console.log('No admins - showing setup form');
+            console.log('✓ NO ADMINS - showing setup form');
             document.getElementById('setupForm').style.display = 'block';
             document.getElementById('loginForm').style.display = 'none';
         } else {
-            console.log('Admins exist - showing login form');
+            console.log('✓ ADMINS EXIST - showing login form');
             document.getElementById('loginForm').style.display = 'block';
             document.getElementById('setupForm').style.display = 'none';
         }
@@ -1455,11 +1473,9 @@
         await showAlert('🔐 Password', 'Change password feature coming soon', 'info');
     }
 
-    // ==================== INITIALIZATION ====================
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOMContentLoaded fired');
-        initializeApp();
-    });
+    // ==================== START WAITING FOR LOADER ====================
+    // Start waiting immediately, don't wait for DOMContentLoaded
+    waitForLoaderData();
 
     window.onclick = function (event) {
         if (event.target.classList.contains('modal')) {
