@@ -851,6 +851,7 @@ async function renderItems() {
           <button class="btn-icon" onclick="startEditItem(${item.id})" title="Edit">✏️</button>
           <button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>
           ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">📤</button>` : `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">📥</button>`}
+		  ${item.assignedTo ? `<button class="btn-sm btn-info" onclick="openNotifyModal(${item.id})" title="Send Notification">🔔</button>` : ''}
         `;
       } else {
         actionButtons = `<button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>`;
@@ -1291,6 +1292,40 @@ function setTheme(theme) {
 
 document.getElementById('lightBtn').addEventListener('click', () => setTheme('light'));
 document.getElementById('darkBtn').addEventListener('click', () => setTheme('dark'));
+
+function openNotifyModal(itemId) {
+    getOne('items', itemId).then(item => {
+        getOne('members', item.assignedTo).then(member => {
+            const customMessage = prompt(`📧 Enter message to send to ${member.name}:\n\n(Default: Item "${item.name}" assigned)\n\nCustom message:`);
+            
+            if (customMessage !== null) {  // User didn't cancel
+                const notificationBody = customMessage.trim() || `Item "${item.name}" has been assigned to you. Condition: ${item.condition}`;
+                
+                // Add to notifications/emails queue
+                queueNotification({
+                    recipient: member.email,
+                    subject: `Notification: ${item.name}`,
+                    body: notificationBody,
+                    timestamp: new Date().toISOString()
+                });
+                
+                alert('✅ Notification sent!');
+            }
+        });
+    });
+}
+
+function queueNotification(notification) {
+    // Add to your notifications queue (IndexedDB or your storage method)
+    db.notifications.add({
+        ...notification,
+        status: 'pending',
+        id: Date.now()
+    }).then(() => {
+        console.log('Notification queued:', notification);
+    });
+}
+
 
 // ============= STARTUP WITH AUTO SYNC =============
 (async () => {
