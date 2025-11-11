@@ -1,1303 +1,1158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asset Manager Pro - Professional Inventory System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; scroll-behavior: smooth; }
-    html:not(.dark) { background-color: #f8fafc; color: #0f172a; }
-    html.dark { background-color: #0d1117; color: #e6edf3; }
-    body { min-height: 100vh; display: flex; flex-direction: column; transition: background-color 0.2s ease, color 0.2s ease; overflow-x: hidden; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Manager Pro</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5568d3;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+        }
 
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    html.dark ::-webkit-scrollbar-thumb { background: #30363d; }
-    html.dark ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .hidden { display: none !important; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+        }
 
-    #authScreen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 99999; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); padding: 2rem 1rem; overflow-y: auto; }
-    #authScreen.hidden { display: none !important; }
+        /* ========== BEAUTIFUL DIALOG STYLES ========== */
+        .beautiful-dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
 
-    .auth-card { background: white; border-radius: 1rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); padding: 2.5rem; max-width: 480px; width: 100%; animation: slideInUp 0.4s ease; max-height: 90vh; overflow-y: auto; }
-    html.dark .auth-card { background: #161b22; }
+        .beautiful-dialog {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.3s ease;
+        }
 
-    @keyframes slideInUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .beautiful-dialog-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    .auth-title { text-align: center; margin-bottom: 2rem; }
-    .logo-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); border-radius: 1rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
-    .auth-title h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .auth-title p { color: #64748b; font-size: 0.875rem; }
+        .beautiful-dialog-message {
+            color: #6b7280;
+            margin-bottom: 24px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
 
-    .setup-alert { background: #dbeafe; color: #0c4a6e; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; border: 1px solid #7dd3fc; font-size: 0.875rem; }
-    html.dark .setup-alert { background: #0c3d5f; color: #7dd3fc; }
+        .beautiful-dialog-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
 
-    .form-group { margin-bottom: 1.25rem; }
-    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.875rem; }
+        .beautiful-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 15px;
+        }
 
-    input, select, textarea { width: 100%; padding: 0.75rem 0.875rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: white; color: #0f172a; font-family: 'Inter', sans-serif; font-size: 0.875rem; transition: all 0.2s ease; }
-    html.dark input, html.dark select, html.dark textarea { background: #0d1117; border-color: #30363d; color: #c9d1d9; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .beautiful-btn-cancel {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
 
-    .btn { cursor: pointer; border: none; transition: all 0.2s ease; font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 0.5rem; }
-    .btn-primary { background: #2563eb; color: white; width: 100%; margin-top: 1rem; }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-success { background: #10b981; color: white; }
-    .btn-success:hover { background: #059669; }
-    .btn-danger { background: #ef4444; color: white; }
-    .btn-danger:hover { background: #dc2626; }
-    .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
-    .btn-secondary { background: #6b7280; color: white; }
-    .btn-secondary:hover { background: #4b5563; }
-    .btn-icon { background: none; border: none; padding: 0.5rem; border-radius: 0.375rem; cursor: pointer; font-size: 1.2rem; display: inline-flex; align-items: center; justify-content: center; }
-    .btn-icon:hover { background: rgba(0, 0, 0, 0.1); }
-    html.dark .btn-icon:hover { background: rgba(255, 255, 255, 0.1); }
+        .beautiful-btn-cancel:hover {
+            background: #e5e7eb;
+        }
 
-    .auth-links { text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: #64748b; }
-    .auth-links a { color: #2563eb; cursor: pointer; font-weight: 500; text-decoration: none; }
+        .beautiful-btn-confirm {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
 
-    header { background: white; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 40; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
-    html.dark header { background: #161b22; border-bottom-color: #30363d; }
+        .beautiful-btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
 
-    main { flex: 1; width: 100%; z-index: 10; overflow-y: auto; padding: 2rem; }
+        /* ========== CONDITION BADGES ========== */
+        .condition-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-block;
+        }
 
-    .card { background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 2rem; overflow-x: auto; }
-    html.dark .card { background: #161b22; border-color: #30363d; }
+        .condition-working {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
 
-    table { width: 100%; font-size: 0.875rem; border-collapse: collapse; }
-    thead tr { border-bottom: 2px solid #e2e8f0; }
-    html.dark thead tr { border-bottom-color: #30363d; }
-    tbody tr { border-bottom: 1px solid #e2e8f0; transition: background-color 0.2s ease; }
-    tbody tr:hover { background: #f8fafc; }
-    html.dark tbody tr:hover { background: #21262d; }
-    tbody tr.edit-row { background: rgba(37, 99, 235, 0.1); }
-    th, td { padding: 0.75rem; text-align: left; }
-    th { font-weight: 600; color: #64748b; }
+        .condition-notworking {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
 
-    .badge { display: inline-block; padding: 0.375rem 0.75rem; font-size: 0.75rem; border-radius: 0.25rem; font-weight: 600; }
-    .badge-green { background: #dcfce7; color: #166534; }
-    .badge-orange { background: #fed7aa; color: #92400e; }
-    html.dark .badge-green { background: #0d3f1a; color: #3fb950; }
-    html.dark .badge-orange { background: #3d2817; color: #d29922; }
+        .condition-na {
+            background-color: #fed7aa;
+            color: #b45309;
+            border: 1px solid #fdba74;
+        }
 
-    .backdrop { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 40; }
-    .backdrop.show { display: block; }
+        /* ========== NOTIFICATION BELL BUTTON ========== */
+        .btn-notify {
+            background: var(--info);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .modal { display: none; position: fixed; inset: 0; z-index: 50; align-items: center; justify-content: center; padding: 1rem; overflow-y: auto; }
-    .modal.show { display: flex; }
-    .modal-content { background: white; border-radius: 0.75rem; box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15); max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; animation: slideInUp 0.3s ease; }
-    html.dark .modal-content { background: #161b22; }
-    .modal-header { border-bottom: 1px solid #e2e8f0; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; }
-    html.dark .modal-header { border-bottom-color: #30363d; }
-    .modal-header h3 { font-size: 1.25rem; font-weight: 700; }
-    .modal-body { padding: 2rem; }
-    .modal-footer { border-top: 1px solid #e2e8f0; padding: 1.5rem; display: flex; gap: 0.75rem; justify-content: flex-end; }
-    html.dark .modal-footer { border-top-color: #30363d; }
-    .close-btn { background: none; border: none; cursor: pointer; color: #64748b; font-size: 1.5rem; padding: 0; }
+        .btn-notify:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
 
-    .panel { position: fixed; right: 0; top: 0; height: 100%; width: 100%; max-width: 320px; z-index: 50; background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px); border-left: 1px solid rgba(48, 54, 61, 0.4); overflow-y: auto; transform: translateX(100%); transition: transform 0.3s; }
-    .panel.open { transform: translateX(0); }
-    .panel-header { position: sticky; top: 0; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; background: rgba(13, 17, 23, 0.8); border-bottom: 1px solid rgba(48, 54, 61, 0.3); z-index: 10; }
-    .panel-header h3 { font-size: 1.125rem; font-weight: bold; color: white; }
-    .panel-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
-    .panel-item { padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(48, 54, 61, 0.6); background: rgba(30, 40, 54, 0.4); backdrop-filter: blur(5px); cursor: pointer; color: white; transition: all 0.2s ease; text-align: left; display: flex; align-items: center; gap: 0.75rem; width: 100%; }
-    .panel-item:hover { background: rgba(30, 40, 54, 0.7); border-color: rgba(88, 166, 255, 0.5); }
-    .panel-item-icon { width: 40px; height: 40px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .icon-blue { background: rgba(59, 130, 246, 0.2); color: #58a6ff; }
-    .icon-purple { background: rgba(139, 92, 246, 0.2); color: #d084d0; }
-    .icon-red { background: rgba(239, 68, 68, 0.2); color: #f87171; }
-    .panel-item-content { flex: 1; }
-    .panel-item-title { font-weight: 600; color: white; font-size: 0.9375rem; margin-bottom: 0.25rem; }
-    .panel-item-desc { font-size: 0.75rem; color: #94a3b8; }
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
 
-    .action-buttons { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        @keyframes slideInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
 
-    .item-count-badge { padding: 0.5rem 1.25rem; background: #f3e8ff; color: #6b21a8; font-size: 0.875rem; font-weight: bold; border-radius: 9999px; }
+        /* ========== AUTH CONTAINER ========== */
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-    .theme-section { border-top: 1px solid rgba(48, 54, 61, 0.3); padding-top: 1rem; margin-top: 1rem; }
-    .theme-label { display: block; font-size: 0.875rem; font-weight: 600; color: white; margin-bottom: 0.75rem; }
-    .theme-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-    .theme-btn { padding: 0.75rem; border-radius: 0.5rem; border: 2px solid #30363d; background: rgba(30, 40, 54, 0.5); color: white; font-weight: 500; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease; }
-    .theme-btn.active { border-color: #2563eb; background: rgba(37, 99, 235, 0.2); }
+        .auth-box {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
 
-    @media (max-width: 768px) {
-      .auth-card { padding: 2rem; margin: 1rem; }
-      main { padding: 1rem; }
-      header { padding: 0.75rem 1rem; }
-    }
-  </style>
+        .auth-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .auth-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ========== MAIN APP ========== */
+        .app-container {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            background: white;
+        }
+
+        .app-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .app-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+        }
+
+        /* ========== ITEMS TABLE ========== */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .items-table thead {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .items-table th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .items-table td {
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .items-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-assign {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-assign:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* ========== MODAL ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 32px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close:hover {
+            color: #374151;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .btn-cancel {
+            padding: 10px 20px;
+            background: #f3f4f6;
+            color: #6b7280;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-confirm {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ========== LOADING SPINNER ========== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
 
-<!-- AUTH SCREEN -->
-<div id="authScreen">
-  <div class="auth-card">
-    <div class="auth-title">
-      <div class="logo-icon">📦</div>
-      <h1>Asset Manager Pro</h1>
-      <p>Professional Inventory System</p>
-    </div>
-
-    <!-- REGISTRATION FORM -->
-    <form id="registerForm" class="hidden">
-      <div class="setup-alert"><strong>🔧 First Time Setup</strong><br><small>You will be the admin</small></div>
-      <div class="form-group"><label>Full Name *</label><input type="text" name="name" placeholder="Enter your name" required></div>
-      <div class="form-group"><label>Email *</label><input type="email" name="email" placeholder="Enter your email" required></div>
-      <div class="form-group"><label>Mobile</label><input type="tel" name="mobile" placeholder="Enter mobile"></div>
-      <div class="form-group"><label>Designation</label><input type="text" name="designation" placeholder="e.g., Manager"></div>
-      <div class="form-group"><label>Department</label><input type="text" name="department" placeholder="e.g., IT"></div>
-      <div class="form-group"><label>Password * (Min 6)</label><input type="password" name="password" required></div>
-      <div class="form-group"><label>Confirm Password *</label><input type="password" name="confirmPassword" required></div>
-      <button type="submit" class="btn btn-primary">👑 Create Admin Account</button>
-      <div class="auth-links">Already registered? <a onclick="switchToLogin()">Sign In</a></div>
-    </form>
-
-    <!-- LOGIN FORM -->
-    <form id="loginForm">
-      <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="Enter email" required></div>
-      <div class="form-group"><label>Password</label><input type="password" name="password" placeholder="Enter password" required></div>
-      <button type="submit" class="btn btn-primary">🔓 Sign In</button>
-      <div class="auth-links">New user? Ask your admin to add you.</div>
-    </form>
-  </div>
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
 </div>
 
-<!-- HEADER -->
-<header class="hidden" id="mainHeader">
-  <div style="display: flex; align-items: center; gap: 1rem;">
-    <h1 style="font-size: 1.25rem; font-weight: 700;">Asset Manager Pro</h1>
-    <p id="userRole" style="color: #64748b; font-size: 0.875rem;">Admin</p>
-  </div>
-  <div style="display: flex; gap: 1rem; align-items: center;">
-    <button id="openManage" class="btn btn-primary" style="display: none; width: auto;">📋 Manage</button>
-    <button id="settingsBtn" class="btn-icon">⚙️</button>
-  </div>
-</header>
-
-<!-- MAIN CONTENT -->
-<main class="hidden" id="mainContent">
-  <div style="width: 100%; padding: 0;">
-    <div class="card">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 700;">📦 Inventory Items</h2>
-        <span class="item-count-badge" id="itemsCount">0</span>
-      </div>
-      <div style="overflow-x: auto;">
-        <table id="itemsTable">
-          <thead>
-            <tr>
-              <th>Item Name</th>
-              <th>Serial Number</th>
-              <th>Holder</th>
-              <th>Status</th>
-              <th>Condition</th>
-              <th style="min-width: 200px;">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="itemsBody">
-            <tr><td colspan="6" style="text-align: center;">No items found</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</main>
-
-<!-- BACKDROP -->
-<div id="backdrop" class="backdrop"></div>
-
-<!-- MANAGE PANEL -->
-<div id="managePanel" class="panel">
-  <div class="panel-header"><h3>📋 Menu</h3><button id="closeManage" type="button" class="close-btn">×</button></div>
-  <div class="panel-body">
-    <button id="viewItemsBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-blue">📦</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">View Items</div>
-        <div class="panel-item-desc">Browse all items</div>
-      </div>
-    </button>
-    <button id="addItemBtn" type="button" class="panel-item" style="display: none;">
-      <div class="panel-item-icon icon-blue">➕</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Add Item</div>
-        <div class="panel-item-desc">Create new</div>
-      </div>
-    </button>
-    <button id="viewMembersBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-purple">👥</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">View Members</div>
-        <div class="panel-item-desc">Manage users</div>
-      </div>
-    </button>
-    <button id="addMemberBtn" type="button" class="panel-item" style="display: none;">
-      <div class="panel-item-icon icon-purple">👤</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Add Member</div>
-        <div class="panel-item-desc">Register user</div>
-      </div>
-    </button>
-  </div>
-</div>
-
-<!-- SETTINGS PANEL (ADMIN ONLY OPTIONS) -->
-<div id="settingsPanel" class="panel">
-  <div class="panel-header"><h3>⚙️ Settings</h3><button id="closeSettings" type="button" class="close-btn">×</button></div>
-  <div class="panel-body">
-    <button id="editProfileBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-blue">✏️</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Edit Profile</div>
-        <div class="panel-item-desc">Update your info</div>
-      </div>
-    </button>
-    <button id="changePasswordBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-purple">🔐</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Change Password</div>
-        <div class="panel-item-desc">Update password</div>
-      </div>
-    </button>
-
-    <!-- ADMIN ONLY: Export and Sync buttons -->
-    <button id="exportBtn" type="button" class="panel-item" style="display: none;">
-      <div class="panel-item-icon icon-blue">💾</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Export to File</div>
-        <div class="panel-item-desc">Download backup JSON</div>
-      </div>
-    </button>
-    <button id="syncFromGithubBtn" type="button" class="panel-item" style="display: none;">
-      <div class="panel-item-icon icon-blue">☁️</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Sync from GitHub</div>
-        <div class="panel-item-desc">Load shared data</div>
-      </div>
-    </button>
-
-    <button id="removeAccountBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-red">🗑️</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Remove Account</div>
-        <div class="panel-item-desc">Delete your account</div>
-      </div>
-    </button>
-    <button id="logoutBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-red">🚪</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Logout</div>
-        <div class="panel-item-desc">Sign out</div>
-      </div>
-    </button>
-
-    <div class="theme-section">
-      <label class="theme-label">🎨 Theme</label>
-      <div class="theme-buttons">
-        <button id="lightBtn" type="button" class="theme-btn">☀️ Light</button>
-        <button id="darkBtn" type="button" class="theme-btn active">🌙 Dark</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODALS -->
-<div id="editProfileModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>✏️ Edit Profile</h3><button type="button" class="close-btn" onclick="closeModal('editProfileModal')">×</button></div>
-    <form id="editProfileForm">
-      <div class="modal-body">
-        <div class="form-group"><label>Full Name</label><input type="text" id="editName" required></div>
-        <div class="form-group"><label>Email</label><input type="email" id="editEmail" required></div>
-        <div class="form-group"><label>Mobile</label><input type="tel" id="editMobile"></div>
-        <div class="form-group"><label>Designation</label><input type="text" id="editDesignation"></div>
-        <div class="form-group"><label>Department</label><input type="text" id="editDepartment"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('editProfileModal')">Cancel</button>
-        <button type="submit" class="btn btn-success">✓ Save</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div id="changePasswordModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>🔐 Change Password</h3><button type="button" class="close-btn" onclick="closeModal('changePasswordModal')">×</button></div>
-    <form id="changePasswordForm">
-      <div class="modal-body">
-        <div class="form-group"><label>Current Password *</label><input type="password" id="currentPassword" required></div>
-        <div class="form-group"><label>New Password *</label><input type="password" id="newPassword" required></div>
-        <div class="form-group"><label>Confirm Password *</label><input type="password" id="confirmNewPassword" required></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('changePasswordModal')">Cancel</button>
-        <button type="submit" class="btn btn-success">Update</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div id="addItemModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>➕ Add Item</h3><button type="button" class="close-btn" onclick="closeModal('addItemModal')">×</button></div>
-    <form id="itemForm">
-      <div class="modal-body">
-        <div class="form-group"><label>Item Name *</label><input type="text" name="name" placeholder="e.g., Laptop" required></div>
-        <div class="form-group"><label>Serial Number *</label><input type="text" name="serial" placeholder="e.g., SN123456" required></div>
-        <div class="form-group">
-          <label>Condition *</label>
-          <select name="condition" required>
-            <option value="">Select</option>
-            <option value="working">✓ Working</option>
-            <option value="not-working">✗ Not Working</option>
-            <option value="not-applicable">N/A Not Applicable</option>
-          </select>
+<!-- AUTH CONTAINER -->
+<div id="authContainer" class="auth-container">
+    <!-- Login Form -->
+    <div id="loginForm" class="auth-box">
+        <div class="auth-header">
+            <h1>🔐 Asset Manager Pro</h1>
+            <p>Professional Inventory System</p>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('addItemModal')">Cancel</button>
-        <button type="submit" class="btn btn-success">Add</button>
-      </div>
-    </form>
-  </div>
-</div>
 
-<div id="assignItemModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>📤 Assign Item</h3><button type="button" class="close-btn" onclick="closeModal('assignItemModal')">×</button></div>
-    <form id="assignForm">
-      <div class="modal-body">
-        <div class="form-group"><label>Select Member *</label><select id="assignMemberSelect" required><option value="">Choose member</option></select></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('assignItemModal')">Cancel</button>
-        <button type="submit" class="btn btn-success">Assign</button>
-      </div>
-    </form>
-  </div>
-</div>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com" required>
+            </div>
 
-<div id="returnItemModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>📥 Return Item</h3><button type="button" class="close-btn" onclick="closeModal('returnItemModal')">×</button></div>
-    <div class="modal-body">
-      <p>Return this item to inventory?</p>
-      <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.5rem;" id="returnItemInfo"></p>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password" required>
+            </div>
+
+            <button type="submit" class="btn-primary">🔓 Sign In</button>
+        </form>
+
+        <div class="auth-footer">
+            New user? <a onclick="showSetup()">Create Admin Account</a>
+        </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" onclick="closeModal('returnItemModal')">Cancel</button>
-      <button type="button" class="btn btn-success" onclick="confirmReturnItem()">Return</button>
+
+    <!-- Setup Form -->
+    <div id="setupForm" class="auth-box" style="display: none;">
+        <div class="auth-header">
+            <h1>🔧 First Time Setup</h1>
+            <p>You will be the admin</p>
+        </div>
+
+        <form onsubmit="handleSetup(event)">
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="setupFullName" placeholder="Your name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="setupEmail" placeholder="your@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password * (Min 6)</label>
+                <input type="password" id="setupPassword" placeholder="Min 6 characters" required minlength="6">
+            </div>
+
+            <div class="form-group">
+                <label>Confirm Password *</label>
+                <input type="password" id="setupConfirmPassword" placeholder="Confirm password" required>
+            </div>
+
+            <button type="submit" class="btn-primary">👑 Create Admin Account</button>
+        </form>
+
+        <div class="auth-footer">
+            Already registered? <a onclick="showLogin()">Sign In</a>
+        </div>
     </div>
-  </div>
 </div>
 
-<div id="deleteItemModal" class="modal">
-  <div class="modal-content">
-    <div style="text-align: center; padding: 2rem;">
-      <div style="font-size: 3rem; margin-bottom: 1rem;">🗑️</div>
-      <h3>Delete Item?</h3>
-      <p style="color: #64748b; margin-bottom: 2rem; font-size: 0.95rem;">This action cannot be undone.</p>
-      <div style="display: flex; gap: 1rem; justify-content: center;">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('deleteItemModal')">Cancel</button>
-        <button type="button" class="btn btn-danger" onclick="confirmDeleteItem()">Delete</button>
-      </div>
+<!-- MAIN APP -->
+<div id="mainApp" class="app-container">
+    <div class="app-content">
+        <div class="app-header">
+            <h1>📦 Inventory Items</h1>
+            <div class="user-info">
+                <span id="userDisplay" style="color: #6b7280; font-weight: 600;"></span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px; display: flex; gap: 12px;">
+            <button class="btn-primary" style="width: auto; padding: 10px 20px;" onclick="openAddItemModal()">➕ Add Item</button>
+            <button class="btn-primary" style="width: auto; padding: 10px 20px;" onclick="openAddMemberModal()">👤 Add Member</button>
+            <button class="btn-primary" style="width: auto; padding: 10px 20px;" onclick="syncFromGitHub()">🔄 Sync from GitHub</button>
+        </div>
+
+        <p style="color: #6b7280; margin-bottom: 15px;">Total Items: <strong id="itemCount">0</strong></p>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Serial Number</th>
+                    <th>Holder</th>
+                    <th>Condition</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="itemsTableBody">
+                <tr><td colspan="5" style="text-align: center; color: #9ca3af;">No items found</td></tr>
+            </tbody>
+        </table>
     </div>
-  </div>
 </div>
 
-<div id="itemHistoryModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>📜 Item History</h3><button type="button" class="close-btn" onclick="closeModal('itemHistoryModal')">×</button></div>
-    <div class="modal-body" id="historyList" style="max-height: 60vh; overflow-y: auto;"></div>
-  </div>
+<!-- ADD ITEM MODAL -->
+<div id="addItemModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>➕ Add Item</h2>
+            <span class="close" onclick="closeModal('addItemModal')">&times;</span>
+        </div>
+
+        <form onsubmit="handleAddItem(event)">
+            <div class="form-group">
+                <label>Item Name *</label>
+                <input type="text" id="itemName" placeholder="Enter item name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Serial Number *</label>
+                <input type="text" id="itemSerial" placeholder="Enter serial number" required>
+            </div>
+
+            <div class="form-group">
+                <label>Condition *</label>
+                <select id="itemCondition" required>
+                    <option value="">Select Condition</option>
+                    <option value="✓ Working">✓ Working</option>
+                    <option value="✗ Not Working">✗ Not Working</option>
+                    <option value="N/A">N/A</option>
+                </select>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeModal('addItemModal')">Cancel</button>
+                <button type="submit" class="btn-confirm">Add Item</button>
+            </div>
+        </form>
+    </div>
 </div>
 
+<!-- ADD MEMBER MODAL -->
 <div id="addMemberModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>👤 Add Member</h3><button type="button" class="close-btn" onclick="closeModal('addMemberModal')">×</button></div>
-    <form id="memberForm">
-      <div class="modal-body">
-        <div class="form-group"><label>Full Name *</label><input type="text" name="name" placeholder="Name" required></div>
-        <div class="form-group"><label>Email *</label><input type="email" name="email" placeholder="Email" required></div>
-        <div class="form-group"><label>Mobile</label><input type="tel" name="mobile"></div>
-        <div class="form-group"><label>Designation</label><input type="text" name="designation"></div>
-        <div class="form-group"><label>Department</label><input type="text" name="department"></div>
-        <div class="form-group"><label>Password * (Min 6)</label><input type="password" name="password" required></div>
-        <div class="form-group"><label>Confirm Password *</label><input type="password" name="confirmPassword" required></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('addMemberModal')">Cancel</button>
-        <button type="submit" class="btn btn-success">Add</button>
-      </div>
-    </form>
-  </div>
-</div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>👤 Add Member</h2>
+            <span class="close" onclick="closeModal('addMemberModal')">&times;</span>
+        </div>
 
-<div id="membersModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>👥 Members</h3><button type="button" class="close-btn" onclick="closeModal('membersModal')">×</button></div>
-    <div class="modal-body" id="membersList" style="max-height: 60vh; overflow-y: auto;"></div>
-  </div>
-</div>
+        <form onsubmit="handleAddMember(event)">
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="memberName" placeholder="Enter name" required>
+            </div>
 
-<!-- FILE INPUT -->
-<input type="file" id="fileInput" accept="application/json" style="display: none;">
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="memberEmail" placeholder="Enter email" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password * (Min 6)</label>
+                <input type="password" id="memberPassword" placeholder="Min 6 characters" required minlength="6">
+            </div>
+
+            <div class="form-group">
+                <label>Confirm Password *</label>
+                <input type="password" id="memberConfirmPassword" placeholder="Confirm password" required>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeModal('addMemberModal')">Cancel</button>
+                <button type="submit" class="btn-confirm">Add Member</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
-// ==================== GITHUB CONFIG (REPLACE THESE 4 VALUES) ====================
-const GITHUB_RAW_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/asset-manager-db/main/data.json";
-const GITHUB_USERNAME = "YOUR_USERNAME";
-const GITHUB_REPO = "asset-manager-db";
-const GITHUB_TOKEN = "ghp_YOUR_TOKEN_HERE";
+// ============ CONFIGURATION ============
+const GITHUB_CONFIG = {
+    username: "YOUR_USERNAME",        // ⚠️ CHANGE THIS
+    repo: "asset-manager-db",         // ⚠️ CHANGE THIS
+    branch: "main",                   // ⚠️ CHANGE THIS
+    token: "ghp_YOUR_TOKEN_HERE"      // ⚠️ CHANGE THIS
+};
 
-// ==================== AUTO-UPLOAD FUNCTION (AUTO-REPLACE FILE) ====================
-async function autoUploadToGithub() {
-  try {
-    const users = await getAll('users');
-    const items = await getAll('items');
-    const history = await getAll('history');
-    
-    const data = {
-      __schema__: 'asset-manager-pro',
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      users, items, history
-    };
-    
-    const content = JSON.stringify(data, null, 2);
-    const encodedContent = btoa(content);
-    
-    const getRes = await fetch(
-      `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/data.json`,
-      {
-        headers: {
-          'Authorization': `Bearer ${GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      }
-    );
-    
-    if (!getRes.ok) {
-      console.warn('Cannot get file SHA');
-      return false;
-    }
-    
-    const fileData = await getRes.json();
-    const sha = fileData.sha;
-    
-    const uploadRes = await fetch(
-      `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/data.json`,
-      {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: 'Auto-sync',
-          content: encodedContent,
-          sha: sha
-        })
-      }
-    );
-    
-    if (uploadRes.ok) {
-      console.log('✅ Auto-synced to GitHub!');
-      return true;
-    }
-  } catch (e) {
-    console.warn('Auto-sync error:', e.message);
-  }
-  return false;
-}
+const GITHUB_RAW_URL = `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/data.json`;
+const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/data.json`;
 
-// ==================== DATABASE ====================
-const DB_NAME = 'AssetManagerPro_DB';
-let db = null;
+// ============ DATA ============
+let allItems = {
+    items: [],
+    members: [],
+    emails: []
+};
 let currentUser = null;
-let isAdmin = false;
-let editingItemId = null;
-let returnItemId = null;
-let deleteItemId = null;
 
-async function initDB() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 1);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => { db = req.result; resolve(db); };
-    req.onupgradeneeded = (e) => {
-      const _db = e.target.result;
-      if (!_db.objectStoreNames.contains('users')) _db.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
-      if (!_db.objectStoreNames.contains('items')) _db.createObjectStore('items', { keyPath: 'id', autoIncrement: true });
-      if (!_db.objectStoreNames.contains('history')) _db.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
-    };
-  });
-}
-
-function getAll(storeName) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readonly');
-    const store = tx.objectStore(storeName);
-    const req = store.getAll();
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result || []);
-  });
-}
-
-function addRecord(storeName, data) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    const req = store.add(data);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-  });
-}
-
-function updateRecord(storeName, data) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    const req = store.put(data);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-  });
-}
-
-function getOne(storeName, id) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readonly');
-    const store = tx.objectStore(storeName);
-    const req = store.get(id);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-  });
-}
-
-function deleteRecord(storeName, id) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    const req = store.delete(id);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-  });
-}
-
-function clearStore(storeName) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readwrite');
-    tx.objectStore(storeName).clear().onsuccess = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-
-// ========== AUTO SYNC FROM GITHUB ==========
-async function autoSyncFromGithub() {
-  try {
-    console.log('🔄 Syncing from GitHub...');
-    const res = await fetch(GITHUB_RAW_URL);
-    
-    if (!res.ok) {
-      console.warn('⚠️ GitHub file not found (first time setup?)');
-      return;
-    }
-
-    const data = await res.json();
-
-    if (data.__schema__ !== 'asset-manager-pro') {
-      console.warn('Invalid data schema');
-      return;
-    }
-
-    await clearStore('users');
-    await clearStore('items');
-    await clearStore('history');
-
-    for (const u of (data.users || [])) await addRecord('users', u);
-    for (const it of (data.items || [])) await addRecord('items', it);
-    for (const h of (data.history || [])) await addRecord('history', h);
-
-    console.log('✅ Auto-synced from GitHub!');
-  } catch (e) {
-    console.warn('Sync failed:', e.message);
-  }
-}
-
-// ========== EXPORT/IMPORT ==========
-async function exportToJsonFile() {
-  try {
-    const users = await getAll('users');
-    const items = await getAll('items');
-    const history = await getAll('history');
-    
-    const data = {
-      __schema__: 'asset-manager-pro',
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      users, items, history
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `asset-manager-backup-${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    alert('✅ Exported! Upload this to GitHub to sync with friends');
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
-}
-
-async function importFromJsonFile(file) {
-  try {
-    const text = await file.text();
-    const data = JSON.parse(text);
-    
-    if (data.__schema__ !== 'asset-manager-pro') {
-      alert('❌ Invalid backup file');
-      return;
-    }
-    
-    if (!confirm('⚠️ Import will REPLACE all local data. Continue?')) return;
-    
-    await clearStore('users');
-    await clearStore('items');
-    await clearStore('history');
-    
-    for (const u of (data.users || [])) await addRecord('users', u);
-    for (const it of (data.items || [])) await addRecord('items', it);
-    for (const h of (data.history || [])) await addRecord('history', h);
-    
-    alert('✅ Import complete!');
-    await checkUserStatus();
-    if (currentUser) renderItems();
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
-}
-
-document.getElementById('fileInput').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (file) await importFromJsonFile(file);
-});
-
-async function checkUserStatus() {
-  const users = await getAll('users');
-  if (users.length === 0 && !currentUser) {
-    document.getElementById('registerForm').classList.remove('hidden');
-    document.getElementById('loginForm').classList.add('hidden');
-  } else if (currentUser) {
-    showMainApp();
-  } else {
-    document.getElementById('registerForm').classList.add('hidden');
-    document.getElementById('loginForm').classList.remove('hidden');
-  }
-}
-
-function switchToLogin() {
-  document.getElementById('registerForm').classList.add('hidden');
-  document.getElementById('loginForm').classList.remove('hidden');
-}
-
-function closeModal(id) {
-  document.getElementById(id).classList.remove('show');
-  if (!document.querySelectorAll('.modal.show').length && !document.querySelectorAll('.panel.open').length) {
-    document.getElementById('backdrop').classList.remove('show');
-  }
-}
-
-function closePanel(id) {
-  document.getElementById(id).classList.remove('open');
-  if (!document.querySelectorAll('.modal.show').length && !document.querySelectorAll('.panel.open').length) {
-    document.getElementById('backdrop').classList.remove('show');
-  }
-}
-
-function openModal(id) {
-  document.getElementById('backdrop').classList.add('show');
-  document.getElementById(id).classList.add('show');
-}
-
-function openPanel(id) {
-  document.getElementById('backdrop').classList.add('show');
-  document.getElementById(id).classList.add('open');
-}
-
-async function showMainApp() {
-  document.getElementById('authScreen').classList.add('hidden');
-  document.getElementById('mainHeader').classList.remove('hidden');
-  document.getElementById('mainContent').classList.remove('hidden');
-  document.getElementById('userRole').textContent = isAdmin ? '👑 Admin' : '👤 Member';
-  
-  if (isAdmin) {
-    document.getElementById('openManage').style.display = 'flex';
-    document.getElementById('addItemBtn').style.display = 'flex';
-    document.getElementById('addMemberBtn').style.display = 'flex';
-    document.getElementById('exportBtn').style.display = 'flex';
-    document.getElementById('syncFromGithubBtn').style.display = 'flex';
-  } else {
-    document.getElementById('openManage').style.display = 'flex';
-    document.getElementById('addItemBtn').style.display = 'none';
-    document.getElementById('addMemberBtn').style.display = 'none';
-    document.getElementById('exportBtn').style.display = 'none';
-    document.getElementById('syncFromGithubBtn').style.display = 'none';
-  }
-  
-  const users = await getAll('users');
-  const adminCount = users.filter(u => u.isAdmin).length;
-  if (isAdmin && adminCount === 1) {
-    document.getElementById('removeAccountBtn').style.display = 'none';
-  } else {
-    document.getElementById('removeAccountBtn').style.display = 'flex';
-  }
-  
-  renderItems();
-}
-
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const formData = new FormData(e.target);
-    const email = formData.get('email').trim().toLowerCase();
-    const password = formData.get('password');
-    const confirmPassword = formData.get('confirmPassword');
-    
-    if (password !== confirmPassword) { alert('Passwords do not match'); return; }
-    if (password.length < 6) { alert('Min 6 characters'); return; }
-    
-    const users = await getAll('users');
-    if (users.some(u => u.email === email)) { alert('Email already registered'); return; }
-    
-    const isFirstUser = users.length === 0;
-    
-    const user = {
-      name: formData.get('name').trim(),
-      email: email,
-      password: btoa(password),
-      mobile: formData.get('mobile').trim() || '',
-      designation: formData.get('designation').trim() || '',
-      department: formData.get('department').trim() || '',
-      isAdmin: isFirstUser
-    };
-    
-    const userId = await addRecord('users', user);
-    user.id = userId;
-    currentUser = user;
-    isAdmin = isFirstUser;
-    
-    alert('✅ Admin Account Created!');
-    await autoUploadToGithub();
-    showMainApp();
-    e.target.reset();
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
-});
-
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const formData = new FormData(e.target);
-    const email = formData.get('email').trim().toLowerCase();
-    const password = btoa(formData.get('password'));
-    
-    const users = await getAll('users');
-    const user = users.find(u => u.email === email && u.password === password);
-    
-    if (!user) { alert('Invalid email or password'); return; }
-    
-    currentUser = user;
-    isAdmin = user.isAdmin || false;
-    showMainApp();
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
-});
-
-async function renderItems() {
-  try {
-    const items = await getAll('items');
-    document.getElementById('itemsCount').textContent = items.length;
-    const tbody = document.getElementById('itemsBody');
-    
-    if (!items.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No items found</td></tr>';
-      return;
-    }
-    
-    tbody.innerHTML = items.map(item => {
-      const hasHolder = item.holder && item.holder.trim() !== '';
-      const statusDisplay = hasHolder ? '📤 Out' : '✓ Available';
-      const statusClass = hasHolder ? 'badge-orange' : 'badge-green';
-      
-      let condDisplay = item.condition === 'working' ? '✓ Working' : item.condition === 'not-working' ? '✗ Not Working' : 'N/A';
-      
-      let actionButtons = '';
-      
-      if (isAdmin) {
-        actionButtons = `
-          <button class="btn-icon" onclick="startEditItem(${item.id})" title="Edit">✏️</button>
-          <button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>
-          ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">📤</button>` : `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">📥</button>`}
-        `;
-      } else {
-        actionButtons = `<button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>`;
-      }
-      
-      return `
-        <tr id="item-row-${item.id}">
-          <td id="name-${item.id}">${item.name}</td>
-          <td id="serial-${item.id}">${item.serial}</td>
-          <td>${item.holder || '-'}</td>
-          <td><span class="badge ${statusClass}">${statusDisplay}</span></td>
-          <td id="cond-${item.id}"><span class="badge badge-green">${condDisplay}</span></td>
-          <td><div class="action-buttons" id="actions-${item.id}">${actionButtons}</div></td>
-        </tr>
-      `;
-    }).join('');
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-function startEditItem(itemId) {
-  editingItemId = itemId;
-  getOne('items', itemId).then(item => {
-    const row = document.getElementById(`item-row-${itemId}`);
-    row.classList.add('edit-row');
-    
-    const nameCell = row.cells[0];
-    const serialCell = row.cells[1];
-    const condCell = row.cells[4];
-    
-    const currentCond = item.condition;
-    
-    nameCell.innerHTML = `<input type="text" id="edit-name-${itemId}" value="${item.name}" style="width: 100%;" />`;
-    serialCell.innerHTML = `<input type="text" id="edit-serial-${itemId}" value="${item.serial}" style="width: 100%;" />`;
-    condCell.innerHTML = `<select id="edit-cond-${itemId}" style="width: 100%;">
-      <option value="working" ${currentCond === 'working' ? 'selected' : ''}>✓ Working</option>
-      <option value="not-working" ${currentCond === 'not-working' ? 'selected' : ''}>✗ Not Working</option>
-      <option value="not-applicable" ${currentCond === 'not-applicable' ? 'selected' : ''}>N/A Not Applicable</option>
-    </select>`;
-    
-    const actionCell = document.getElementById(`actions-${itemId}`);
-    actionCell.innerHTML = `
-      <button class="btn-sm btn-success" onclick="saveEditItem(${itemId})">✓ Save</button>
-      <button class="btn-sm btn-secondary" onclick="cancelEditItem()">Cancel</button>
-      <button class="btn-sm btn-danger" onclick="openDeleteModal(${itemId})">🗑️</button>
-    `;
-  });
-}
-
-async function saveEditItem(itemId) {
-  try {
-    const name = document.getElementById(`edit-name-${itemId}`).value.trim();
-    const serial = document.getElementById(`edit-serial-${itemId}`).value.trim();
-    const cond = document.getElementById(`edit-cond-${itemId}`).value;
-    
-    if (!name || !serial) { alert('Name and Serial are required'); return; }
-    
-    const item = await getOne('items', itemId);
-    item.name = name;
-    item.serial = serial;
-    item.condition = cond;
-    
-    await updateRecord('items', item);
-    alert('✅ Item updated!');
-    editingItemId = null;
-    renderItems();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-function cancelEditItem() {
-  editingItemId = null;
-  renderItems();
-}
-
-function openDeleteModal(itemId) {
-  deleteItemId = itemId;
-  openModal('deleteItemModal');
-}
-
-async function confirmDeleteItem() {
-  try {
-    await deleteRecord('items', deleteItemId);
-    alert('✅ Item deleted!');
-    closeModal('deleteItemModal');
-    renderItems();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-async function openAssignModal(itemId) {
-  try {
-    const members = await getAll('users');
-    const select = document.getElementById('assignMemberSelect');
-    select.innerHTML = '<option value="">Choose member</option>' + 
-      members.map(m => `<option value="${m.id}">${m.name} (${m.email})</option>`).join('');
-    select.dataset.itemId = itemId;
-    openModal('assignItemModal');
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-document.getElementById('assignForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const itemId = parseInt(document.getElementById('assignMemberSelect').dataset.itemId);
-    const memberId = parseInt(document.getElementById('assignMemberSelect').value);
-    
-    if (!memberId) { alert('Select a member'); return; }
-    
-    const item = await getOne('items', itemId);
-    const member = await getOne('users', memberId);
-    
-    const oldHolder = item.holder;
-    item.holder = member.name;
-    
-    await updateRecord('items', item);
-    await addRecord('history', {
-      itemId: itemId,
-      itemName: item.name,
-      action: 'assigned',
-      from: oldHolder || 'Available',
-      to: member.name,
-      date: new Date().toLocaleString(),
-      user: currentUser.name
-    });
-    
-    alert('✅ Item assigned!');
-    closeModal('assignItemModal');
-    renderItems();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-});
-
-function openReturnModal(itemId) {
-  returnItemId = itemId;
-  getOne('items', itemId).then(item => {
-    document.getElementById('returnItemInfo').textContent = `Item: ${item.name} | Holder: ${item.holder}`;
-    openModal('returnItemModal');
-  });
-}
-
-async function confirmReturnItem() {
-  try {
-    const item = await getOne('items', returnItemId);
-    const oldHolder = item.holder;
-    item.holder = '';
-    
-    await updateRecord('items', item);
-    await addRecord('history', {
-      itemId: returnItemId,
-      itemName: item.name,
-      action: 'returned',
-      from: oldHolder,
-      to: 'Available',
-      date: new Date().toLocaleString(),
-      user: currentUser.name
-    });
-    
-    alert('✅ Item returned!');
-    closeModal('returnItemModal');
-    renderItems();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-async function openItemHistory(itemId) {
-  try {
-    const allHistory = await getAll('history');
-    const itemHistory = allHistory.filter(h => h.itemId === itemId);
-    const list = document.getElementById('historyList');
-    
-    if (!itemHistory.length) {
-      list.innerHTML = '<p style="text-align: center; color: #94a3b8;">No history for this item</p>';
-      openModal('itemHistoryModal');
-      return;
-    }
-    
-    list.innerHTML = itemHistory.reverse().map(h => {
-      const actionEmoji = h.action === 'assigned' ? '📤' : '📥';
-      return `
-        <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem; margin-bottom: 1rem;">
-          <div style="font-weight: 600; margin-bottom: 0.5rem;">${actionEmoji} ${h.action.toUpperCase()}</div>
-          <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">${h.from} → ${h.to}</div>
-          <div style="font-size: 0.75rem; color: #94a3b8;">${h.date} by ${h.user}</div>
-        </div>
-      `;
-    }).join('');
-    
-    openModal('itemHistoryModal');
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-document.getElementById('itemForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const formData = new FormData(e.target);
-    const item = {
-      name: formData.get('name').trim(),
-      serial: formData.get('serial').trim(),
-      condition: formData.get('condition'),
-      holder: ''
-    };
-    
-    await addRecord('items', item);
-    alert('✅ Item added!');
-    e.target.reset();
-    closeModal('addItemModal');
-    renderItems();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-});
-
-document.getElementById('memberForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const formData = new FormData(e.target);
-    const email = formData.get('email').trim().toLowerCase();
-    const password = formData.get('password');
-    const confirmPassword = formData.get('confirmPassword');
-    
-    if (password !== confirmPassword) { alert('Passwords do not match'); return; }
-    if (password.length < 6) { alert('Min 6 characters'); return; }
-    
-    const users = await getAll('users');
-    if (users.some(u => u.email === email)) { alert('Email exists'); return; }
-    
-    const user = {
-      name: formData.get('name').trim(),
-      email: email,
-      password: btoa(password),
-      mobile: formData.get('mobile').trim() || '',
-      designation: formData.get('designation').trim() || '',
-      department: formData.get('department').trim() || '',
-      isAdmin: false
-    };
-    
-    await addRecord('users', user);
-    alert('✅ Member added!');
-    e.target.reset();
-    closeModal('addMemberModal');
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-});
-
-async function renderMembers() {
-  try {
-    const users = await getAll('users');
-    const list = document.getElementById('membersList');
-    
-    if (!users.length) {
-      list.innerHTML = '<p style="text-align: center; color: #94a3b8;">No members</p>';
-      return;
-    }
-    
-    list.innerHTML = users.map(u => {
-      const isCurrentUser = u.id === currentUser.id;
-      let actions = '';
-      
-      if (isAdmin && !isCurrentUser) {
-        actions = `
-          <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
-            ${!u.isAdmin ? `<button class="btn btn-sm btn-success" onclick="promoteToAdmin(${u.id})">👑 Promote</button>` : ''}
-            <button class="btn btn-sm btn-danger" onclick="removeMember(${u.id})">🗑️ Remove</button>
-          </div>
-        `;
-      } else if (isCurrentUser) {
-        const adminCount = users.filter(x => x.isAdmin).length;
-        if (!isAdmin || adminCount > 1) {
-          actions = `
-            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-              <button class="btn btn-sm btn-danger" onclick="removeSelf()">Remove Self</button>
+// ============ BEAUTIFUL DIALOGS ============
+function showBeautifulAlert(title, message) {
+    return new Promise(resolve => {
+        const overlay = document.createElement('div');
+        overlay.className = 'beautiful-dialog-overlay';
+        
+        const dialog = document.createElement('div');
+        dialog.className = 'beautiful-dialog';
+        
+        dialog.innerHTML = `
+            <div class="beautiful-dialog-title">${title}</div>
+            <div class="beautiful-dialog-message">${message}</div>
+            <div class="beautiful-dialog-buttons">
+                <button class="beautiful-btn beautiful-btn-confirm">OK</button>
             </div>
-          `;
-        }
-      }
-      
-      return `
-        <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem; margin-bottom: 1rem;">
-          <div style="font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">👤 ${u.name}</div>
-          <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 0.5rem;">📧 ${u.email}</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem;">${u.designation || 'N/A'} | ${u.department || 'N/A'}</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem;">${u.isAdmin ? '👑 Admin' : '👤 Member'}</div>
-          ${actions}
-        </div>
-      `;
+        `;
+        
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+        
+        dialog.querySelector('.beautiful-btn-confirm').onclick = () => {
+            document.body.removeChild(overlay);
+            resolve(true);
+        };
+    });
+}
+
+function showBeautifulConfirm(title, message) {
+    return new Promise(resolve => {
+        const overlay = document.createElement('div');
+        overlay.className = 'beautiful-dialog-overlay';
+        
+        const dialog = document.createElement('div');
+        dialog.className = 'beautiful-dialog';
+        
+        dialog.innerHTML = `
+            <div class="beautiful-dialog-title">${title}</div>
+            <div class="beautiful-dialog-message">${message}</div>
+            <div class="beautiful-dialog-buttons">
+                <button class="beautiful-btn beautiful-btn-cancel">Cancel</button>
+                <button class="beautiful-btn beautiful-btn-confirm">Confirm</button>
+            </div>
+        `;
+        
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+        
+        dialog.querySelector('.beautiful-btn-cancel').onclick = () => {
+            document.body.removeChild(overlay);
+            resolve(false);
+        };
+        
+        dialog.querySelector('.beautiful-btn-confirm').onclick = () => {
+            document.body.removeChild(overlay);
+            resolve(true);
+        };
+    });
+}
+
+// ============ GITHUB FUNCTIONS ============
+async function loadFromGitHub() {
+    try {
+        showLoading();
+        const response = await fetch(GITHUB_RAW_URL, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Failed to load data from GitHub');
+        allItems = await response.json();
+        hideLoading();
+        return true;
+    } catch (error) {
+        hideLoading();
+        console.error('GitHub load error:', error);
+        await showBeautifulAlert('⚠️ GitHub Error', 'Could not load data from GitHub. Please check your configuration.');
+        return false;
+    }
+}
+
+async function saveToGitHub() {
+    try {
+        showLoading();
+        
+        // Get current file SHA
+        const getResponse = await fetch(GITHUB_API_URL, {
+            headers: {
+                'Authorization': `token ${GITHUB_CONFIG.token}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        
+        const getData = await getResponse.json();
+        const sha = getData.sha;
+        
+        // Update file
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(allItems, null, 2))));
+        
+        const putResponse = await fetch(GITHUB_API_URL, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${GITHUB_CONFIG.token}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: 'Update asset manager data',
+                content: content,
+                sha: sha,
+                branch: GITHUB_CONFIG.branch
+            })
+        });
+        
+        if (!putResponse.ok) throw new Error('Failed to save to GitHub');
+        
+        hideLoading();
+        return true;
+    } catch (error) {
+        hideLoading();
+        console.error('GitHub save error:', error);
+        await showBeautifulAlert('❌ Save Error', 'Failed to save data to GitHub: ' + error.message);
+        return false;
+    }
+}
+
+async function syncFromGitHub() {
+    const success = await loadFromGitHub();
+    if (success) {
+        displayItems();
+        await showBeautifulAlert('✅ Success', 'Data synced from GitHub successfully!');
+    }
+}
+
+// ============ EMAIL FUNCTIONS ============
+async function sendWelcomeEmail(member) {
+    const confirmed = await showBeautifulConfirm(
+        '📧 Send Welcome Email',
+        `Send welcome email with login credentials to ${member.email}?`
+    );
+    
+    if (!confirmed) return;
+    
+    const emailData = {
+        type: 'WELCOME_EMAIL',
+        recipient: member.email,
+        subject: 'Asset Manager Pro - Account Created',
+        body: `Dear ${member.fullName},\n\nYour account has been created in Asset Manager Pro.\n\nLogin Details:\nEmail: ${member.email}\nPassword: ${member.password}\n\nPlease change your password after first login.\n\nBest regards,\nAdmin Team`,
+        timestamp: new Date().toISOString(),
+        status: 'pending'
+    };
+    
+    allItems.emails = allItems.emails || [];
+    allItems.emails.push(emailData);
+    await saveToGitHub();
+    
+    await showBeautifulAlert('✅ Email Queued', 'Welcome email has been queued for sending.');
+}
+
+async function sendAssignmentNotification(item, member) {
+    const confirmed = await showBeautifulConfirm(
+        '🔔 Send Notification',
+        `Send notification email to ${member.fullName} about item assignment?`
+    );
+    
+    if (!confirmed) return;
+    
+    const emailData = {
+        type: 'ASSIGNMENT_NOTIFICATION',
+        recipient: member.email,
+        subject: 'Item Assigned - Asset Manager Pro',
+        body: `Dear ${member.fullName},\n\nItem "${item.name}" (Serial: ${item.serialNumber}) has been assigned to you.\n\nItem Details:\n- Condition: ${item.condition}\n- Assignment Date: ${new Date().toLocaleDateString()}\n\nPlease log in to Asset Manager Pro to view more details.\n\nBest regards,\nAdmin Team`,
+        timestamp: new Date().toISOString(),
+        itemId: item.id,
+        status: 'pending'
+    };
+    
+    allItems.emails = allItems.emails || [];
+    allItems.emails.push(emailData);
+    await saveToGitHub();
+    
+    await showBeautifulAlert('✅ Notification Sent', 'Assignment notification queued for delivery.');
+}
+
+// ============ DISPLAY FUNCTIONS ============
+function displayItems() {
+    const tbody = document.getElementById('itemsTableBody');
+    document.getElementById('itemCount').textContent = allItems.items.length;
+    
+    if (allItems.items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af;">No items found</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = allItems.items.map((item, index) => {
+        const holder = allItems.members.find(m => m.id === item.assignedTo);
+        const conditionClass = item.condition === '✓ Working' ? 'working' : 
+                              item.condition === '✗ Not Working' ? 'notworking' : 'na';
+        
+        return `
+            <tr>
+                <td>${item.name}</td>
+                <td>${item.serialNumber}</td>
+                <td>${holder ? holder.fullName : 'Unassigned'}</td>
+                <td>
+                    <span class="condition-badge condition-${conditionClass}">
+                        ${item.condition}
+                    </span>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-small btn-assign" onclick="assignItem(${index})">📤 Assign</button>
+                        ${item.assignedTo ? `<button class="btn-notify" onclick="notifyMember(${index})" title="Send notification">🔔</button>` : ''}
+                        <button class="btn-small btn-delete" onclick="deleteItem(${index})">🗑️</button>
+                    </div>
+                </td>
+            </tr>
+        `;
     }).join('');
+}
+
+// ============ AUTH FUNCTIONS ============
+function showSetup() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('setupForm').style.display = 'block';
+}
+
+function showLogin() {
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('setupForm').style.display = 'none';
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
     
-    openModal('membersModal');
-  } catch (e) { alert('Error: ' + e.message); }
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    // Load data from GitHub first
+    const success = await loadFromGitHub();
+    if (!success) return;
+    
+    const user = allItems.members.find(m => m.email === email && m.password === password);
+    
+    if (!user) {
+        await showBeautifulAlert('❌ Login Failed', 'Invalid email or password');
+        return;
+    }
+    
+    currentUser = user;
+    showApp();
 }
 
-async function promoteToAdmin(userId) {
-  if (!confirm('Promote this member to admin?')) return;
-  try {
-    const user = await getOne('users', userId);
-    user.isAdmin = true;
-    await updateRecord('users', user);
-    alert('✅ Promoted to admin!');
-    renderMembers();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
+async function handleSetup(e) {
+    e.preventDefault();
+    
+    const fullName = document.getElementById('setupFullName').value;
+    const email = document.getElementById('setupEmail').value;
+    const password = document.getElementById('setupPassword').value;
+    const confirmPassword = document.getElementById('setupConfirmPassword').value;
+    
+    if (password !== confirmPassword) {
+        await showBeautifulAlert('❌ Error', 'Passwords do not match');
+        return;
+    }
+    
+    const admin = {
+        id: Date.now(),
+        fullName,
+        email,
+        password,
+        role: 'admin',
+        createdDate: new Date().toISOString()
+    };
+    
+    allItems.members.push(admin);
+    currentUser = admin;
+    
+    const saved = await saveToGitHub();
+    if (saved) {
+        await showBeautifulAlert('✅ Success', 'Admin account created successfully!');
+        showApp();
+    }
 }
 
-async function removeMember(userId) {
-  if (!confirm('Remove this member?')) return;
-  try {
-    await deleteRecord('users', userId);
-    alert('✅ Member removed!');
-    renderMembers();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-async function removeSelf() {
-  if (!confirm('Remove your account?')) return;
-  try {
-    await deleteRecord('users', currentUser.id);
-    alert('✅ Account removed!');
+function logout() {
     currentUser = null;
-    isAdmin = false;
-    document.getElementById('authScreen').classList.remove('hidden');
-    document.getElementById('mainHeader').classList.add('hidden');
-    document.getElementById('mainContent').classList.add('hidden');
-    closeModal('membersModal');
-    await checkUserStatus();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
+    document.getElementById('authContainer').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
+    showLogin();
 }
 
-document.getElementById('editProfileBtn').addEventListener('click', () => {
-  closePanel('settingsPanel');
-  document.getElementById('editName').value = currentUser.name;
-  document.getElementById('editEmail').value = currentUser.email;
-  document.getElementById('editMobile').value = currentUser.mobile || '';
-  document.getElementById('editDesignation').value = currentUser.designation || '';
-  document.getElementById('editDepartment').value = currentUser.department || '';
-  openModal('editProfileModal');
-});
-
-document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    currentUser.name = document.getElementById('editName').value;
-    currentUser.email = document.getElementById('editEmail').value;
-    currentUser.mobile = document.getElementById('editMobile').value;
-    currentUser.designation = document.getElementById('editDesignation').value;
-    currentUser.department = document.getElementById('editDepartment').value;
-    
-    await updateRecord('users', currentUser);
-    alert('✅ Profile updated!');
-    closeModal('editProfileModal');
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-});
-
-document.getElementById('changePasswordBtn').addEventListener('click', () => {
-  closePanel('settingsPanel');
-  openModal('changePasswordModal');
-});
-
-document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const currentPassword = btoa(document.getElementById('currentPassword').value);
-    const newPassword = document.getElementById('newPassword').value;
-    const confirmPassword = document.getElementById('confirmNewPassword').value;
-    
-    if (currentPassword !== currentUser.password) { alert('Wrong password'); return; }
-    if (newPassword !== confirmPassword) { alert('Passwords do not match'); return; }
-    if (newPassword.length < 6) { alert('Min 6 characters'); return; }
-    
-    currentUser.password = btoa(newPassword);
-    await updateRecord('users', currentUser);
-    alert('✅ Password changed!');
-    document.getElementById('changePasswordForm').reset();
-    closeModal('changePasswordModal');
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-});
-
-document.getElementById('exportBtn').addEventListener('click', () => {
-  closePanel('settingsPanel');
-  exportToJsonFile();
-});
-
-document.getElementById('syncFromGithubBtn').addEventListener('click', async () => {
-  closePanel('settingsPanel');
-  await autoSyncFromGithub();
-  alert('✅ Sync complete! Refresh to see updates.');
-  location.reload();
-});
-
-document.getElementById('removeAccountBtn').addEventListener('click', () => {
-  closePanel('settingsPanel');
-  removeSelf();
-});
-
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-  closePanel('settingsPanel');
-  currentUser = null;
-  isAdmin = false;
-  document.getElementById('authScreen').classList.remove('hidden');
-  document.getElementById('mainHeader').classList.add('hidden');
-  document.getElementById('mainContent').classList.add('hidden');
-  await checkUserStatus();
-});
-
-document.getElementById('openManage').addEventListener('click', () => openPanel('managePanel'));
-document.getElementById('closeManage').addEventListener('click', () => closePanel('managePanel'));
-document.getElementById('settingsBtn').addEventListener('click', () => openPanel('settingsPanel'));
-document.getElementById('closeSettings').addEventListener('click', () => closePanel('settingsPanel'));
-
-document.getElementById('backdrop').addEventListener('click', () => {
-  closePanel('managePanel');
-  closePanel('settingsPanel');
-  document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
-  document.getElementById('backdrop').classList.remove('show');
-});
-
-document.getElementById('viewItemsBtn').addEventListener('click', () => { closePanel('managePanel'); renderItems(); });
-document.getElementById('addItemBtn').addEventListener('click', () => { closePanel('managePanel'); openModal('addItemModal'); });
-document.getElementById('viewMembersBtn').addEventListener('click', () => { closePanel('managePanel'); renderMembers(); });
-document.getElementById('addMemberBtn').addEventListener('click', () => { closePanel('managePanel'); openModal('addMemberModal'); });
-
-function setTheme(theme) {
-  localStorage.setItem('theme', theme);
-  document.documentElement.classList.toggle('dark', theme === 'dark');
-  document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
-  document.getElementById(theme === 'dark' ? 'darkBtn' : 'lightBtn').classList.add('active');
+function showApp() {
+    document.getElementById('authContainer').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('userDisplay').textContent = `👤 ${currentUser.fullName}`;
+    displayItems();
 }
 
-document.getElementById('lightBtn').addEventListener('click', () => setTheme('light'));
-document.getElementById('darkBtn').addEventListener('click', () => setTheme('dark'));
+// ============ ITEM FUNCTIONS ============
+function openAddItemModal() {
+    document.getElementById('addItemModal').style.display = 'block';
+}
 
-// ============= STARTUP WITH AUTO SYNC =============
-(async () => {
-  try {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    setTheme(savedTheme);
-    await initDB();
+async function handleAddItem(e) {
+    e.preventDefault();
     
-    console.log('🔄 Starting auto-sync...');
-    await autoSyncFromGithub();
+    const name = document.getElementById('itemName').value;
+    const serial = document.getElementById('itemSerial').value;
+    const condition = document.getElementById('itemCondition').value;
     
-    await checkUserStatus();
-  } catch (e) {
-    console.error('Startup error:', e.message);
-  }
-})();
+    const item = {
+        id: Date.now(),
+        name,
+        serialNumber: serial,
+        condition,
+        assignedTo: null,
+        createdDate: new Date().toISOString()
+    };
+    
+    allItems.items.push(item);
+    
+    const saved = await saveToGitHub();
+    if (saved) {
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemSerial').value = '';
+        document.getElementById('itemCondition').value = '';
+        
+        closeModal('addItemModal');
+        displayItems();
+        await showBeautifulAlert('✅ Success', 'Item added successfully!');
+    }
+}
+
+async function deleteItem(index) {
+    const confirmed = await showBeautifulConfirm(
+        '🗑️ Delete Item',
+        'This action cannot be undone. Are you sure?'
+    );
+    
+    if (confirmed) {
+        allItems.items.splice(index, 1);
+        const saved = await saveToGitHub();
+        if (saved) {
+            displayItems();
+            await showBeautifulAlert('✅ Deleted', 'Item deleted successfully!');
+        }
+    }
+}
+
+async function assignItem(index) {
+    const item = allItems.items[index];
+    
+    if (allItems.members.length === 0) {
+        await showBeautifulAlert('⚠️ No Members', 'Please add members first.');
+        return;
+    }
+    
+    const memberList = allItems.members.map((m, i) => `${i}: ${m.fullName} (${m.email})`).join('\n');
+    const memberId = prompt('Select member ID:\n\n' + memberList);
+    
+    if (memberId === null || memberId === '') return;
+    
+    const id = parseInt(memberId);
+    if (!isNaN(id) && id >= 0 && id < allItems.members.length) {
+        item.assignedTo = allItems.members[id].id;
+        const saved = await saveToGitHub();
+        if (saved) {
+            displayItems();
+            await showBeautifulAlert('✅ Assigned', 'Item assigned successfully!');
+        }
+    } else {
+        await showBeautifulAlert('❌ Error', 'Invalid member ID');
+    }
+}
+
+async function notifyMember(index) {
+    const item = allItems.items[index];
+    const member = allItems.members.find(m => m.id === item.assignedTo);
+    
+    if (member) {
+        await sendAssignmentNotification(item, member);
+    }
+}
+
+// ============ MEMBER FUNCTIONS ============
+function openAddMemberModal() {
+    document.getElementById('addMemberModal').style.display = 'block';
+}
+
+async function handleAddMember(e) {
+    e.preventDefault();
+    
+    const fullName = document.getElementById('memberName').value;
+    const email = document.getElementById('memberEmail').value;
+    const password = document.getElementById('memberPassword').value;
+    const confirmPassword = document.getElementById('memberConfirmPassword').value;
+    
+    if (password !== confirmPassword) {
+        await showBeautifulAlert('❌ Error', 'Passwords do not match');
+        return;
+    }
+    
+    const member = {
+        id: Date.now(),
+        fullName,
+        email,
+        password,
+        role: 'member',
+        createdDate: new Date().toISOString()
+    };
+    
+    allItems.members.push(member);
+    
+    const saved = await saveToGitHub();
+    if (saved) {
+        document.getElementById('memberName').value = '';
+        document.getElementById('memberEmail').value = '';
+        document.getElementById('memberPassword').value = '';
+        document.getElementById('memberConfirmPassword').value = '';
+        
+        closeModal('addMemberModal');
+        
+        await sendWelcomeEmail(member);
+        await showBeautifulAlert('✅ Success', 'Member added successfully!');
+    }
+}
+
+// ============ UTILITY FUNCTIONS ============
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function showLoading() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoading() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+// Close modals on background click
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+};
+
+// ============ INITIALIZATION ============
+window.addEventListener('load', () => {
+    hideLoading();
+});
 </script>
 
 </body>
