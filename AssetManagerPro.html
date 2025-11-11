@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset Manager Pro - GitHub Edition</title>
+    <title>Asset Manager Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ==================== RESET & BASE ==================== */
         * {
             margin: 0;
             padding: 0;
@@ -35,102 +35,91 @@
             }
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
-        /* ==================== LOADING SCREEN ==================== */
-        .loading-screen {
+        /* ==================== BEAUTIFUL CONFIRMATION DIALOG ==================== */
+        .beautiful-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.95);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 99999;
-        }
-
-        .spinner {
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        .loading-text {
-            color: #667eea;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .loading-screen.hidden {
+            background: rgba(0, 0, 0, 0.6);
             display: none;
-        }
-
-        /* ==================== BEAUTIFUL DIALOG ==================== */
-        .beautiful-dialog-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10000;
             animation: fadeIn 0.3s ease;
         }
 
-        .beautiful-dialog {
-            background: white;
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 450px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideInUp 0.3s ease;
+        .beautiful-overlay.active {
+            display: flex;
         }
 
-        .beautiful-dialog-title {
+        .beautiful-dialog {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+        }
+
+        .beautiful-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .beautiful-icon.success { color: #10b981; }
+        .beautiful-icon.error { color: #ef4444; }
+        .beautiful-icon.warning { color: #f59e0b; }
+        .beautiful-icon.info { color: #3b82f6; }
+
+        .beautiful-title {
             font-size: 24px;
             font-weight: 700;
             color: #1f2937;
             margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
-        .beautiful-dialog-message {
+        .beautiful-message {
             color: #6b7280;
-            margin-bottom: 24px;
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.6;
+            margin-bottom: 30px;
         }
 
-        .beautiful-dialog-buttons {
+        .beautiful-buttons {
             display: flex;
             gap: 12px;
-            justify-content: flex-end;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .beautiful-btn {
-            padding: 12px 24px;
+            padding: 12px 28px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 15px;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            font-size: 14px;
         }
 
         .beautiful-btn-cancel {
@@ -140,6 +129,7 @@
 
         .beautiful-btn-cancel:hover {
             background: #e5e7eb;
+            transform: translateY(-2px);
         }
 
         .beautiful-btn-confirm {
@@ -149,54 +139,17 @@
 
         .beautiful-btn-confirm:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
 
-        /* ==================== CONDITION BADGES ==================== */
-        .condition-badge {
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 13px;
-            display: inline-block;
-        }
-
-        .condition-working {
-            background-color: #dcfce7;
-            color: #166534;
-            border: 1px solid #86efac;
-        }
-
-        .condition-notworking {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fca5a5;
-        }
-
-        .condition-na {
-            background-color: #fed7aa;
-            color: #b45309;
-            border: 1px solid #fdba74;
-        }
-
-        /* ==================== NOTIFICATION BUTTON ==================== */
-        .btn-notify {
-            background: #3b82f6;
+        .beautiful-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        .btn-notify:hover {
-            background: #2563eb;
-            transform: scale(1.05);
+        .beautiful-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
 
         /* ==================== AUTH CONTAINER ==================== */
@@ -210,28 +163,28 @@
 
         .auth-box {
             background: white;
-            border-radius: 16px;
-            padding: 40px;
-            max-width: 480px;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 500px;
             width: 100%;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         .auth-header {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 40px;
         }
 
         .auth-header h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             color: #1f2937;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .auth-header p {
             color: #6b7280;
-            font-size: 14px;
+            font-size: 15px;
         }
 
         .form-group {
@@ -251,7 +204,7 @@
             width: 100%;
             padding: 12px 16px;
             border: 2px solid #e5e7eb;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 14px;
             transition: all 0.3s ease;
         }
@@ -260,25 +213,25 @@
         .form-group select:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
 
-        .btn-primary {
+        .btn-auth {
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
+        .btn-auth:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
 
         .auth-footer {
@@ -299,27 +252,6 @@
             text-decoration: underline;
         }
 
-        /* ==================== DEBUG INFO ==================== */
-        .debug-info {
-            background: #f3f4f6;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-family: monospace;
-            max-height: 300px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        .debug-title {
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
         /* ==================== MAIN APP ==================== */
         .app-container {
             display: none;
@@ -328,13 +260,66 @@
             background: white;
         }
 
-        .app-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        .app-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
         }
 
-        .app-header {
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .menu-section {
+            margin-bottom: 30px;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+        }
+
+        .main-content {
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -343,16 +328,21 @@
             border-bottom: 2px solid #e5e7eb;
         }
 
-        .app-header h1 {
+        .top-bar h1 {
             font-size: 32px;
             font-weight: 700;
             color: #1f2937;
         }
 
-        .user-info {
+        .user-section {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
+        }
+
+        .user-name {
+            color: #6b7280;
+            font-weight: 600;
         }
 
         .btn-logout {
@@ -363,11 +353,12 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .btn-logout:hover {
             background: #dc2626;
+            transform: translateY(-2px);
         }
 
         /* ==================== ITEMS TABLE ==================== */
@@ -405,6 +396,34 @@
             background: #f9fafb;
         }
 
+        /* ==================== CONDITION BADGES ==================== */
+        .condition-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-block;
+        }
+
+        .condition-working {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .condition-notworking {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .condition-na {
+            background-color: #fed7aa;
+            color: #b45309;
+            border: 1px solid #fdba74;
+        }
+
+        /* ==================== ACTION BUTTONS ==================== */
         .btn-small {
             padding: 6px 12px;
             border: none;
@@ -423,6 +442,7 @@
 
         .btn-assign:hover {
             background: #5568d3;
+            transform: translateY(-2px);
         }
 
         .btn-delete {
@@ -432,6 +452,18 @@
 
         .btn-delete:hover {
             background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-notify {
+            background: #3b82f6;
+            color: white;
+            padding: 8px 12px;
+        }
+
+        .btn-notify:hover {
+            background: #2563eb;
+            transform: scale(1.05);
         }
 
         .action-buttons {
@@ -451,17 +483,23 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-content {
             background-color: white;
-            margin: 5% auto;
-            padding: 32px;
-            border-radius: 16px;
+            padding: 40px;
+            border-radius: 20px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            animation: slideInUp 0.3s ease;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .modal-header {
@@ -483,6 +521,8 @@
             color: #9ca3af;
             cursor: pointer;
             transition: color 0.2s ease;
+            background: none;
+            border: none;
         }
 
         .close:hover {
@@ -497,32 +537,35 @@
         }
 
         .btn-cancel {
-            padding: 10px 20px;
+            padding: 12px 24px;
             background: #f3f4f6;
             color: #6b7280;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
+            transition: all 0.3s ease;
         }
 
         .btn-cancel:hover {
             background: #e5e7eb;
+            transform: translateY(-2px);
         }
 
         .btn-confirm {
-            padding: 10px 20px;
+            padding: 12px 24px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
+            transition: all 0.3s ease;
         }
 
         .btn-confirm:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
 
         /* ==================== BUTTON GROUP ==================== */
@@ -534,15 +577,39 @@
         }
 
         .button-group button {
-            width: auto;
-            padding: 10px 20px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .button-group button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
 
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 768px) {
-            .app-header {
+            .app-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .top-bar {
                 flex-direction: column;
                 gap: 15px;
+                align-items: flex-start;
             }
 
             .button-group {
@@ -552,39 +619,43 @@
             .button-group button {
                 width: 100%;
             }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .btn-small,
-            .btn-notify {
-                width: 100%;
-            }
         }
     </style>
 </head>
 <body>
 
-<!-- LOADING SCREEN -->
-<div id="loadingScreen" class="loading-screen">
-    <div class="spinner"></div>
-    <div class="loading-text">Loading from GitHub...</div>
+<!-- BEAUTIFUL CONFIRMATION DIALOG -->
+<div id="confirmDialog" class="beautiful-overlay">
+    <div class="beautiful-dialog">
+        <div class="beautiful-icon" id="confirmIcon"></div>
+        <div class="beautiful-title" id="confirmTitle"></div>
+        <div class="beautiful-message" id="confirmMessage"></div>
+        <div class="beautiful-buttons">
+            <button class="beautiful-btn beautiful-btn-cancel" onclick="closeConfirm(false)">Cancel</button>
+            <button class="beautiful-btn beautiful-btn-confirm" id="confirmBtn" onclick="closeConfirm(true)">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- ALERT DIALOG -->
+<div id="alertDialog" class="beautiful-overlay">
+    <div class="beautiful-dialog">
+        <div class="beautiful-icon" id="alertIcon"></div>
+        <div class="beautiful-title" id="alertTitle"></div>
+        <div class="beautiful-message" id="alertMessage"></div>
+        <div class="beautiful-buttons">
+            <button class="beautiful-btn beautiful-btn-primary" onclick="closeAlert()">OK</button>
+        </div>
+    </div>
 </div>
 
 <!-- AUTH CONTAINER -->
-<div id="authContainer" class="auth-container">
+<div id="authContainer" class="auth-container" style="display: none;">
     <!-- LOGIN FORM -->
-    <div id="loginForm" class="auth-box" style="display: none;">
+    <div id="loginForm" class="auth-box">
         <div class="auth-header">
             <h1>🔐 Asset Manager Pro</h1>
             <p>Professional Inventory System</p>
-        </div>
-
-        <!-- DEBUG INFO -->
-        <div id="debugInfo" class="debug-info" style="display: none;">
-            <div class="debug-title">⚙️ DEBUG INFO:</div>
-            <div id="debugContent"></div>
         </div>
 
         <form onsubmit="handleLogin(event)">
@@ -598,19 +669,19 @@
                 <input type="password" id="loginPassword" placeholder="Enter password" required>
             </div>
 
-            <button type="submit" class="btn-primary">🔓 Sign In</button>
+            <button type="submit" class="btn-auth">🔓 Sign In</button>
         </form>
 
         <div class="auth-footer">
-            Admin will add you to the system.
+            New user? <a onclick="showSetup()">Create Admin Account</a>
         </div>
     </div>
 
-    <!-- SETUP FORM (ONLY SHOWN IF NO ADMINS) -->
+    <!-- SETUP FORM -->
     <div id="setupForm" class="auth-box" style="display: none;">
         <div class="auth-header">
             <h1>🔧 First Time Setup</h1>
-            <p>Create your admin account</p>
+            <p>You will be the admin</p>
         </div>
 
         <form onsubmit="handleSetup(event)">
@@ -625,6 +696,21 @@
             </div>
 
             <div class="form-group">
+                <label>Mobile</label>
+                <input type="tel" id="setupMobile" placeholder="Phone number">
+            </div>
+
+            <div class="form-group">
+                <label>Designation</label>
+                <input type="text" id="setupDesignation" placeholder="Your designation">
+            </div>
+
+            <div class="form-group">
+                <label>Department</label>
+                <input type="text" id="setupDepartment" placeholder="Your department">
+            </div>
+
+            <div class="form-group">
                 <label>Password * (Min 6)</label>
                 <input type="password" id="setupPassword" placeholder="Min 6 characters" required minlength="6">
             </div>
@@ -634,47 +720,184 @@
                 <input type="password" id="setupConfirmPassword" placeholder="Confirm password" required>
             </div>
 
-            <button type="submit" class="btn-primary">👑 Create Admin Account</button>
+            <button type="submit" class="btn-auth">👑 Create Admin Account</button>
         </form>
 
         <div class="auth-footer">
-            (Admin registration is only available on first setup)
+            Already registered? <a onclick="showLogin()">Sign In</a>
         </div>
     </div>
 </div>
 
 <!-- MAIN APPLICATION -->
 <div id="mainApp" class="app-container">
-    <div class="app-content">
-        <div class="app-header">
-            <h1>📦 Inventory Items</h1>
-            <div class="user-info">
-                <span id="userDisplay" style="color: #6b7280; font-weight: 600;"></span>
-                <button class="btn-logout" onclick="logout()">Logout</button>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-logo">📦 AMP</div>
+
+            <div class="menu-section">
+                <div class="menu-title">📋 Menu</div>
+                <div class="menu-item active" onclick="showViewItems()">
+                    <i class="fas fa-list"></i> View Items
+                </div>
+                <div class="menu-item" onclick="showAddItem()">
+                    <i class="fas fa-plus"></i> Add Item
+                </div>
+                <div class="menu-item" onclick="showViewMembers()">
+                    <i class="fas fa-users"></i> View Members
+                </div>
+                <div class="menu-item" onclick="showAddMember()">
+                    <i class="fas fa-user-plus"></i> Add Member
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-title">⚙️ Settings</div>
+                <div class="menu-item" onclick="editProfile()">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </div>
+                <div class="menu-item" onclick="changePassword()">
+                    <i class="fas fa-lock"></i> Change Password
+                </div>
+                <div class="menu-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
             </div>
         </div>
 
-        <div class="button-group">
-            <button class="btn-primary" onclick="openAddItemModal()">➕ Add Item</button>
-            <button class="btn-primary" onclick="openAddMemberModal()">👤 Add Member</button>
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h1 id="pageTitle">📦 Inventory Items</h1>
+                <div class="user-section">
+                    <span class="user-name">👤 <span id="userDisplay"></span></span>
+                </div>
+            </div>
+
+            <!-- VIEW ITEMS PAGE -->
+            <div id="viewItemsPage">
+                <div class="button-group">
+                    <button onclick="openAddItemModal()">➕ Add Item</button>
+                </div>
+
+                <p style="color: #6b7280; margin-bottom: 15px;">Total Items: <strong id="itemCount">0</strong></p>
+
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Serial Number</th>
+                            <th>Holder</th>
+                            <th>Condition</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody">
+                        <tr><td colspan="5" style="text-align: center; color: #9ca3af;">No items found</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ADD ITEM PAGE -->
+            <div id="addItemPage" style="display: none;">
+                <form onsubmit="handleAddItemForm(event)">
+                    <div class="form-group">
+                        <label>Item Name *</label>
+                        <input type="text" id="formItemName" placeholder="Enter item name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Serial Number *</label>
+                        <input type="text" id="formItemSerial" placeholder="Enter serial number" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Condition *</label>
+                        <select id="formItemCondition" required>
+                            <option value="">Select Condition</option>
+                            <option value="✓ Working">✓ Working</option>
+                            <option value="✗ Not Working">✗ Not Working</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel" onclick="showViewItems()">Cancel</button>
+                        <button type="submit" class="btn-confirm">Add Item</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- MEMBERS PAGE -->
+            <div id="membersPage" style="display: none;">
+                <div class="button-group">
+                    <button onclick="showAddMember()">👤 Add Member</button>
+                </div>
+
+                <p style="color: #6b7280; margin-bottom: 15px;">Total Members: <strong id="memberCount">0</strong></p>
+
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTableBody">
+                        <tr><td colspan="5" style="text-align: center; color: #9ca3af;">No members found</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ADD MEMBER PAGE -->
+            <div id="addMemberPage" style="display: none;">
+                <form onsubmit="handleAddMemberForm(event)">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="formMemberName" placeholder="Enter name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="formMemberEmail" placeholder="Enter email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mobile</label>
+                        <input type="tel" id="formMemberMobile" placeholder="Phone number">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Designation</label>
+                        <input type="text" id="formMemberDesignation" placeholder="Designation">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Department</label>
+                        <input type="text" id="formMemberDepartment" placeholder="Department">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password * (Min 6)</label>
+                        <input type="password" id="formMemberPassword" placeholder="Min 6 characters" required minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confirm Password *</label>
+                        <input type="password" id="formMemberConfirmPassword" placeholder="Confirm password" required>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel" onclick="showViewMembers()">Cancel</button>
+                        <button type="submit" class="btn-confirm">Add Member</button>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <p style="color: #6b7280; margin-bottom: 15px;">Total Items: <strong id="itemCount">0</strong></p>
-
-        <table class="items-table">
-            <thead>
-                <tr>
-                    <th>Item Name</th>
-                    <th>Serial Number</th>
-                    <th>Holder</th>
-                    <th>Condition</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="itemsTableBody">
-                <tr><td colspan="5" style="text-align: center; color: #9ca3af;">No items found</td></tr>
-            </tbody>
-        </table>
     </div>
 </div>
 
@@ -683,7 +906,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2>➕ Add Item</h2>
-            <span class="close" onclick="closeModal('addItemModal')">&times;</span>
+            <button class="close" onclick="closeModal('addItemModal')">&times;</button>
         </div>
 
         <form onsubmit="handleAddItem(event)">
@@ -715,40 +938,44 @@
     </div>
 </div>
 
-<!-- ADD MEMBER MODAL -->
-<div id="addMemberModal" class="modal">
+<!-- ASSIGN ITEM MODAL -->
+<div id="assignItemModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>👤 Add Member</h2>
-            <span class="close" onclick="closeModal('addMemberModal')">&times;</span>
+            <h2>📤 Assign Item</h2>
+            <button class="close" onclick="closeModal('assignItemModal')">&times;</button>
         </div>
 
-        <form onsubmit="handleAddMember(event)">
+        <form onsubmit="handleAssignItem(event)">
             <div class="form-group">
-                <label>Full Name *</label>
-                <input type="text" id="memberName" placeholder="Enter name" required>
-            </div>
-
-            <div class="form-group">
-                <label>Email *</label>
-                <input type="email" id="memberEmail" placeholder="Enter email" required>
-            </div>
-
-            <div class="form-group">
-                <label>Password * (Min 6)</label>
-                <input type="password" id="memberPassword" placeholder="Min 6 characters" required minlength="6">
-            </div>
-
-            <div class="form-group">
-                <label>Confirm Password *</label>
-                <input type="password" id="memberConfirmPassword" placeholder="Confirm password" required>
+                <label>Select Member *</label>
+                <select id="assignMember" required>
+                    <option value="">Choose member</option>
+                </select>
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeModal('addMemberModal')">Cancel</button>
-                <button type="submit" class="btn-confirm">Add Member</button>
+                <button type="button" class="btn-cancel" onclick="closeModal('assignItemModal')">Cancel</button>
+                <button type="submit" class="btn-confirm">Assign</button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- DELETE ITEM MODAL -->
+<div id="deleteItemModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🗑️ Delete Item</h2>
+            <button class="close" onclick="closeModal('deleteItemModal')">&times;</button>
+        </div>
+
+        <p style="color: #6b7280; margin-bottom: 24px;">This action cannot be undone. Are you sure?</p>
+
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel" onclick="closeModal('deleteItemModal')">Cancel</button>
+            <button type="button" class="btn-confirm" onclick="confirmDeleteItem()">Delete</button>
+        </div>
     </div>
 </div>
 
@@ -756,104 +983,179 @@
     // ==================== DATA & STATE ====================
     let allItems = window.assetManagerData || { items: [], members: [], emails: [] };
     let currentUser = null;
+    let currentPage = 'viewItems';
+    let pendingDeleteIndex = null;
+    let pendingAssignIndex = null;
+    let confirmCallback = null;
 
-    // ==================== DEBUG LOGGING ====================
-    function addDebugLog(message) {
-        const debugContent = document.getElementById('debugContent');
-        const timestamp = new Date().toLocaleTimeString();
-        debugContent.textContent += `[${timestamp}] ${message}\n`;
-        console.log(message);
-    }
-
-    function showDebugInfo() {
-        document.getElementById('debugInfo').style.display = 'block';
-    }
-
-    // ==================== BEAUTIFUL DIALOGS ====================
-    function showBeautifulAlert(title, message) {
+    // ==================== DIALOG FUNCTIONS ==================== 
+    async function showConfirm(title, message, type = 'warning') {
         return new Promise(resolve => {
-            const overlay = document.createElement('div');
-            overlay.className = 'beautiful-dialog-overlay';
-
-            const dialog = document.createElement('div');
-            dialog.className = 'beautiful-dialog';
-
-            dialog.innerHTML = `
-                <div class="beautiful-dialog-title">${title}</div>
-                <div class="beautiful-dialog-message">${message}</div>
-                <div class="beautiful-dialog-buttons">
-                    <button class="beautiful-btn beautiful-btn-confirm">OK</button>
-                </div>
-            `;
-
-            overlay.appendChild(dialog);
-            document.body.appendChild(overlay);
-
-            dialog.querySelector('.beautiful-btn-confirm').onclick = () => {
-                document.body.removeChild(overlay);
-                resolve(true);
-            };
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            
+            const iconMap = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
+            document.getElementById('confirmIcon').textContent = iconMap[type];
+            document.getElementById('confirmIcon').className = `beautiful-icon ${type}`;
+            
+            confirmCallback = resolve;
+            document.getElementById('confirmDialog').classList.add('active');
         });
     }
 
-    function showBeautifulConfirm(title, message) {
+    function closeConfirm(result) {
+        document.getElementById('confirmDialog').classList.remove('active');
+        if (confirmCallback) confirmCallback(result);
+    }
+
+    async function showAlert(title, message, type = 'info') {
         return new Promise(resolve => {
-            const overlay = document.createElement('div');
-            overlay.className = 'beautiful-dialog-overlay';
-
-            const dialog = document.createElement('div');
-            dialog.className = 'beautiful-dialog';
-
-            dialog.innerHTML = `
-                <div class="beautiful-dialog-title">${title}</div>
-                <div class="beautiful-dialog-message">${message}</div>
-                <div class="beautiful-dialog-buttons">
-                    <button class="beautiful-btn beautiful-btn-cancel">Cancel</button>
-                    <button class="beautiful-btn beautiful-btn-confirm">Confirm</button>
-                </div>
-            `;
-
-            overlay.appendChild(dialog);
-            document.body.appendChild(overlay);
-
-            dialog.querySelector('.beautiful-btn-cancel').onclick = () => {
-                document.body.removeChild(overlay);
-                resolve(false);
-            };
-
-            dialog.querySelector('.beautiful-btn-confirm').onclick = () => {
-                document.body.removeChild(overlay);
-                resolve(true);
-            };
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').textContent = message;
+            
+            const iconMap = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
+            document.getElementById('alertIcon').textContent = iconMap[type];
+            document.getElementById('alertIcon').className = `beautiful-icon ${type}`;
+            
+            window.closeAlertCallback = resolve;
+            document.getElementById('alertDialog').classList.add('active');
         });
     }
 
-    // ==================== INITIALIZATION ====================
-    function initializeApp() {
-        const loadingScreen = document.getElementById('loadingScreen');
-        
-        addDebugLog('=== APP INITIALIZATION ===');
-        addDebugLog(`window.assetManagerData exists: ${typeof window.assetManagerData !== 'undefined'}`);
-        addDebugLog(`allItems: ${JSON.stringify(allItems)}`);
-        addDebugLog(`Members count: ${allItems.members ? allItems.members.length : 0}`);
-        
-        // Check if admins exist
-        if (!allItems.members || allItems.members.length === 0) {
-            addDebugLog('✓ NO ADMINS - Showing SETUP FORM');
-            document.getElementById('setupForm').style.display = 'block';
-        } else {
-            addDebugLog('✓ ADMINS EXIST - Showing LOGIN FORM');
-            addDebugLog(`Admins: ${JSON.stringify(allItems.members)}`);
-            document.getElementById('loginForm').style.display = 'block';
-            showDebugInfo();
+    function closeAlert() {
+        document.getElementById('alertDialog').classList.remove('active');
+        if (window.closeAlertCallback) window.closeAlertCallback();
+    }
+
+    // ==================== MODAL FUNCTIONS ====================
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    function openAddItemModal() {
+        document.getElementById('addItemModal').classList.add('active');
+    }
+
+    // ==================== AUTH FUNCTIONS ====================
+    function showSetup() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('setupForm').style.display = 'block';
+    }
+
+    function showLogin() {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('setupForm').style.display = 'none';
+    }
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        const user = allItems.members && allItems.members.length > 0
+            ? allItems.members.find(m => m && m.email === email && m.password === password)
+            : null;
+
+        if (!user) {
+            await showAlert('❌ Login Failed', 'Invalid email or password', 'error');
+            return;
         }
 
-        // Hide loading screen
-        loadingScreen.classList.add('hidden');
-        addDebugLog('✓ App initialized');
+        currentUser = user;
+        showApp();
     }
 
-    // ==================== DISPLAY ITEMS ====================
+    async function handleSetup(e) {
+        e.preventDefault();
+        const fullName = document.getElementById('setupFullName').value;
+        const email = document.getElementById('setupEmail').value;
+        const password = document.getElementById('setupPassword').value;
+        const confirmPassword = document.getElementById('setupConfirmPassword').value;
+        const mobile = document.getElementById('setupMobile').value;
+        const designation = document.getElementById('setupDesignation').value;
+        const department = document.getElementById('setupDepartment').value;
+
+        if (password !== confirmPassword) {
+            await showAlert('❌ Error', 'Passwords do not match', 'error');
+            return;
+        }
+
+        const admin = {
+            id: Date.now(),
+            fullName,
+            email,
+            password,
+            mobile,
+            designation,
+            department,
+            role: 'admin',
+            createdDate: new Date().toISOString()
+        };
+
+        if (!allItems.members) allItems.members = [];
+        allItems.members.push(admin);
+        currentUser = admin;
+
+        window.saveData(allItems);
+        await showAlert('✅ Success', 'Admin account created!', 'success');
+        location.reload();
+    }
+
+    function logout() {
+        currentUser = null;
+        document.getElementById('authContainer').style.display = 'flex';
+        document.getElementById('mainApp').style.display = 'none';
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+    }
+
+    function showApp() {
+        document.getElementById('authContainer').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'flex';
+        document.getElementById('userDisplay').textContent = currentUser.fullName;
+        displayItems();
+    }
+
+    // ==================== PAGE NAVIGATION ====================
+    function showViewItems() {
+        currentPage = 'viewItems';
+        document.getElementById('viewItemsPage').style.display = 'block';
+        document.getElementById('addItemPage').style.display = 'none';
+        document.getElementById('membersPage').style.display = 'none';
+        document.getElementById('addMemberPage').style.display = 'none';
+        document.getElementById('pageTitle').textContent = '📦 Inventory Items';
+        displayItems();
+    }
+
+    function showAddItem() {
+        currentPage = 'addItem';
+        document.getElementById('viewItemsPage').style.display = 'none';
+        document.getElementById('addItemPage').style.display = 'block';
+        document.getElementById('membersPage').style.display = 'none';
+        document.getElementById('addMemberPage').style.display = 'none';
+        document.getElementById('pageTitle').textContent = '➕ Add Item';
+    }
+
+    function showViewMembers() {
+        currentPage = 'viewMembers';
+        document.getElementById('viewItemsPage').style.display = 'none';
+        document.getElementById('addItemPage').style.display = 'none';
+        document.getElementById('membersPage').style.display = 'block';
+        document.getElementById('addMemberPage').style.display = 'none';
+        document.getElementById('pageTitle').textContent = '👥 Members';
+        displayMembers();
+    }
+
+    function showAddMember() {
+        currentPage = 'addMember';
+        document.getElementById('viewItemsPage').style.display = 'none';
+        document.getElementById('addItemPage').style.display = 'none';
+        document.getElementById('membersPage').style.display = 'none';
+        document.getElementById('addMemberPage').style.display = 'block';
+        document.getElementById('pageTitle').textContent = '👤 Add Member';
+    }
+
+    // ==================== DISPLAY FUNCTIONS ====================
     function displayItems() {
         const tbody = document.getElementById('itemsTableBody');
         document.getElementById('itemCount').textContent = allItems.items ? allItems.items.length : 0;
@@ -883,9 +1185,9 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn-small btn-assign" onclick="assignItem(${index})">📤 Assign</button>
-                            ${item.assignedTo ? `<button class="btn-notify" onclick="notifyMember(${index})" title="Send notification">🔔</button>` : ''}
-                            <button class="btn-small btn-delete" onclick="deleteItem(${index})">🗑️</button>
+                            <button class="btn-small btn-assign" onclick="openAssignModal(${index})">📤 Assign</button>
+                            ${item.assignedTo ? `<button class="btn-notify" onclick="sendNotification(${index})" title="Send notification">🔔</button>` : ''}
+                            <button class="btn-small btn-delete" onclick="openDeleteModal(${index})">🗑️</button>
                         </div>
                     </td>
                 </tr>
@@ -893,90 +1195,31 @@
         }).join('');
     }
 
-    // ==================== AUTH FUNCTIONS ====================
-    async function handleLogin(e) {
-        e.preventDefault();
+    function displayMembers() {
+        const tbody = document.getElementById('membersTableBody');
+        document.getElementById('memberCount').textContent = allItems.members ? allItems.members.length : 0;
 
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-
-        addDebugLog(`Login attempt: ${email}`);
-        addDebugLog(`Checking against ${allItems.members.length} members`);
-
-        const user = allItems.members && allItems.members.length > 0
-            ? allItems.members.find(m => m && m.email === email && m.password === password)
-            : null;
-
-        if (!user) {
-            addDebugLog(`❌ Login FAILED for ${email}`);
-            await showBeautifulAlert('❌ Login Failed', 'Invalid email or password');
+        if (!allItems.members || allItems.members.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af;">No members found</td></tr>';
             return;
         }
 
-        addDebugLog(`✓ Login SUCCESS for ${email}`);
-        currentUser = user;
-        showApp();
-    }
-
-    async function handleSetup(e) {
-        e.preventDefault();
-
-        const fullName = document.getElementById('setupFullName').value;
-        const email = document.getElementById('setupEmail').value;
-        const password = document.getElementById('setupPassword').value;
-        const confirmPassword = document.getElementById('setupConfirmPassword').value;
-
-        if (password !== confirmPassword) {
-            await showBeautifulAlert('❌ Error', 'Passwords do not match');
-            return;
-        }
-
-        const admin = {
-            id: Date.now(),
-            fullName,
-            email,
-            password,
-            role: 'admin',
-            createdDate: new Date().toISOString()
-        };
-
-        if (!allItems.members) allItems.members = [];
-        allItems.members.push(admin);
-        currentUser = admin;
-
-        addDebugLog(`✓ Admin created: ${email}`);
-        addDebugLog(`Calling window.saveData()`);
-
-        window.saveData(allItems);
-        await showBeautifulAlert('✅ Success', 'Admin account created! You can now login.');
-        
-        // Refresh to show login form
-        location.reload();
-    }
-
-    function logout() {
-        currentUser = null;
-        document.getElementById('authContainer').style.display = 'flex';
-        document.getElementById('mainApp').style.display = 'none';
-        document.getElementById('loginEmail').value = '';
-        document.getElementById('loginPassword').value = '';
-    }
-
-    function showApp() {
-        document.getElementById('authContainer').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('userDisplay').textContent = `👤 ${currentUser.fullName}`;
-        displayItems();
+        tbody.innerHTML = allItems.members.map((member) => {
+            return `
+                <tr>
+                    <td>${member.fullName}</td>
+                    <td>${member.email}</td>
+                    <td>${member.mobile || '-'}</td>
+                    <td>${member.designation || '-'}</td>
+                    <td>${member.department || '-'}</td>
+                </tr>
+            `;
+        }).join('');
     }
 
     // ==================== ITEM FUNCTIONS ====================
-    function openAddItemModal() {
-        document.getElementById('addItemModal').style.display = 'block';
-    }
-
     async function handleAddItem(e) {
         e.preventDefault();
-
         const name = document.getElementById('itemName').value;
         const serial = document.getElementById('itemSerial').value;
         const condition = document.getElementById('itemCondition').value;
@@ -999,72 +1242,136 @@
         document.getElementById('itemSerial').value = '';
         document.getElementById('itemCondition').value = '';
 
-        closeModal('addItemModal');
+        document.getElementById('addItemModal').classList.remove('active');
         displayItems();
-        await showBeautifulAlert('✅ Success', 'Item added!');
+        await showAlert('✅ Item Added', `${name} has been added successfully!`, 'success');
     }
 
-    async function deleteItem(index) {
-        const confirmed = await showBeautifulConfirm(
-            '🗑️ Delete Item',
-            'This action cannot be undone. Are you sure?'
-        );
+    async function handleAddItemForm(e) {
+        e.preventDefault();
+        const name = document.getElementById('formItemName').value;
+        const serial = document.getElementById('formItemSerial').value;
+        const condition = document.getElementById('formItemCondition').value;
 
-        if (confirmed) {
-            allItems.items.splice(index, 1);
+        const item = {
+            id: Date.now(),
+            name,
+            serialNumber: serial,
+            condition,
+            assignedTo: null,
+            createdDate: new Date().toISOString()
+        };
+
+        if (!allItems.items) allItems.items = [];
+        allItems.items.push(item);
+
+        window.saveData(allItems);
+
+        document.getElementById('formItemName').value = '';
+        document.getElementById('formItemSerial').value = '';
+        document.getElementById('formItemCondition').value = '';
+
+        showViewItems();
+        await showAlert('✅ Item Added', `${name} has been added successfully!`, 'success');
+    }
+
+    function openDeleteModal(index) {
+        pendingDeleteIndex = index;
+        document.getElementById('deleteItemModal').classList.add('active');
+    }
+
+    async function confirmDeleteItem() {
+        if (pendingDeleteIndex !== null) {
+            const itemName = allItems.items[pendingDeleteIndex].name;
+            allItems.items.splice(pendingDeleteIndex, 1);
             window.saveData(allItems);
+            document.getElementById('deleteItemModal').classList.remove('active');
             displayItems();
-            await showBeautifulAlert('✅ Deleted', 'Item deleted successfully!');
+            await showAlert('✅ Deleted', `${itemName} has been deleted.`, 'success');
+            pendingDeleteIndex = null;
         }
     }
 
-    async function assignItem(index) {
-        if (!allItems.members || allItems.members.length === 0) {
-            await showBeautifulAlert('⚠️ No Members', 'Please add members first.');
+    function openAssignModal(index) {
+        pendingAssignIndex = index;
+        const select = document.getElementById('assignMember');
+        select.innerHTML = '<option value="">Choose member</option>';
+        
+        allItems.members.forEach((member, idx) => {
+            const option = document.createElement('option');
+            option.value = idx;
+            option.textContent = `${member.fullName} (${member.email})`;
+            select.appendChild(option);
+        });
+
+        document.getElementById('assignItemModal').classList.add('active');
+    }
+
+    async function handleAssignItem(e) {
+        e.preventDefault();
+        const memberIdx = parseInt(document.getElementById('assignMember').value);
+
+        if (isNaN(memberIdx)) {
+            await showAlert('❌ Error', 'Please select a member', 'error');
             return;
         }
 
-        const memberList = allItems.members.map((m, i) => `${i}: ${m.fullName} (${m.email})`).join('\n');
-        const memberId = prompt('Select member ID:\n\n' + memberList);
-
-        if (memberId === null || memberId === '') return;
-
-        const id = parseInt(memberId);
-        if (!isNaN(id) && id >= 0 && id < allItems.members.length) {
-            allItems.items[index].assignedTo = allItems.members[id].id;
-            window.saveData(allItems);
-            displayItems();
-            await showBeautifulAlert('✅ Assigned', 'Item assigned successfully!');
-        } else {
-            await showBeautifulAlert('❌ Error', 'Invalid member ID');
-        }
+        allItems.items[pendingAssignIndex].assignedTo = allItems.members[memberIdx].id;
+        window.saveData(allItems);
+        document.getElementById('assignItemModal').classList.remove('active');
+        displayItems();
+        await showAlert('✅ Assigned', `Item assigned to ${allItems.members[memberIdx].fullName}`, 'success');
+        pendingAssignIndex = null;
     }
 
-    async function notifyMember(index) {
+    async function sendNotification(index) {
         const item = allItems.items[index];
-        if (!allItems.members || allItems.members.length === 0) return;
-
         const member = allItems.members.find(m => m && m.id === item.assignedTo);
-        if (member) {
-            await showBeautifulAlert('✅ Notification', `Email notification queued for ${member.fullName}`);
+
+        if (!member) {
+            await showAlert('⚠️ Error', 'Member not found', 'error');
+            return;
+        }
+
+        const confirmed = await showConfirm(
+            '📧 Send Notification',
+            `Send notification email to ${member.fullName} at ${member.email}?`,
+            'info'
+        );
+
+        if (confirmed) {
+            const notification = {
+                type: 'ITEM_ASSIGNMENT',
+                recipient: member.email,
+                subject: `Item Assigned: ${item.name}`,
+                body: `Item "${item.name}" (Serial: ${item.serialNumber}) has been assigned to you.\n\nCondition: ${item.condition}`,
+                timestamp: new Date().toISOString(),
+                itemId: item.id,
+                status: 'pending'
+            };
+
+            if (!allItems.emails) allItems.emails = [];
+            allItems.emails.push(notification);
+            window.saveData(allItems);
+
+            await showAlert('✅ Sent', `Notification email queued for ${member.fullName}`, 'success');
         }
     }
 
     // ==================== MEMBER FUNCTIONS ====================
-    function openAddMemberModal() {
-        document.getElementById('addMemberModal').style.display = 'block';
-    }
-
-    async function handleAddMember(e) {
+    async function handleAddMemberForm(e) {
         e.preventDefault();
 
-        const fullName = document.getElementById('memberName').value;
-        const email = document.getElementById('memberEmail').value;
-        const password = document.getElementById('memberPassword').value;
-        const confirmPassword = document.getElementById('memberConfirmPassword').value;
+        const fullName = document.getElementById('formMemberName').value;
+        const email = document.getElementById('formMemberEmail').value;
+        const password = document.getElementById('formMemberPassword').value;
+        const confirmPassword = document.getElementById('formMemberConfirmPassword').value;
+        const mobile = document.getElementById('formMemberMobile').value;
+        const designation = document.getElementById('formMemberDesignation').value;
+        const department = document.getElementById('formMemberDepartment').value;
 
         if (password !== confirmPassword) {
-            await showBeautifulAlert('❌ Error', 'Passwords do not match');
+            await showAlert('❌ Error', 'Passwords do not match', 'error');
             return;
         }
 
@@ -1073,6 +1380,9 @@
             fullName,
             email,
             password,
+            mobile,
+            designation,
+            department,
             role: 'member',
             createdDate: new Date().toISOString()
         };
@@ -1082,31 +1392,67 @@
 
         window.saveData(allItems);
 
-        document.getElementById('memberName').value = '';
-        document.getElementById('memberEmail').value = '';
-        document.getElementById('memberPassword').value = '';
-        document.getElementById('memberConfirmPassword').value = '';
+        const sendEmail = await showConfirm(
+            '📧 Send Credentials',
+            `Send welcome email with login credentials to ${email}?`,
+            'info'
+        );
 
-        closeModal('addMemberModal');
-        await showBeautifulAlert('✅ Success', 'Member added successfully!');
+        if (sendEmail) {
+            const emailRecord = {
+                type: 'WELCOME_EMAIL',
+                recipient: email,
+                subject: 'Asset Manager Pro - Account Created',
+                body: `Dear ${fullName},\n\nYour account has been created successfully.\n\nEmail: ${email}\nPassword: ${password}\n\nPlease change your password after first login.\n\nBest regards,\nAsset Manager Pro`,
+                timestamp: new Date().toISOString(),
+                status: 'pending'
+            };
+
+            if (!allItems.emails) allItems.emails = [];
+            allItems.emails.push(emailRecord);
+            window.saveData(allItems);
+
+            await showAlert('✅ Success', `Member added and email sent to ${email}`, 'success');
+        } else {
+            await showAlert('✅ Success', `Member ${fullName} added without sending email`, 'success');
+        }
+
+        document.getElementById('formMemberName').value = '';
+        document.getElementById('formMemberEmail').value = '';
+        document.getElementById('formMemberPassword').value = '';
+        document.getElementById('formMemberConfirmPassword').value = '';
+        document.getElementById('formMemberMobile').value = '';
+        document.getElementById('formMemberDesignation').value = '';
+        document.getElementById('formMemberDepartment').value = '';
+
+        showViewMembers();
     }
 
-    // ==================== MODAL FUNCTIONS ====================
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
+    // ==================== EDIT/CHANGE FUNCTIONS ====================
+    async function editProfile() {
+        await showAlert('👤 Profile', `Edit profile for ${currentUser.fullName}`, 'info');
     }
 
-    // ==================== UTILITY FUNCTIONS ====================
+    async function changePassword() {
+        await showAlert('🔐 Password', 'Change password feature coming soon', 'info');
+    }
+
+    // ==================== INITIALIZATION ====================
+    window.addEventListener('load', () => {
+        if (!allItems.members || allItems.members.length === 0) {
+            document.getElementById('authContainer').style.display = 'flex';
+            document.getElementById('setupForm').style.display = 'block';
+        } else {
+            document.getElementById('authContainer').style.display = 'flex';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+    });
+
     window.onclick = function (event) {
         if (event.target.classList.contains('modal')) {
-            event.target.style.display = 'none';
+            event.target.classList.remove('active');
         }
     };
-
-    // Initialize on load
-    window.addEventListener('load', () => {
-        initializeApp();
-    });
 </script>
 
 </body>
