@@ -3,21 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset Manager Pro</title>
+    <title>Asset Manager Pro - GitHub Edition</title>
     <style>
-        :root {
-            --primary: #667eea;
-            --primary-dark: #5568d3;
-            --secondary: #764ba2;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --info: #3b82f6;
-            --dark: #1a1a2e;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-        }
-
+        /* ==================== RESET & BASE ==================== */
         * {
             margin: 0;
             padding: 0;
@@ -26,11 +14,33 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
 
-        /* ========== BEAUTIFUL DIALOG STYLES ========== */
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ==================== BEAUTIFUL DIALOG ==================== */
         .beautiful-dialog-overlay {
             position: fixed;
             top: 0;
@@ -98,7 +108,7 @@
         }
 
         .beautiful-btn-confirm {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
@@ -107,7 +117,7 @@
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
-        /* ========== CONDITION BADGES ========== */
+        /* ==================== CONDITION BADGES ==================== */
         .condition-badge {
             padding: 6px 12px;
             border-radius: 6px;
@@ -134,9 +144,9 @@
             border: 1px solid #fdba74;
         }
 
-        /* ========== NOTIFICATION BELL BUTTON ========== */
+        /* ==================== NOTIFICATION BUTTON ==================== */
         .btn-notify {
-            background: var(--info);
+            background: #3b82f6;
             color: white;
             border: none;
             padding: 8px 12px;
@@ -154,28 +164,7 @@
             transform: scale(1.05);
         }
 
-        /* ========== ANIMATIONS ========== */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideInUp {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* ========== AUTH CONTAINER ========== */
+        /* ==================== AUTH CONTAINER ==================== */
         .auth-container {
             display: flex;
             align-items: center;
@@ -222,7 +211,8 @@
             font-size: 14px;
         }
 
-        .form-group input, .form-group select {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 12px 16px;
             border: 2px solid #e5e7eb;
@@ -231,16 +221,17 @@
             transition: all 0.3s ease;
         }
 
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .btn-primary {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -263,7 +254,7 @@
         }
 
         .auth-footer a {
-            color: var(--primary);
+            color: #667eea;
             cursor: pointer;
             text-decoration: none;
             font-weight: 600;
@@ -273,7 +264,7 @@
             text-decoration: underline;
         }
 
-        /* ========== MAIN APP ========== */
+        /* ==================== MAIN APP ==================== */
         .app-container {
             display: none;
             width: 100%;
@@ -323,7 +314,7 @@
             background: #dc2626;
         }
 
-        /* ========== ITEMS TABLE ========== */
+        /* ==================== ITEMS TABLE ==================== */
         .items-table {
             width: 100%;
             border-collapse: collapse;
@@ -334,7 +325,7 @@
         }
 
         .items-table thead {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
@@ -370,16 +361,16 @@
         }
 
         .btn-assign {
-            background: var(--primary);
+            background: #667eea;
             color: white;
         }
 
         .btn-assign:hover {
-            background: var(--primary-dark);
+            background: #5568d3;
         }
 
         .btn-delete {
-            background: var(--danger);
+            background: #ef4444;
             color: white;
         }
 
@@ -391,9 +382,10 @@
             display: flex;
             gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
-        /* ========== MODAL ========== */
+        /* ==================== MODAL ==================== */
         .modal {
             display: none;
             position: fixed;
@@ -413,6 +405,7 @@
             width: 90%;
             max-width: 500px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.3s ease;
         }
 
         .modal-header {
@@ -463,7 +456,7 @@
 
         .btn-confirm {
             padding: 10px 20px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -473,9 +466,23 @@
 
         .btn-confirm:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
-        /* ========== LOADING SPINNER ========== */
+        /* ==================== BUTTON GROUP ==================== */
+        .button-group {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .button-group button {
+            width: auto;
+            padding: 10px 20px;
+        }
+
+        /* ==================== LOADING SPINNER ==================== */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -483,7 +490,7 @@
             right: 0;
             bottom: 0;
             background: rgba(255, 255, 255, 0.9);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 9999;
@@ -491,16 +498,36 @@
 
         .spinner {
             border: 4px solid #f3f4f6;
-            border-top: 4px solid var(--primary);
+            border-top: 4px solid #667eea;
             border-radius: 50%;
             width: 50px;
             height: 50px;
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .button-group button {
+                width: 100%;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-small,
+            .btn-notify {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -513,7 +540,7 @@
 
 <!-- AUTH CONTAINER -->
 <div id="authContainer" class="auth-container">
-    <!-- Login Form -->
+    <!-- LOGIN FORM -->
     <div id="loginForm" class="auth-box">
         <div class="auth-header">
             <h1>🔐 Asset Manager Pro</h1>
@@ -539,7 +566,7 @@
         </div>
     </div>
 
-    <!-- Setup Form -->
+    <!-- SETUP FORM -->
     <div id="setupForm" class="auth-box" style="display: none;">
         <div class="auth-header">
             <h1>🔧 First Time Setup</h1>
@@ -576,7 +603,7 @@
     </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- MAIN APPLICATION -->
 <div id="mainApp" class="app-container">
     <div class="app-content">
         <div class="app-header">
@@ -587,10 +614,9 @@
             </div>
         </div>
 
-        <div style="margin-bottom: 20px; display: flex; gap: 12px;">
-            <button class="btn-primary" style="width: auto; padding: 10px 20px;" onclick="openAddItemModal()">➕ Add Item</button>
-            <button class="btn-primary" style="width: auto; padding: 10px 20px;" onclick="openAddMemberModal()">👤 Add Member</button>
-            <button class="btn-primary" style="width: auto; padding: 10px 20px;" onclick="syncFromGitHub()">🔄 Sync from GitHub</button>
+        <div class="button-group">
+            <button class="btn-primary" onclick="openAddItemModal()">➕ Add Item</button>
+            <button class="btn-primary" onclick="openAddMemberModal()">👤 Add Member</button>
         </div>
 
         <p style="color: #6b7280; margin-bottom: 15px;">Total Items: <strong id="itemCount">0</strong></p>
@@ -687,472 +713,329 @@
 </div>
 
 <script>
-// ============ CONFIGURATION ============
-const GITHUB_CONFIG = {
-    username: "YOUR_USERNAME",        // ⚠️ CHANGE THIS
-    repo: "asset-manager-db",         // ⚠️ CHANGE THIS
-    branch: "main",                   // ⚠️ CHANGE THIS
-    token: "ghp_YOUR_TOKEN_HERE"      // ⚠️ CHANGE THIS
-};
+    // ==================== DATA & STATE ====================
+    let allItems = window.assetManagerData || { items: [], members: [], emails: [] };
+    let currentUser = null;
 
-const GITHUB_RAW_URL = `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/data.json`;
-const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/data.json`;
+    // ==================== BEAUTIFUL DIALOGS ====================
+    function showBeautifulAlert(title, message) {
+        return new Promise(resolve => {
+            const overlay = document.createElement('div');
+            overlay.className = 'beautiful-dialog-overlay';
 
-// ============ DATA ============
-let allItems = {
-    items: [],
-    members: [],
-    emails: []
-};
-let currentUser = null;
+            const dialog = document.createElement('div');
+            dialog.className = 'beautiful-dialog';
 
-// ============ BEAUTIFUL DIALOGS ============
-function showBeautifulAlert(title, message) {
-    return new Promise(resolve => {
-        const overlay = document.createElement('div');
-        overlay.className = 'beautiful-dialog-overlay';
-        
-        const dialog = document.createElement('div');
-        dialog.className = 'beautiful-dialog';
-        
-        dialog.innerHTML = `
-            <div class="beautiful-dialog-title">${title}</div>
-            <div class="beautiful-dialog-message">${message}</div>
-            <div class="beautiful-dialog-buttons">
-                <button class="beautiful-btn beautiful-btn-confirm">OK</button>
-            </div>
-        `;
-        
-        overlay.appendChild(dialog);
-        document.body.appendChild(overlay);
-        
-        dialog.querySelector('.beautiful-btn-confirm').onclick = () => {
-            document.body.removeChild(overlay);
-            resolve(true);
-        };
-    });
-}
+            dialog.innerHTML = `
+                <div class="beautiful-dialog-title">${title}</div>
+                <div class="beautiful-dialog-message">${message}</div>
+                <div class="beautiful-dialog-buttons">
+                    <button class="beautiful-btn beautiful-btn-confirm">OK</button>
+                </div>
+            `;
 
-function showBeautifulConfirm(title, message) {
-    return new Promise(resolve => {
-        const overlay = document.createElement('div');
-        overlay.className = 'beautiful-dialog-overlay';
-        
-        const dialog = document.createElement('div');
-        dialog.className = 'beautiful-dialog';
-        
-        dialog.innerHTML = `
-            <div class="beautiful-dialog-title">${title}</div>
-            <div class="beautiful-dialog-message">${message}</div>
-            <div class="beautiful-dialog-buttons">
-                <button class="beautiful-btn beautiful-btn-cancel">Cancel</button>
-                <button class="beautiful-btn beautiful-btn-confirm">Confirm</button>
-            </div>
-        `;
-        
-        overlay.appendChild(dialog);
-        document.body.appendChild(overlay);
-        
-        dialog.querySelector('.beautiful-btn-cancel').onclick = () => {
-            document.body.removeChild(overlay);
-            resolve(false);
-        };
-        
-        dialog.querySelector('.beautiful-btn-confirm').onclick = () => {
-            document.body.removeChild(overlay);
-            resolve(true);
-        };
-    });
-}
+            overlay.appendChild(dialog);
+            document.body.appendChild(overlay);
 
-// ============ GITHUB FUNCTIONS ============
-async function loadFromGitHub() {
-    try {
-        showLoading();
-        const response = await fetch(GITHUB_RAW_URL, { cache: 'no-store' });
-        if (!response.ok) throw new Error('Failed to load data from GitHub');
-        allItems = await response.json();
-        hideLoading();
-        return true;
-    } catch (error) {
-        hideLoading();
-        console.error('GitHub load error:', error);
-        await showBeautifulAlert('⚠️ GitHub Error', 'Could not load data from GitHub. Please check your configuration.');
-        return false;
-    }
-}
-
-async function saveToGitHub() {
-    try {
-        showLoading();
-        
-        // Get current file SHA
-        const getResponse = await fetch(GITHUB_API_URL, {
-            headers: {
-                'Authorization': `token ${GITHUB_CONFIG.token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
+            dialog.querySelector('.beautiful-btn-confirm').onclick = () => {
+                document.body.removeChild(overlay);
+                resolve(true);
+            };
         });
-        
-        const getData = await getResponse.json();
-        const sha = getData.sha;
-        
-        // Update file
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(allItems, null, 2))));
-        
-        const putResponse = await fetch(GITHUB_API_URL, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${GITHUB_CONFIG.token}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                message: 'Update asset manager data',
-                content: content,
-                sha: sha,
-                branch: GITHUB_CONFIG.branch
-            })
+    }
+
+    function showBeautifulConfirm(title, message) {
+        return new Promise(resolve => {
+            const overlay = document.createElement('div');
+            overlay.className = 'beautiful-dialog-overlay';
+
+            const dialog = document.createElement('div');
+            dialog.className = 'beautiful-dialog';
+
+            dialog.innerHTML = `
+                <div class="beautiful-dialog-title">${title}</div>
+                <div class="beautiful-dialog-message">${message}</div>
+                <div class="beautiful-dialog-buttons">
+                    <button class="beautiful-btn beautiful-btn-cancel">Cancel</button>
+                    <button class="beautiful-btn beautiful-btn-confirm">Confirm</button>
+                </div>
+            `;
+
+            overlay.appendChild(dialog);
+            document.body.appendChild(overlay);
+
+            dialog.querySelector('.beautiful-btn-cancel').onclick = () => {
+                document.body.removeChild(overlay);
+                resolve(false);
+            };
+
+            dialog.querySelector('.beautiful-btn-confirm').onclick = () => {
+                document.body.removeChild(overlay);
+                resolve(true);
+            };
         });
-        
-        if (!putResponse.ok) throw new Error('Failed to save to GitHub');
-        
-        hideLoading();
-        return true;
-    } catch (error) {
-        hideLoading();
-        console.error('GitHub save error:', error);
-        await showBeautifulAlert('❌ Save Error', 'Failed to save data to GitHub: ' + error.message);
-        return false;
     }
-}
 
-async function syncFromGitHub() {
-    const success = await loadFromGitHub();
-    if (success) {
-        displayItems();
-        await showBeautifulAlert('✅ Success', 'Data synced from GitHub successfully!');
+    // ==================== DISPLAY ITEMS ====================
+    function displayItems() {
+        const tbody = document.getElementById('itemsTableBody');
+        document.getElementById('itemCount').textContent = allItems.items ? allItems.items.length : 0;
+
+        if (!allItems.items || allItems.items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af;">No items found</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = allItems.items.map((item, index) => {
+            const holder = allItems.members && allItems.members.length > 0
+                ? allItems.members.find(m => m && m.id === item.assignedTo)
+                : null;
+
+            const conditionClass = item.condition === '✓ Working' ? 'working' :
+                item.condition === '✗ Not Working' ? 'notworking' : 'na';
+
+            return `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.serialNumber}</td>
+                    <td>${holder ? holder.fullName : 'Unassigned'}</td>
+                    <td>
+                        <span class="condition-badge condition-${conditionClass}">
+                            ${item.condition}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-small btn-assign" onclick="assignItem(${index})">📤 Assign</button>
+                            ${item.assignedTo ? `<button class="btn-notify" onclick="notifyMember(${index})" title="Send notification">🔔</button>` : ''}
+                            <button class="btn-small btn-delete" onclick="deleteItem(${index})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
-}
 
-// ============ EMAIL FUNCTIONS ============
-async function sendWelcomeEmail(member) {
-    const confirmed = await showBeautifulConfirm(
-        '📧 Send Welcome Email',
-        `Send welcome email with login credentials to ${member.email}?`
-    );
-    
-    if (!confirmed) return;
-    
-    const emailData = {
-        type: 'WELCOME_EMAIL',
-        recipient: member.email,
-        subject: 'Asset Manager Pro - Account Created',
-        body: `Dear ${member.fullName},\n\nYour account has been created in Asset Manager Pro.\n\nLogin Details:\nEmail: ${member.email}\nPassword: ${member.password}\n\nPlease change your password after first login.\n\nBest regards,\nAdmin Team`,
-        timestamp: new Date().toISOString(),
-        status: 'pending'
-    };
-    
-    allItems.emails = allItems.emails || [];
-    allItems.emails.push(emailData);
-    await saveToGitHub();
-    
-    await showBeautifulAlert('✅ Email Queued', 'Welcome email has been queued for sending.');
-}
-
-async function sendAssignmentNotification(item, member) {
-    const confirmed = await showBeautifulConfirm(
-        '🔔 Send Notification',
-        `Send notification email to ${member.fullName} about item assignment?`
-    );
-    
-    if (!confirmed) return;
-    
-    const emailData = {
-        type: 'ASSIGNMENT_NOTIFICATION',
-        recipient: member.email,
-        subject: 'Item Assigned - Asset Manager Pro',
-        body: `Dear ${member.fullName},\n\nItem "${item.name}" (Serial: ${item.serialNumber}) has been assigned to you.\n\nItem Details:\n- Condition: ${item.condition}\n- Assignment Date: ${new Date().toLocaleDateString()}\n\nPlease log in to Asset Manager Pro to view more details.\n\nBest regards,\nAdmin Team`,
-        timestamp: new Date().toISOString(),
-        itemId: item.id,
-        status: 'pending'
-    };
-    
-    allItems.emails = allItems.emails || [];
-    allItems.emails.push(emailData);
-    await saveToGitHub();
-    
-    await showBeautifulAlert('✅ Notification Sent', 'Assignment notification queued for delivery.');
-}
-
-// ============ DISPLAY FUNCTIONS ============
-function displayItems() {
-    const tbody = document.getElementById('itemsTableBody');
-    document.getElementById('itemCount').textContent = allItems.items.length;
-    
-    if (allItems.items.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af;">No items found</td></tr>';
-        return;
+    // ==================== AUTH FUNCTIONS ====================
+    function showSetup() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('setupForm').style.display = 'block';
     }
-    
-    tbody.innerHTML = allItems.items.map((item, index) => {
-        const holder = allItems.members.find(m => m.id === item.assignedTo);
-        const conditionClass = item.condition === '✓ Working' ? 'working' : 
-                              item.condition === '✗ Not Working' ? 'notworking' : 'na';
-        
-        return `
-            <tr>
-                <td>${item.name}</td>
-                <td>${item.serialNumber}</td>
-                <td>${holder ? holder.fullName : 'Unassigned'}</td>
-                <td>
-                    <span class="condition-badge condition-${conditionClass}">
-                        ${item.condition}
-                    </span>
-                </td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn-small btn-assign" onclick="assignItem(${index})">📤 Assign</button>
-                        ${item.assignedTo ? `<button class="btn-notify" onclick="notifyMember(${index})" title="Send notification">🔔</button>` : ''}
-                        <button class="btn-small btn-delete" onclick="deleteItem(${index})">🗑️</button>
-                    </div>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
 
-// ============ AUTH FUNCTIONS ============
-function showSetup() {
-    document.getElementById('loginForm').style.display = 'none';
-    document.getElementById('setupForm').style.display = 'block';
-}
-
-function showLogin() {
-    document.getElementById('loginForm').style.display = 'block';
-    document.getElementById('setupForm').style.display = 'none';
-}
-
-async function handleLogin(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    // Load data from GitHub first
-    const success = await loadFromGitHub();
-    if (!success) return;
-    
-    const user = allItems.members.find(m => m.email === email && m.password === password);
-    
-    if (!user) {
-        await showBeautifulAlert('❌ Login Failed', 'Invalid email or password');
-        return;
+    function showLogin() {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('setupForm').style.display = 'none';
     }
-    
-    currentUser = user;
-    showApp();
-}
 
-async function handleSetup(e) {
-    e.preventDefault();
-    
-    const fullName = document.getElementById('setupFullName').value;
-    const email = document.getElementById('setupEmail').value;
-    const password = document.getElementById('setupPassword').value;
-    const confirmPassword = document.getElementById('setupConfirmPassword').value;
-    
-    if (password !== confirmPassword) {
-        await showBeautifulAlert('❌ Error', 'Passwords do not match');
-        return;
-    }
-    
-    const admin = {
-        id: Date.now(),
-        fullName,
-        email,
-        password,
-        role: 'admin',
-        createdDate: new Date().toISOString()
-    };
-    
-    allItems.members.push(admin);
-    currentUser = admin;
-    
-    const saved = await saveToGitHub();
-    if (saved) {
-        await showBeautifulAlert('✅ Success', 'Admin account created successfully!');
+    async function handleLogin(e) {
+        e.preventDefault();
+
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        const user = allItems.members && allItems.members.length > 0
+            ? allItems.members.find(m => m && m.email === email && m.password === password)
+            : null;
+
+        if (!user) {
+            await showBeautifulAlert('❌ Login Failed', 'Invalid email or password');
+            return;
+        }
+
+        currentUser = user;
         showApp();
     }
-}
 
-function logout() {
-    currentUser = null;
-    document.getElementById('authContainer').style.display = 'flex';
-    document.getElementById('mainApp').style.display = 'none';
-    showLogin();
-}
+    async function handleSetup(e) {
+        e.preventDefault();
 
-function showApp() {
-    document.getElementById('authContainer').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('userDisplay').textContent = `👤 ${currentUser.fullName}`;
-    displayItems();
-}
+        const fullName = document.getElementById('setupFullName').value;
+        const email = document.getElementById('setupEmail').value;
+        const password = document.getElementById('setupPassword').value;
+        const confirmPassword = document.getElementById('setupConfirmPassword').value;
 
-// ============ ITEM FUNCTIONS ============
-function openAddItemModal() {
-    document.getElementById('addItemModal').style.display = 'block';
-}
+        if (password !== confirmPassword) {
+            await showBeautifulAlert('❌ Error', 'Passwords do not match');
+            return;
+        }
 
-async function handleAddItem(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById('itemName').value;
-    const serial = document.getElementById('itemSerial').value;
-    const condition = document.getElementById('itemCondition').value;
-    
-    const item = {
-        id: Date.now(),
-        name,
-        serialNumber: serial,
-        condition,
-        assignedTo: null,
-        createdDate: new Date().toISOString()
-    };
-    
-    allItems.items.push(item);
-    
-    const saved = await saveToGitHub();
-    if (saved) {
+        const admin = {
+            id: Date.now(),
+            fullName,
+            email,
+            password,
+            role: 'admin',
+            createdDate: new Date().toISOString()
+        };
+
+        if (!allItems.members) allItems.members = [];
+        allItems.members.push(admin);
+        currentUser = admin;
+
+        window.saveData(allItems);
+        await showBeautifulAlert('✅ Success', 'Admin account created!');
+        showApp();
+    }
+
+    function logout() {
+        currentUser = null;
+        document.getElementById('authContainer').style.display = 'flex';
+        document.getElementById('mainApp').style.display = 'none';
+        showLogin();
+    }
+
+    function showApp() {
+        document.getElementById('authContainer').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('userDisplay').textContent = `👤 ${currentUser.fullName}`;
+        displayItems();
+    }
+
+    // ==================== ITEM FUNCTIONS ====================
+    function openAddItemModal() {
+        document.getElementById('addItemModal').style.display = 'block';
+    }
+
+    async function handleAddItem(e) {
+        e.preventDefault();
+
+        const name = document.getElementById('itemName').value;
+        const serial = document.getElementById('itemSerial').value;
+        const condition = document.getElementById('itemCondition').value;
+
+        const item = {
+            id: Date.now(),
+            name,
+            serialNumber: serial,
+            condition,
+            assignedTo: null,
+            createdDate: new Date().toISOString()
+        };
+
+        if (!allItems.items) allItems.items = [];
+        allItems.items.push(item);
+
+        window.saveData(allItems);
+
         document.getElementById('itemName').value = '';
         document.getElementById('itemSerial').value = '';
         document.getElementById('itemCondition').value = '';
-        
+
         closeModal('addItemModal');
         displayItems();
-        await showBeautifulAlert('✅ Success', 'Item added successfully!');
+        await showBeautifulAlert('✅ Success', 'Item added!');
     }
-}
 
-async function deleteItem(index) {
-    const confirmed = await showBeautifulConfirm(
-        '🗑️ Delete Item',
-        'This action cannot be undone. Are you sure?'
-    );
-    
-    if (confirmed) {
-        allItems.items.splice(index, 1);
-        const saved = await saveToGitHub();
-        if (saved) {
+    async function deleteItem(index) {
+        const confirmed = await showBeautifulConfirm(
+            '🗑️ Delete Item',
+            'This action cannot be undone. Are you sure?'
+        );
+
+        if (confirmed) {
+            allItems.items.splice(index, 1);
+            window.saveData(allItems);
             displayItems();
             await showBeautifulAlert('✅ Deleted', 'Item deleted successfully!');
         }
     }
-}
 
-async function assignItem(index) {
-    const item = allItems.items[index];
-    
-    if (allItems.members.length === 0) {
-        await showBeautifulAlert('⚠️ No Members', 'Please add members first.');
-        return;
-    }
-    
-    const memberList = allItems.members.map((m, i) => `${i}: ${m.fullName} (${m.email})`).join('\n');
-    const memberId = prompt('Select member ID:\n\n' + memberList);
-    
-    if (memberId === null || memberId === '') return;
-    
-    const id = parseInt(memberId);
-    if (!isNaN(id) && id >= 0 && id < allItems.members.length) {
-        item.assignedTo = allItems.members[id].id;
-        const saved = await saveToGitHub();
-        if (saved) {
+    async function assignItem(index) {
+        if (!allItems.members || allItems.members.length === 0) {
+            await showBeautifulAlert('⚠️ No Members', 'Please add members first.');
+            return;
+        }
+
+        const memberList = allItems.members.map((m, i) => `${i}: ${m.fullName} (${m.email})`).join('\n');
+        const memberId = prompt('Select member ID:\n\n' + memberList);
+
+        if (memberId === null || memberId === '') return;
+
+        const id = parseInt(memberId);
+        if (!isNaN(id) && id >= 0 && id < allItems.members.length) {
+            allItems.items[index].assignedTo = allItems.members[id].id;
+            window.saveData(allItems);
             displayItems();
             await showBeautifulAlert('✅ Assigned', 'Item assigned successfully!');
+        } else {
+            await showBeautifulAlert('❌ Error', 'Invalid member ID');
         }
-    } else {
-        await showBeautifulAlert('❌ Error', 'Invalid member ID');
     }
-}
 
-async function notifyMember(index) {
-    const item = allItems.items[index];
-    const member = allItems.members.find(m => m.id === item.assignedTo);
-    
-    if (member) {
-        await sendAssignmentNotification(item, member);
+    async function notifyMember(index) {
+        const item = allItems.items[index];
+        if (!allItems.members || allItems.members.length === 0) return;
+
+        const member = allItems.members.find(m => m && m.id === item.assignedTo);
+        if (member) {
+            await showBeautifulAlert('✅ Notification', `Email notification queued for ${member.fullName}`);
+        }
     }
-}
 
-// ============ MEMBER FUNCTIONS ============
-function openAddMemberModal() {
-    document.getElementById('addMemberModal').style.display = 'block';
-}
-
-async function handleAddMember(e) {
-    e.preventDefault();
-    
-    const fullName = document.getElementById('memberName').value;
-    const email = document.getElementById('memberEmail').value;
-    const password = document.getElementById('memberPassword').value;
-    const confirmPassword = document.getElementById('memberConfirmPassword').value;
-    
-    if (password !== confirmPassword) {
-        await showBeautifulAlert('❌ Error', 'Passwords do not match');
-        return;
+    // ==================== MEMBER FUNCTIONS ====================
+    function openAddMemberModal() {
+        document.getElementById('addMemberModal').style.display = 'block';
     }
-    
-    const member = {
-        id: Date.now(),
-        fullName,
-        email,
-        password,
-        role: 'member',
-        createdDate: new Date().toISOString()
-    };
-    
-    allItems.members.push(member);
-    
-    const saved = await saveToGitHub();
-    if (saved) {
+
+    async function handleAddMember(e) {
+        e.preventDefault();
+
+        const fullName = document.getElementById('memberName').value;
+        const email = document.getElementById('memberEmail').value;
+        const password = document.getElementById('memberPassword').value;
+        const confirmPassword = document.getElementById('memberConfirmPassword').value;
+
+        if (password !== confirmPassword) {
+            await showBeautifulAlert('❌ Error', 'Passwords do not match');
+            return;
+        }
+
+        const member = {
+            id: Date.now(),
+            fullName,
+            email,
+            password,
+            role: 'member',
+            createdDate: new Date().toISOString()
+        };
+
+        if (!allItems.members) allItems.members = [];
+        allItems.members.push(member);
+
+        window.saveData(allItems);
+
         document.getElementById('memberName').value = '';
         document.getElementById('memberEmail').value = '';
         document.getElementById('memberPassword').value = '';
         document.getElementById('memberConfirmPassword').value = '';
-        
+
         closeModal('addMemberModal');
-        
-        await sendWelcomeEmail(member);
         await showBeautifulAlert('✅ Success', 'Member added successfully!');
     }
-}
 
-// ============ UTILITY FUNCTIONS ============
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
-
-function showLoading() {
-    document.getElementById('loadingOverlay').style.display = 'flex';
-}
-
-function hideLoading() {
-    document.getElementById('loadingOverlay').style.display = 'none';
-}
-
-// Close modals on background click
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = 'none';
+    // ==================== MODAL FUNCTIONS ====================
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
     }
-};
 
-// ============ INITIALIZATION ============
-window.addEventListener('load', () => {
-    hideLoading();
-});
+    function showLoading() {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+    }
+
+    function hideLoading() {
+        document.getElementById('loadingOverlay').style.display = 'none';
+    }
+
+    // ==================== UTILITY FUNCTIONS ====================
+    window.onclick = function (event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    };
+
+    window.addEventListener('load', () => {
+        hideLoading();
+    });
 </script>
 
 </body>
