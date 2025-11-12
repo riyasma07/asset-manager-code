@@ -852,7 +852,8 @@ async function renderItems() {
           <button class="btn-icon" onclick="startEditItem(${item.id})" title="Edit">✏️</button>
           <button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>
           ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">📤</button>` : `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">📥</button>`}
-		  ${item.assignedTo ? `<button class="btn-icon" onclick="openNotifyModal(${item.id})" title="Send Notification">🔔</button>` : ''}
+		  ${item.holder ? `<button class="btn-icon" onclick="openNotifyModal(${item.id})" title="Send Notification">🔔</button>` : ''}
+
         `;
       } else {
         actionButtons = `<button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>`;
@@ -1093,6 +1094,7 @@ document.getElementById('memberForm').addEventListener('submit', async (e) => {
     };
     
     await addRecord('users', user);
+	await autoUploadToGithub();
     alert('✅ Member added!');
 	const sendEmail = confirm(`Send welcome email to ${formData.get("email")}?`);
 	if (sendEmail) {
@@ -1103,9 +1105,9 @@ document.getElementById('memberForm').addEventListener('submit', async (e) => {
         timestamp: new Date().toISOString()
     });
 	}
+	console.log('Queued emails:', allEmails);
     e.target.reset();
     closeModal('addMemberModal');
-    await autoUploadToGithub();
   } catch (e) { alert('Error: ' + e.message); }
 });
 
