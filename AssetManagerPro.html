@@ -1349,7 +1349,184 @@ function queueNotification(notification) {
     console.error('Startup error:', e.message);
   }
 })();
+
+
+    // ==================== EMAIL BACKEND INTEGRATION ====================
+    let currentNotifyItemId = null;
+
+    // Open notification modal
+    function openNotifyModal(itemId) {
+        currentNotifyItemId = itemId;
+
+        const allItems = JSON.parse(localStorage.getItem('items') || '[]');
+        const allMembers = JSON.parse(localStorage.getItem('members') || '[]');
+
+        const item = allItems.find(i => i.id === itemId || i.id == itemId);
+        if (!item || !item.holder) {
+            alert('❌ No holder assigned to this item');
+            return;
+        }
+
+        const member = allMembers.find(m => m.id === item.holder || m.id == item.holder);
+        if (!member) {
+            alert('❌ Member not found');
+            return;
+        }
+
+        // Set recipient info
+        document.getElementById('notifyRecipientInfo').textContent = 
+            `📧 Sending to: ${member.name} (${member.email})`;
+
+        // Set default subject and message
+        document.getElementById('notifySubject').value = 
+            `Notification: ${item.name}`;
+        document.getElementById('notifyMessage').value = 
+            `Hi ${member.name},\n\nThis is regarding the item "${item.name}" (Serial: ${item.serial}) currently assigned to you.\n\nPlease check and confirm receipt.\n\nBest regards,\n${localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')).name : 'Admin'}`;
+
+        // Show modal
+        document.getElementById('notificationModal').classList.add('active');
+    }
+
+    // Close notification modal
+    function closeNotificationModal() {
+        document.getElementById('notificationModal').classList.remove('active');
+        currentNotifyItemId = null;
+    }
+
+    // Send email via backend
+    async function sendEmailViaBackend(toEmail, subject, body, fromEmail) {
+        try {
+            const response = await fetch('http://localhost:3000/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: toEmail,
+                    subject: subject,
+                    body: body,
+                    from: fromEmail
+                })
+            });
+            const data = await response.json();
+            if (data.success) {
+                return true;
+            } else {
+                alert('❌ Failed to send email: ' + data.error);
+                return false;
+            }
+        } catch(error) {
+            console.error('Email error:', error);
+            alert('❌ Server error: ' + error.message + '\n\nMake sure backend is running: npm start');
+            return false;
+        }
+    }
+
+    // Send notification email
+    async function sendNotificationEmail() {
+        const subject = document.getElementById('notifySubject').value.trim();
+        const message = document.getElementById('notifyMessage').value.trim();
+
+        if (!subject || !message) {
+            alert('❌ Please fill in both subject and message');
+            return;
+        }
+
+        try {
+            const allItems = JSON.parse(localStorage.getItem('items') || '[]');
+            const allMembers = JSON.parse(localStorage.getItem('members') || '[]');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+
+            const item = allItems.find(i => i.id === currentNotifyItemId || i.id == currentNotifyItemId);
+            const member = allMembers.find(m => m.id === item.holder || m.id == item.holder);
+
+            if (!item || !member) {
+                alert('❌ Item or member not found');
+                return;
+            }
+
+            // Show loading
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = '📤 Sending...';
+            btn.disabled = true;
+
+            // Send via backend
+            const success = await sendEmailViaBackend(
+                member.email,
+                subject,
+                message,
+                currentUser.email || 'admin@assetmanager.com'
+            );
+
+            btn.innerText = originalText;
+            btn.disabled = false;
+
+            if (success) {
+                alert('✅ Email sent successfully!');
+                closeNotificationModal();
+            }
+        } catch(error) {
+            console.error('Error:', error);
+            alert('❌ Failed to send notification: ' + error.message);
+        }
+    }
+
+    // Close modal on ESC key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeNotificationModal();
+        }
+    });
+
+    // Close modal on backdrop click
+    document.getElementById('notificationModal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'notificationModal') {
+            closeNotificationModal();
+        }
+    });
+    // ==================== END EMAIL INTEGRATION ====================
 </script>
 
+
+<!-- Notification Email Modal -->
+<div id="notificationModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
+    <div class="modal-content" style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: slideUp 0.3s ease; max-width: 500px; width: 90%;">
+        <style>
+            #notificationModal.active { display: flex !important; }
+            #notificationModal .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #e2e8f0; }
+            #notificationModal .close-btn { background: none; border: none; font-size: 32px; cursor: pointer; color: #94a3b8; line-height: 1; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: 0.2s; }
+            #notificationModal .close-btn:hover { background: #f1f5f9; color: #64748b; }
+            #notificationModal .form-group { margin-bottom: 20px; }
+            #notificationModal .form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #334155; font-size: 14px; }
+            #notificationModal .form-group input, #notificationModal .form-group textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 14px; }
+            #notificationModal .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+            #notificationModal .notify-recipient-info { background: #f0f9ff; border-left: 4px solid #0284c7; padding: 12px; border-radius: 4px; margin-bottom: 20px; color: #0c4a6e; font-weight: 500; font-size: 14px; }
+            html.dark #notificationModal .modal-content { background: #1e293b; color: #e2e8f0; }
+            html.dark #notificationModal .modal-header { border-bottom-color: #334155; }
+            html.dark #notificationModal .form-group label { color: #cbd5e1; }
+            html.dark #notificationModal .form-group input, html.dark #notificationModal .form-group textarea { background: #334155; border-color: #475569; color: #e2e8f0; }
+            html.dark #notificationModal .close-btn:hover { background: #334155; color: #cbd5e1; }
+            html.dark #notificationModal .notify-recipient-info { background: #082f49; border-left-color: #0ea5e9; color: #e0f2fe; }
+        </style>
+        <div class="modal-header">
+            <h2 style="margin: 0;">📧 Send Notification</h2>
+            <button class="close-btn" onclick="closeNotificationModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="notifyRecipientInfo" class="notify-recipient-info"></div>
+            <div class="form-group">
+                <label>Subject *</label>
+                <input type="text" id="notifySubject" placeholder="Enter email subject" required>
+            </div>
+            <div class="form-group">
+                <label>Message *</label>
+                <textarea id="notifyMessage" rows="6" placeholder="Enter your message..." required></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeNotificationModal()" style="background: #e2e8f0; color: #475569; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Cancel</button>
+            <button class="btn btn-primary" onclick="sendNotificationEmail()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s;">📤 Send</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
