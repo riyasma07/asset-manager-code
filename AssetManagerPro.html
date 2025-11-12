@@ -1350,52 +1350,91 @@ function queueNotification(notification) {
   }
 })();
 
-
-    // ==================== EMAIL BACKEND INTEGRATION ====================
+	// ==================== EMAIL BACKEND INTEGRATION (FIXED) ====================
     let currentNotifyItemId = null;
 
-    // Open notification modal
+    // Open notification modal - FIXED VERSION
     function openNotifyModal(itemId) {
         currentNotifyItemId = itemId;
+        console.log('Opening notify modal for item:', itemId);
+        
+        try {
+            const allItems = JSON.parse(localStorage.getItem('items') || '[]');
+            const allMembers = JSON.parse(localStorage.getItem('members') || '[]');
+            
+            console.log('All items:', allItems);
+            console.log('All members:', allMembers);
+            
+            // Find item - handle both string and number IDs
+            const item = allItems.find(i => String(i.id) === String(itemId));
+            console.log('Found item:', item);
+            
+            if (!item) {
+                alert('❌ Item not found');
+                return;
+            }
+            
+            // Check if holder is assigned
+            if (!item.holder || item.holder.trim() === '') {
+                alert('❌ No holder assigned to this item');
+                return;
+            }
+            
+            // Find member - handle both string and number IDs
+            const member = allMembers.find(m => String(m.id) === String(item.holder));
+            console.log('Found member:', member);
+            
+            if (!member) {
+                alert('❌ Member not found');
+                return;
+            }
+            
+            // Validate email
+            if (!member.email || member.email.trim() === '') {
+                alert('❌ Member does not have an email address');
+                return;
+            }
+            
+            // Set recipient info
+            document.getElementById('notifyRecipientInfo').textContent = 
+                `📧 Sending to: ${member.name} (${member.email})`;
+            
+            // Set default subject and message
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            document.getElementById('notifySubject').value = 
+                `Notification: ${item.name}`;
+            document.getElementById('notifyMessage').value = 
+                `Hi ${member.name},
 
-        const allItems = JSON.parse(localStorage.getItem('items') || '[]');
-        const allMembers = JSON.parse(localStorage.getItem('members') || '[]');
+This is regarding the item "${item.name}" (Serial: ${item.serial}) currently assigned to you.
 
-        const item = allItems.find(i => i.id === itemId || i.id == itemId);
-        if (!item || !item.holder) {
-            alert('❌ No holder assigned to this item');
-            return;
+Please check and confirm receipt.
+
+Best regards,
+${currentUser.name || 'Admin'}`;
+            
+            // Show modal
+            document.getElementById('notificationModal').classList.add('active');
+            
+        } catch(error) {
+            console.error('Error in openNotifyModal:', error);
+            alert('❌ Error: ' + error.message);
         }
-
-        const member = allMembers.find(m => m.id === item.holder || m.id == item.holder);
-        if (!member) {
-            alert('❌ Member not found');
-            return;
-        }
-
-        // Set recipient info
-        document.getElementById('notifyRecipientInfo').textContent = 
-            `📧 Sending to: ${member.name} (${member.email})`;
-
-        // Set default subject and message
-        document.getElementById('notifySubject').value = 
-            `Notification: ${item.name}`;
-        document.getElementById('notifyMessage').value = 
-            `Hi ${member.name},\n\nThis is regarding the item "${item.name}" (Serial: ${item.serial}) currently assigned to you.\n\nPlease check and confirm receipt.\n\nBest regards,\n${localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')).name : 'Admin'}`;
-
-        // Show modal
-        document.getElementById('notificationModal').classList.add('active');
     }
 
     // Close notification modal
     function closeNotificationModal() {
         document.getElementById('notificationModal').classList.remove('active');
         currentNotifyItemId = null;
+        // Clear form
+        document.getElementById('notifySubject').value = '';
+        document.getElementById('notifyMessage').value = '';
     }
 
-    // Send email via backend
+    // Send email via backend - FIXED VERSION
     async function sendEmailViaBackend(toEmail, subject, body, fromEmail) {
         try {
+            console.log('Sending email to:', toEmail);
             const response = await fetch('http://localhost:3000/api/send-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1406,40 +1445,61 @@ function queueNotification(notification) {
                     from: fromEmail
                 })
             });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const data = await response.json();
+            console.log('Email response:', data);
+            
             if (data.success) {
                 return true;
             } else {
-                alert('❌ Failed to send email: ' + data.error);
+                alert('❌ Failed to send email: ' + (data.error || 'Unknown error'));
                 return false;
             }
         } catch(error) {
             console.error('Email error:', error);
-            alert('❌ Server error: ' + error.message + '\n\nMake sure backend is running: npm start');
+            alert('❌ Server error: ' + error.message + '\n\nMake sure backend is running:\nnpm start');
             return false;
         }
     }
 
-    // Send notification email
+    // Send notification email - FIXED VERSION
     async function sendNotificationEmail() {
         const subject = document.getElementById('notifySubject').value.trim();
         const message = document.getElementById('notifyMessage').value.trim();
-
+        
         if (!subject || !message) {
             alert('❌ Please fill in both subject and message');
             return;
         }
-
+        
         try {
             const allItems = JSON.parse(localStorage.getItem('items') || '[]');
             const allMembers = JSON.parse(localStorage.getItem('members') || '[]');
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-
-            const item = allItems.find(i => i.id === currentNotifyItemId || i.id == currentNotifyItemId);
-            const member = allMembers.find(m => m.id === item.holder || m.id == item.holder);
-
-            if (!item || !member) {
-                alert('❌ Item or member not found');
+            
+            console.log('Sending notification for item:', currentNotifyItemId);
+            
+            // Find item
+            const item = allItems.find(i => String(i.id) === String(currentNotifyItemId));
+            if (!item) {
+                alert('❌ Item not found');
+                return;
+            }
+            
+            // Find member
+            const member = allMembers.find(m => String(m.id) === String(item.holder));
+            if (!member) {
+                alert('❌ Member not found');
+                return;
+            }
+            
+            // Validate member email
+            if (!member.email || member.email.trim() === '') {
+                alert('❌ Member does not have an email address');
                 return;
             }
 
@@ -1456,7 +1516,7 @@ function queueNotification(notification) {
                 message,
                 currentUser.email || 'admin@assetmanager.com'
             );
-
+            
             btn.innerText = originalText;
             btn.disabled = false;
 
@@ -1484,6 +1544,7 @@ function queueNotification(notification) {
         }
     });
     // ==================== END EMAIL INTEGRATION ====================
+
 </script>
 
 
