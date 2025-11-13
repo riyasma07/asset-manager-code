@@ -452,6 +452,28 @@
 
 <script>
 let allEmails = [];
+window.allItems = [];
+window.allMembers = [];
+window.currentNotifyItemId = null;
+
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        try {
+            const items = localStorage.getItem('items');
+            const members = localStorage.getItem('members');
+            
+            if (items) window.allItems = JSON.parse(items);
+            if (members) window.allMembers = JSON.parse(members);
+            
+            console.log('✓ Notification system ready');
+            console.log('  Items cached:', window.allItems.length);
+            console.log('  Members cached:', window.allMembers.length);
+        } catch (e) {
+            console.error('Notification init error:', e);
+        }
+    }, 500);
+});
+
 // ==================== GITHUB CONFIG (REPLACE THESE 4 VALUES) ====================
 const GITHUB_RAW_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/asset-manager-db/main/data.json";
 const GITHUB_USERNAME = "YOUR_USERNAME";
@@ -1301,26 +1323,158 @@ function setTheme(theme) {
 document.getElementById('lightBtn').addEventListener('click', () => setTheme('light'));
 document.getElementById('darkBtn').addEventListener('click', () => setTheme('dark'));
 
-function openNotifyModal(itemId) {
-    getOne('items', itemId).then(item => {
-        getOne('members', item.assignedTo).then(member => {
-            const customMessage = prompt(`📧 Enter message to send to ${member.name}:\n\n(Default: Item "${item.name}" assigned)\n\nCustom message:`);
-            
-            if (customMessage !== null) {  // User didn't cancel
-                const notificationBody = customMessage.trim() || `Item "${item.name}" has been assigned to you. Condition: ${item.condition}`;
-                
-                // Add to notifications/emails queue
-                queueNotification({
-                    recipient: member.email,
-                    subject: `Notification: ${item.name}`,
-                    body: notificationBody,
-                    timestamp: new Date().toISOString()
-                });
-                
-                alert('✅ Notification sent!');
-            }
+async function openNotifyModal(itemId) {
+    window.currentNotifyItemId = itemId;
+    console.log('Opening notification for item:', itemId);
+    
+    try {
+        // Get data from localStorage cache, NOT IndexedDB
+        const items = JSON.parse(localStorage.getItem('items') || '[]');
+        const members = JSON.parse(localStorage.getItem('members') || '[]');
+        
+        console.log('Available items:', items.length, 'members:', members.length);
+        
+        // Find the item
+        const item = items.find(i => {
+            return String(i.id) === String(itemId);
         });
-    });
+        
+        if (!item) {
+            console.error('Item not found:', itemId);
+            alert('❌ Item not found');
+            return;
+        }
+        
+        if (!item.holder) {
+            alert('❌ No member assigned to this item');
+            return;
+        }
+        
+        // Find the member
+        const member = members.find(m => {
+            return String(m.id) === String(item.holder);
+        });
+        
+        if (!member) {
+            console.error('Member not found:', item.holder);
+            alert('❌ Member not found');
+            return;
+        }
+        
+        if (!member.email) {
+            alert('❌ Member email not found');
+            return;
+        }
+        
+        // Update modal content
+        const recipientInfo = document.getElementById('notifyRecipientInfo');
+        if (recipientInfo) {
+            recipientInfo.innerHTML = `<strong>📧 To:</strong> ${member.name} (${member.email})`;
+        }
+        
+        const subjectField = document.getElementById('notifySubject');
+        if (subjectField) {
+            subjectField.value = `Update on: ${item.name}`;
+        }
+        
+        const messageField = document.getElementById('notifyMessage');
+        if (messageField) {
+            messageField.value = `Hi ${member.name},\n\nRegarding the item "${item.name}" (Serial: ${item.serial}) assigned to you.\n\nPlease reply with confirmation.\n\nBest regards`;
+        }
+        
+        // Show modal
+        const modal = document.getElementById('notificationModal');
+        if (modal) {
+            modal.classList.add('active');
+            console.log('✓ Modal opened successfully');
+        }
+        
+    } catch (err) {
+        console.error('Error in openNotifyModal:', err.message, err.stack);
+        alert('❌ Error: ' + err.message);
+    }
+}
+
+async function sendNotificationEmail() {
+    const subject = document.getElementById('notifySubject').value.trim();
+    const message = document.getElementById('notifyMessage').value.trim();
+    
+    if (!subject || !message) {
+        alert('❌ Please fill in subject and message');
+        return;
+    }
+    
+    try {
+        // Get fresh data from localStorage
+        const items = JSON.parse(localStorage.getItem('items') || '[]');
+        const members = JSON.parse(localStorage.getItem('members') || '[]');
+        
+        const item = items.find(i => String(i.id) === String(window.currentNotifyItemId));
+        if (!item) {
+            alert('❌ Item not found');
+            return;
+        }
+        
+        const member = members.find(m => String(m.id) === String(item.holder));
+        if (!member || !member.email) {
+            alert('❌ Member not found');
+            return;
+        }
+        
+        // Show loading state
+        const sendBtn = event.target;
+        const originalText = sendBtn.innerText;
+        sendBtn.disabled = true;
+        sendBtn.innerText = '📤 Sending...';
+        
+        console.log('Sending email to:', member.email);
+        console.log('Subject:', subject);
+        
+        // Make the API call
+        const response = await fetch('http://localhost:3000/api/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                to: member.email,
+                subject: subject,
+                body: message,
+                from: (window.currentUser && window.currentUser.email) || 'admin@assetmanager.com'
+            })
+        });
+        
+        console.log('Backend response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Backend response:', data);
+        
+        sendBtn.disabled = false;
+        sendBtn.innerText = originalText;
+        
+        if (data.success || data.message === 'Email sent successfully') {
+            alert('✅ Email sent successfully to ' + member.email);
+            document.getElementById('notificationModal').classList.remove('active');
+            document.getElementById('notifySubject').value = '';
+            document.getElementById('notifyMessage').value = '';
+        } else {
+            alert('❌ Email send failed: ' + (data.message || 'Unknown error'));
+        }
+        
+    } catch (err) {
+        const sendBtn = event.target;
+        sendBtn.disabled = false;
+        sendBtn.innerText = '📤 Send';
+        
+        console.error('Email send error:', err);
+        console.error('Error details:', err.message);
+        
+        alert('❌ Error sending email:\n\n' + err.message + '\n\nMake sure:\n1. Backend is running: npm start\n2. Backend is on port 3000\n3. Email service is configured');
+    }
 }
 
 function queueNotification(notification) {
