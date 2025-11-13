@@ -1352,138 +1352,215 @@ function queueNotification(notification) {
 
 
     // ==================== EMAIL NOTIFICATION FUNCTIONS ====================
-    let currentNotifyItemId = null;
+let currentNotifyItemId = null;
 
-    async function openNotifyModal(itemId) {
-      currentNotifyItemId = itemId;
-      try {
-        const items = await getAll('items');
-        const members = await getAll('members');
-
-        const item = items.find(i => String(i.id) === String(itemId));
-        if (!item || !item.holder) {
-          alert('❌ No holder assigned');
-          return;
-        }
-
-        const member = members.find(m => String(m.id) === String(item.holder));
-        if (!member || !member.email) {
-          alert('❌ Member or email not found');
-          return;
-        }
-
-        document.getElementById('notifyRecipientInfo').textContent = 
-          `📧 Sending to: ${member.name} (${member.email})`;
-        document.getElementById('notifySubject').value = `Notification: ${item.name}`;
-        document.getElementById('notifyMessage').value = 
-          `Hi ${member.name},\n\nThis is regarding the item "${item.name}" (Serial: ${item.serial}) currently assigned to you.\n\nPlease confirm receipt.\n\nBest regards,\n${currentUser.name || 'Admin'}`;
-
-        document.getElementById('notificationModal').classList.add('active');
-      } catch(error) {
-        console.error('Error:', error);
-        alert('❌ Error: ' + error.message);
-      }
+async function openNotifyModal(itemId) {
+  currentNotifyItemId = itemId;
+  console.log('Opening notification modal for item:', itemId);
+  
+  try {
+    // Get all items and members from localStorage
+    const items = JSON.parse(localStorage.getItem('items') || '[]');
+    const members = JSON.parse(localStorage.getItem('members') || '[]');
+    
+    console.log('Available items:', items);
+    console.log('Available members:', members);
+    
+    // Find the item
+    const item = items.find(i => String(i.id) === String(itemId));
+    
+    if (!item) {
+      alert('❌ Item not found');
+      return;
     }
-
-    async function sendEmailViaBackend(toEmail, subject, body, fromEmail) {
-      try {
-        const response = await fetch('http://localhost:3000/api/send-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ to: toEmail, subject, body, from: fromEmail })
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        return data.success || false;
-      } catch(error) {
-        console.error('Email error:', error);
-        alert('❌ Backend error: ' + error.message + '\n\nMake sure to run: npm start');
-        return false;
-      }
+    
+    // Check if holder is assigned
+    if (!item.holder || String(item.holder).trim() === '') {
+      alert('❌ No member assigned to this item');
+      return;
     }
-
-    async function sendNotificationEmail() {
-      const subject = document.getElementById('notifySubject').value.trim();
-      const message = document.getElementById('notifyMessage').value.trim();
-
-      if (!subject || !message) {
-        alert('❌ Please fill in both subject and message');
-        return;
-      }
-
-      try {
-        const items = await getAll('items');
-        const members = await getAll('members');
-
-        const item = items.find(i => String(i.id) === String(currentNotifyItemId));
-        if (!item) {
-          alert('❌ Item not found');
-          return;
-        }
-
-        const member = members.find(m => String(m.id) === String(item.holder));
-        if (!member || !member.email) {
-          alert('❌ Member not found');
-          return;
-        }
-
-        const btn = event.target;
-        btn.innerText = '📤 Sending...';
-        btn.disabled = true;
-
-        const success = await sendEmailViaBackend(
-          member.email,
-          subject,
-          message,
-          currentUser.email || 'admin@assetmanager.com'
-        );
-
-        btn.innerText = '📤 Send';
-        btn.disabled = false;
-
-        if (success) {
-          alert('✅ Email sent successfully!');
-          document.getElementById('notificationModal').classList.remove('active');
-          document.getElementById('notifySubject').value = '';
-          document.getElementById('notifyMessage').value = '';
-        }
-      } catch(error) {
-        console.error('Error:', error);
-        alert('❌ Error: ' + error.message);
-      }
+    
+    // Find the member
+    const member = members.find(m => String(m.id) === String(item.holder));
+    
+    if (!member) {
+      alert('❌ Member not found');
+      return;
     }
-
-    async function sendMemberWelcomeEmail(email, name, password) {
-      await sendEmailViaBackend(
-        email,
-        '🎉 Profile Created - Asset Manager Application',
-        `Hi ${name},\n\nYour profile has been successfully created in the Asset Manager Application.\n\nYour login credentials:\n📧 Email: ${email}\n🔑 Password: ${password}\n\nPlease keep your password secure. You can change it after first login.\n\nBest regards,\nAsset Manager Team`,
-        currentUser.email || 'admin@assetmanager.com'
-      );
+    
+    if (!member.email || String(member.email).trim() === '') {
+      alert('❌ Member does not have an email address');
+      return;
     }
-
-    async function sendItemAssignmentEmail(memberEmail, memberName, itemName, itemSerial) {
-      await sendEmailViaBackend(
-        memberEmail,
-        `📦 Item Assignment: ${itemName}`,
-        `Hi ${memberName},\n\nYou have been assigned the following item:\n\n📦 Item Name: ${itemName}\n🔢 Serial Number: ${itemSerial}\n\nPlease ensure you receive and inspect the item. Confirm receipt with your administrator.\n\nBest regards,\nAsset Manager Team`,
-        currentUser.email || 'admin@assetmanager.com'
-      );
+    
+    // Update modal with recipient info
+    const recipientInfo = document.getElementById('notifyRecipientInfo');
+    if (recipientInfo) {
+      recipientInfo.textContent = `📧 Sending to: ${member.name} (${member.email})`;
     }
+    
+    // Pre-fill subject
+    const subjectField = document.getElementById('notifySubject');
+    if (subjectField) {
+      subjectField.value = `Notification: ${item.name}`;
+    }
+    
+    // Pre-fill message
+    const messageField = document.getElementById('notifyMessage');
+    if (messageField) {
+      messageField.value = `Hi ${member.name},\n\nThis is regarding the item "${item.name}" (Serial: ${item.serial}) currently assigned to you.\n\nPlease confirm receipt.\n\nBest regards,\n${currentUser.name || 'Admin'}`;
+    }
+    
+    // Show the modal
+    const modal = document.getElementById('notificationModal');
+    if (modal) {
+      modal.classList.add('active');
+    }
+    
+  } catch(error) {
+    console.error('Error opening notification modal:', error);
+    alert('❌ Error: ' + error.message);
+  }
+}
 
-    // Close notification modal on ESC or backdrop click
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && document.getElementById('notificationModal').classList.contains('active')) {
-        document.getElementById('notificationModal').classList.remove('active');
+async function sendEmailViaBackend(toEmail, subject, body, fromEmail) {
+  try {
+    console.log('Sending email to:', toEmail);
+    
+    const response = await fetch('http://localhost:3000/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: toEmail,
+        subject: subject,
+        body: body,
+        from: fromEmail
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('Email response:', data);
+    
+    return data.success === true;
+  } catch(error) {
+    console.error('Email backend error:', error);
+    alert('❌ Backend error: ' + error.message + '\n\nMake sure backend is running:\nnpm start');
+    return false;
+  }
+}
+
+async function sendNotificationEmail() {
+  try {
+    const subject = (document.getElementById('notifySubject') || {}).value || '';
+    const message = (document.getElementById('notifyMessage') || {}).value || '';
+    
+    if (!subject.trim() || !message.trim()) {
+      alert('❌ Please fill in both subject and message');
+      return;
+    }
+    
+    // Get data from localStorage
+    const items = JSON.parse(localStorage.getItem('items') || '[]');
+    const members = JSON.parse(localStorage.getItem('members') || '[]');
+    
+    // Find item and member
+    const item = items.find(i => String(i.id) === String(currentNotifyItemId));
+    if (!item) {
+      alert('❌ Item not found');
+      return;
+    }
+    
+    const member = members.find(m => String(m.id) === String(item.holder));
+    if (!member || !member.email) {
+      alert('❌ Member or email not found');
+      return;
+    }
+    
+    // Show loading state
+    const btn = event.target;
+    const originalText = btn.innerText;
+    btn.innerText = '📤 Sending...';
+    btn.disabled = true;
+    
+    // Send email
+    const success = await sendEmailViaBackend(
+      member.email,
+      subject,
+      message,
+      currentUser.email || 'admin@assetmanager.com'
+    );
+    
+    // Reset button
+    btn.innerText = originalText;
+    btn.disabled = false;
+    
+    if (success) {
+      alert('✅ Email sent successfully!');
+      document.getElementById('notificationModal').classList.remove('active');
+      document.getElementById('notifySubject').value = '';
+      document.getElementById('notifyMessage').value = '';
+    }
+    
+  } catch(error) {
+    console.error('Error sending email:', error);
+    alert('❌ Error: ' + error.message);
+  }
+}
+
+async function sendMemberWelcomeEmail(email, name, password) {
+  try {
+    await sendEmailViaBackend(
+      email,
+      '🎉 Profile Created - Asset Manager Application',
+      `Hi ${name},\n\nYour profile has been successfully created!\n\nLogin credentials:\nEmail: ${email}\nPassword: ${password}\n\nPlease change your password after first login.\n\nBest regards,\nAsset Manager Team`,
+      currentUser.email || 'admin@assetmanager.com'
+    );
+  } catch(error) {
+    console.error('Welcome email error:', error);
+  }
+}
+
+async function sendItemAssignmentEmail(memberEmail, memberName, itemName, itemSerial) {
+  try {
+    await sendEmailViaBackend(
+      memberEmail,
+      `📦 Item Assignment: ${itemName}`,
+      `Hi ${memberName},\n\nYou have been assigned:\n\nItem: ${itemName}\nSerial: ${itemSerial}\n\nPlease confirm receipt.\n\nBest regards,\nAsset Manager Team`,
+      currentUser.email || 'admin@assetmanager.com'
+    );
+  } catch(error) {
+    console.error('Assignment email error:', error);
+  }
+}
+
+// Modal close handlers
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('notificationModal');
+    if (modal) {
+      modal.classList.remove('active');
+    }
+  }
+});
+
+// Backdrop click close
+setTimeout(function() {
+  const modal = document.getElementById('notificationModal');
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.classList.remove('active');
       }
     });
+  }
+}, 100);
 
-    document.getElementById('notificationModal')?.addEventListener('click', (e) => {
-      if (e.target.id === 'notificationModal') {
-        document.getElementById('notificationModal').classList.remove('active');
-      }
-    });
-    // ==================== END EMAIL FUNCTIONS ====================
+// ==================== END EMAIL FUNCTIONS ====================
+
 </script>
 
 
