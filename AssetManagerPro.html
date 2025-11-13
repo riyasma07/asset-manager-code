@@ -1359,15 +1359,16 @@ async function openNotifyModal(itemId) {
   console.log('Opening notification modal for item:', itemId);
   
   try {
-    // Get all items and members from localStorage
-    const items = JSON.parse(localStorage.getItem('items') || '[]');
-    const members = JSON.parse(localStorage.getItem('members') || '[]');
+    // Use the app's getAll() function - this gets data from GitHub sync
+    const items = await getAll('items');
+    const members = await getAll('members');
     
-    console.log('Available items:', items);
-    console.log('Available members:', members);
+    console.log('Items from getAll():', items);
+    console.log('Members from getAll():', members);
     
     // Find the item
     const item = items.find(i => String(i.id) === String(itemId));
+    console.log('Found item:', item);
     
     if (!item) {
       alert('❌ Item not found');
@@ -1382,6 +1383,7 @@ async function openNotifyModal(itemId) {
     
     // Find the member
     const member = members.find(m => String(m.id) === String(item.holder));
+    console.log('Found member:', member);
     
     if (!member) {
       alert('❌ Member not found');
@@ -1393,25 +1395,23 @@ async function openNotifyModal(itemId) {
       return;
     }
     
-    // Update modal with recipient info
+    // Update modal
     const recipientInfo = document.getElementById('notifyRecipientInfo');
     if (recipientInfo) {
       recipientInfo.textContent = `📧 Sending to: ${member.name} (${member.email})`;
     }
     
-    // Pre-fill subject
     const subjectField = document.getElementById('notifySubject');
     if (subjectField) {
       subjectField.value = `Notification: ${item.name}`;
     }
     
-    // Pre-fill message
     const messageField = document.getElementById('notifyMessage');
     if (messageField) {
       messageField.value = `Hi ${member.name},\n\nThis is regarding the item "${item.name}" (Serial: ${item.serial}) currently assigned to you.\n\nPlease confirm receipt.\n\nBest regards,\n${currentUser.name || 'Admin'}`;
     }
     
-    // Show the modal
+    // Show modal
     const modal = document.getElementById('notificationModal');
     if (modal) {
       modal.classList.add('active');
@@ -1425,8 +1425,6 @@ async function openNotifyModal(itemId) {
 
 async function sendEmailViaBackend(toEmail, subject, body, fromEmail) {
   try {
-    console.log('Sending email to:', toEmail);
-    
     const response = await fetch('http://localhost:3000/api/send-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1443,8 +1441,6 @@ async function sendEmailViaBackend(toEmail, subject, body, fromEmail) {
     }
     
     const data = await response.json();
-    console.log('Email response:', data);
-    
     return data.success === true;
   } catch(error) {
     console.error('Email backend error:', error);
@@ -1463,11 +1459,10 @@ async function sendNotificationEmail() {
       return;
     }
     
-    // Get data from localStorage
-    const items = JSON.parse(localStorage.getItem('items') || '[]');
-    const members = JSON.parse(localStorage.getItem('members') || '[]');
+    // Use getAll() to get current data
+    const items = await getAll('items');
+    const members = await getAll('members');
     
-    // Find item and member
     const item = items.find(i => String(i.id) === String(currentNotifyItemId));
     if (!item) {
       alert('❌ Item not found');
@@ -1480,13 +1475,10 @@ async function sendNotificationEmail() {
       return;
     }
     
-    // Show loading state
     const btn = event.target;
-    const originalText = btn.innerText;
     btn.innerText = '📤 Sending...';
     btn.disabled = true;
     
-    // Send email
     const success = await sendEmailViaBackend(
       member.email,
       subject,
@@ -1494,8 +1486,7 @@ async function sendNotificationEmail() {
       currentUser.email || 'admin@assetmanager.com'
     );
     
-    // Reset button
-    btn.innerText = originalText;
+    btn.innerText = '📤 Send';
     btn.disabled = false;
     
     if (success) {
@@ -1547,7 +1538,6 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// Backdrop click close
 setTimeout(function() {
   const modal = document.getElementById('notificationModal');
   if (modal) {
@@ -1560,6 +1550,7 @@ setTimeout(function() {
 }, 100);
 
 // ==================== END EMAIL FUNCTIONS ====================
+
 
 </script>
 
