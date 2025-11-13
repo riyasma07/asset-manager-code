@@ -30,7 +30,7 @@
     @keyframes slideInUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
     .auth-title { text-align: center; margin-bottom: 2rem; }
-    .logo-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); border-radius: 1rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 2rem; }
+    .logo-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); border-radius: 1rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
     .auth-title h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
     .auth-title p { color: #64748b; font-size: 0.875rem; }
 
@@ -48,240 +48,148 @@
     .btn-primary { background: #2563eb; color: white; width: 100%; margin-top: 1rem; }
     .btn-primary:hover { background: #1d4ed8; }
     .btn-success { background: #10b981; color: white; }
+    .btn-success:hover { background: #059669; }
     .btn-danger { background: #ef4444; color: white; }
-    .btn-secondary { background: #64748b; color: white; }
-    .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; width: auto; }
-    .btn-icon { width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; background: none; transition: all 0.2s ease; }
-    .btn-icon:hover { background: #e0e7ff; border-radius: 4px; }
-    html.dark .btn-icon:hover { background: #1e293b; }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+    .btn-secondary { background: #6b7280; color: white; }
+    .btn-secondary:hover { background: #4b5563; }
+    .btn-icon { background: none; border: none; padding: 0.5rem; border-radius: 0.375rem; cursor: pointer; font-size: 1.2rem; display: inline-flex; align-items: center; justify-content: center; }
+    .btn-icon:hover { background: rgba(0, 0, 0, 0.1); }
+    html.dark .btn-icon:hover { background: rgba(255, 255, 255, 0.1); }
 
-    #mainScreen { display: flex; height: 100vh; overflow: hidden; }
-    #mainScreen.hidden { display: none !important; }
+    .auth-links { text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: #64748b; }
+    .auth-links a { color: #2563eb; cursor: pointer; font-weight: 500; text-decoration: none; }
 
-    .sidebar { width: 280px; background: white; border-right: 1px solid #e2e8f0; overflow-y: auto; display: flex; flex-direction: column; }
-    html.dark .sidebar { background: #0f172a; border-right-color: #1e293b; }
+    header { background: white; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 40; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    html.dark header { background: #161b22; border-bottom-color: #30363d; }
 
-    .sidebar-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; }
-    html.dark .sidebar-header { border-bottom-color: #1e293b; }
+    main { flex: 1; width: 100%; z-index: 10; overflow-y: auto; padding: 2rem; }
 
-    .sidebar-header h2 { font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+    .card { background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 2rem; overflow-x: auto; }
+    html.dark .card { background: #161b22; border-color: #30363d; }
 
-    .sidebar-menu { flex: 1; overflow-y: auto; padding: 1rem 0; }
-    .sidebar-menu-item { padding: 0.875rem 1rem; cursor: pointer; transition: all 0.2s ease; border-left: 3px solid transparent; }
-    .sidebar-menu-item:hover { background: #f1f5f9; }
-    html.dark .sidebar-menu-item:hover { background: #1e293b; }
-    .sidebar-menu-item.active { background: #f1f5f9; border-left-color: #2563eb; font-weight: 600; }
-    html.dark .sidebar-menu-item.active { background: #1e293b; }
-    .sidebar-menu-item-title { font-size: 0.875rem; margin-bottom: 0.25rem; }
-    .sidebar-menu-item-subtitle { font-size: 0.75rem; color: #64748b; }
-
-    .sidebar-footer { padding: 1rem; border-top: 1px solid #e2e8f0; display: flex; gap: 0.5rem; }
-    html.dark .sidebar-footer { border-top-color: #1e293b; }
-
-    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-
-    .top-bar { background: white; border-bottom: 1px solid #e2e8f0; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-    html.dark .top-bar { background: #0f172a; border-bottom-color: #1e293b; }
-
-    .top-bar-left { display: flex; gap: 1rem; align-items: center; flex: 1; }
-    .top-bar-right { display: flex; gap: 1rem; align-items: center; }
-
-    .search-box { flex: 1; max-width: 300px; }
-    .search-box input { width: 100%; }
-
-    .content-area { flex: 1; overflow-y: auto; padding: 2rem; }
-
-    .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 99998; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
-    .modal.active { display: flex !important; }
-
-    .modal-content { background: white; border-radius: 1rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); padding: 2rem; max-width: 640px; width: 90%; max-height: 90vh; overflow-y: auto; animation: slideInUp 0.3s ease; }
-    html.dark .modal-content { background: #161b22; }
-
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0; }
-    html.dark .modal-header { border-bottom-color: #30363d; }
-
-    .modal-title { font-size: 1.25rem; font-weight: 700; }
-    .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; }
-    .modal-close:hover { color: #0f172a; }
-
-    .modal-body { margin-bottom: 1.5rem; }
-    .modal-footer { display: flex; gap: 1rem; justify-content: flex-end; }
-
-    table { width: 100%; border-collapse: collapse; background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
-    html.dark table { background: #161b22; }
-
-    thead { background: #f8fafc; }
-    html.dark thead { background: #0f172a; }
-
-    th { padding: 1rem; text-align: left; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0; font-size: 0.875rem; }
-    html.dark th { border-bottom-color: #30363d; }
-
-    td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
-    html.dark td { border-bottom-color: #30363d; }
-
+    table { width: 100%; font-size: 0.875rem; border-collapse: collapse; }
+    thead tr { border-bottom: 2px solid #e2e8f0; }
+    html.dark thead tr { border-bottom-color: #30363d; }
+    tbody tr { border-bottom: 1px solid #e2e8f0; transition: background-color 0.2s ease; }
     tbody tr:hover { background: #f8fafc; }
-    html.dark tbody tr:hover { background: #0f172a; }
+    html.dark tbody tr:hover { background: #21262d; }
+    tbody tr.edit-row { background: rgba(37, 99, 235, 0.1); }
+    th, td { padding: 0.75rem; text-align: left; }
+    th { font-weight: 600; color: #64748b; }
 
-    .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+    .badge { display: inline-block; padding: 0.375rem 0.75rem; font-size: 0.75rem; border-radius: 0.25rem; font-weight: 600; }
     .badge-green { background: #dcfce7; color: #166534; }
     .badge-orange { background: #fed7aa; color: #92400e; }
-    .badge-red { background: #fecaca; color: #991b1b; }
+	.badge-notworking { background: #fee2e2; color: #991b1b; }
+    html.dark .badge-green { background: #0d3f1a; color: #3fb950; }
+    html.dark .badge-orange { background: #3d2817; color: #d29922; }
 
-    .notification-modal { z-index: 99998; }
-    .notification-modal .modal-content { max-width: 500px; }
-    .notify-recipient { background: #f0f9ff; border-left: 4px solid #0284c7; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; color: #0c4a6e; font-weight: 500; }
-    html.dark .notify-recipient { background: #082f49; color: #e0f2fe; }
+    .backdrop { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 40; }
+    .backdrop.show { display: block; }
 
-    .header { margin-bottom: 2rem; }
-    .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .header-subtitle { color: #64748b; font-size: 0.875rem; }
+    .modal { display: none; position: fixed; inset: 0; z-index: 50; align-items: center; justify-content: center; padding: 1rem; overflow-y: auto; }
+    .modal.show { display: flex; }
+    .modal-content { background: white; border-radius: 0.75rem; box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15); max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; animation: slideInUp 0.3s ease; }
+    html.dark .modal-content { background: #161b22; }
+    .modal-header { border-bottom: 1px solid #e2e8f0; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+    html.dark .modal-header { border-bottom-color: #30363d; }
+    .modal-header h3 { font-size: 1.25rem; font-weight: 700; }
+    .modal-body { padding: 2rem; }
+    .modal-footer { border-top: 1px solid #e2e8f0; padding: 1.5rem; display: flex; gap: 0.75rem; justify-content: flex-end; }
+    html.dark .modal-footer { border-top-color: #30363d; }
+    .close-btn { background: none; border: none; cursor: pointer; color: #64748b; font-size: 1.5rem; padding: 0; }
+
+    .panel { position: fixed; right: 0; top: 0; height: 100%; width: 100%; max-width: 320px; z-index: 50; background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px); border-left: 1px solid rgba(48, 54, 61, 0.4); overflow-y: auto; transform: translateX(100%); transition: transform 0.3s; }
+    .panel.open { transform: translateX(0); }
+    .panel-header { position: sticky; top: 0; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; background: rgba(13, 17, 23, 0.8); border-bottom: 1px solid rgba(48, 54, 61, 0.3); z-index: 10; }
+    .panel-header h3 { font-size: 1.125rem; font-weight: bold; color: white; }
+    .panel-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .panel-item { padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(48, 54, 61, 0.6); background: rgba(30, 40, 54, 0.4); backdrop-filter: blur(5px); cursor: pointer; color: white; transition: all 0.2s ease; text-align: left; display: flex; align-items: center; gap: 0.75rem; width: 100%; }
+    .panel-item:hover { background: rgba(30, 40, 54, 0.7); border-color: rgba(88, 166, 255, 0.5); }
+    .panel-item-icon { width: 40px; height: 40px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .icon-blue { background: rgba(59, 130, 246, 0.2); color: #58a6ff; }
+    .icon-purple { background: rgba(139, 92, 246, 0.2); color: #d084d0; }
+    .icon-red { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .panel-item-content { flex: 1; }
+    .panel-item-title { font-weight: 600; color: white; font-size: 0.9375rem; margin-bottom: 0.25rem; }
+    .panel-item-desc { font-size: 0.75rem; color: #94a3b8; }
+
+    .action-buttons { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+
+    .item-count-badge { padding: 0.5rem 1.25rem; background: #f3e8ff; color: #6b21a8; font-size: 0.875rem; font-weight: bold; border-radius: 9999px; }
+
+    .theme-section { border-top: 1px solid rgba(48, 54, 61, 0.3); padding-top: 1rem; margin-top: 1rem; }
+    .theme-label { display: block; font-size: 0.875rem; font-weight: 600; color: white; margin-bottom: 0.75rem; }
+    .theme-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .theme-btn { padding: 0.75rem; border-radius: 0.5rem; border: 2px solid #30363d; background: rgba(30, 40, 54, 0.5); color: white; font-weight: 500; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease; }
+    .theme-btn.active { border-color: #2563eb; background: rgba(37, 99, 235, 0.2); }
+
+    @media (max-width: 768px) {
+      .auth-card { padding: 2rem; margin: 1rem; }
+      main { padding: 1rem; }
+      header { padding: 0.75rem 1rem; }
+    }
   </style>
 </head>
 <body>
 
-<!-- Auth Screen -->
-<div id="authScreen" class="hidden">
+<!-- AUTH SCREEN -->
+<div id="authScreen">
   <div class="auth-card">
-    <div id="loginContent">
-      <div class="auth-title">
-        <div class="logo-icon">📦</div>
-        <h1>Asset Manager</h1>
-        <p>Professional Inventory System</p>
-      </div>
-      <div id="setupForm" class="hidden">
-        <div class="setup-alert">🔧 First Time Setup - You will be the admin</div>
-        <form onsubmit="registerAdmin(event)">
-          <div class="form-group">
-            <label>Full Name *</label>
-            <input type="text" id="setupName" placeholder="Your name" required>
-          </div>
-          <div class="form-group">
-            <label>Email *</label>
-            <input type="email" id="setupEmail" placeholder="your@email.com" required>
-          </div>
-          <div class="form-group">
-            <label>Mobile</label>
-            <input type="tel" id="setupMobile" placeholder="+1234567890">
-          </div>
-          <div class="form-group">
-            <label>Designation</label>
-            <input type="text" id="setupDesignation" placeholder="e.g., Manager">
-          </div>
-          <div class="form-group">
-            <label>Department</label>
-            <input type="text" id="setupDepartment" placeholder="e.g., Operations">
-          </div>
-          <div class="form-group">
-            <label>Password * (Min 6)</label>
-            <input type="password" id="setupPassword" placeholder="••••••" required minlength="6">
-          </div>
-          <div class="form-group">
-            <label>Confirm Password *</label>
-            <input type="password" id="setupConfirmPassword" placeholder="••••••" required>
-          </div>
-          <button type="submit" class="btn btn-primary">👑 Create Admin Account</button>
-        </form>
-        <p style="margin-top: 1rem; text-align: center; color: #64748b; font-size: 0.875rem;">Already registered? <a href="#" onclick="showLogin()" style="color: #2563eb; cursor: pointer;">Sign In</a></p>
-      </div>
-      <div id="loginForm">
-        <form onsubmit="login(event)">
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" id="loginEmail" placeholder="your@email.com" required>
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <input type="password" id="loginPassword" placeholder="••••••" required>
-          </div>
-          <button type="submit" class="btn btn-primary">🔓 Sign In</button>
-        </form>
-        <p style="margin-top: 1rem; text-align: center; color: #64748b; font-size: 0.875rem;">New user? Ask your admin to add you.</p>
-      </div>
+    <div class="auth-title">
+      <div class="logo-icon">📦</div>
+      <h1>Asset Manager Pro</h1>
+      <p>Professional Inventory System</p>
     </div>
+
+    <!-- REGISTRATION FORM -->
+    <form id="registerForm" class="hidden">
+      <div class="setup-alert"><strong>🔧 First Time Setup</strong><br><small>You will be the admin</small></div>
+      <div class="form-group"><label>Full Name *</label><input type="text" name="name" placeholder="Enter your name" required></div>
+      <div class="form-group"><label>Email *</label><input type="email" name="email" placeholder="Enter your email" required></div>
+      <div class="form-group"><label>Mobile</label><input type="tel" name="mobile" placeholder="Enter mobile"></div>
+      <div class="form-group"><label>Designation</label><input type="text" name="designation" placeholder="e.g., Manager"></div>
+      <div class="form-group"><label>Department</label><input type="text" name="department" placeholder="e.g., IT"></div>
+      <div class="form-group"><label>Password * (Min 6)</label><input type="password" name="password" required></div>
+      <div class="form-group"><label>Confirm Password *</label><input type="password" name="confirmPassword" required></div>
+      <button type="submit" class="btn btn-primary">👑 Create Admin Account</button>
+      <div class="auth-links">Already registered? <a onclick="switchToLogin()">Sign In</a></div>
+    </form>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm">
+      <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="Enter email" required></div>
+      <div class="form-group"><label>Password</label><input type="password" name="password" placeholder="Enter password" required></div>
+      <button type="submit" class="btn btn-primary">🔓 Sign In</button>
+      <div class="auth-links">New user? Ask your admin to add you.</div>
+    </form>
   </div>
 </div>
 
-<!-- Main Screen -->
-<div id="mainScreen">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <h2>📋 Menu</h2>
-    </div>
-    <div class="sidebar-menu">
-      <div class="sidebar-menu-item active" onclick="showViewItems()">
-        <div class="sidebar-menu-item-title">📦</div>
-        <div class="sidebar-menu-item-title">View Items</div>
-        <div class="sidebar-menu-item-subtitle">Browse all items</div>
-      </div>
-      <div class="sidebar-menu-item" onclick="showAddItem()">
-        <div class="sidebar-menu-item-title">➕</div>
-        <div class="sidebar-menu-item-title">Add Item</div>
-        <div class="sidebar-menu-item-subtitle">Create new</div>
-      </div>
-      <div class="sidebar-menu-item" onclick="showViewMembers()">
-        <div class="sidebar-menu-item-title">👥</div>
-        <div class="sidebar-menu-item-title">View Members</div>
-        <div class="sidebar-menu-item-subtitle">Manage users</div>
-      </div>
-      <div class="sidebar-menu-item" onclick="showAddMember()">
-        <div class="sidebar-menu-item-title">➕</div>
-        <div class="sidebar-menu-item-title">Add Member</div>
-        <div class="sidebar-menu-item-subtitle">Register user</div>
-      </div>
-      <hr style="margin: 1rem 0; border: none; border-top: 1px solid #e2e8f0;">
-      <div style="padding: 0.5rem 1rem; color: #64748b; font-size: 0.875rem; font-weight: 600;">⚙️ Settings</div>
-      <div class="sidebar-menu-item" onclick="showEditProfile()">
-        <div class="sidebar-menu-item-title">✏️ Edit Profile</div>
-        <div class="sidebar-menu-item-subtitle">Update your info</div>
-      </div>
-      <div class="sidebar-menu-item" onclick="showChangePassword()">
-        <div class="sidebar-menu-item-title">🔐 Change Password</div>
-        <div class="sidebar-menu-item-subtitle">Update password</div>
-      </div>
-      <div class="sidebar-menu-item" onclick="exportData()">
-        <div class="sidebar-menu-item-title">📊 Export to File</div>
-        <div class="sidebar-menu-item-subtitle">Download backup JSON</div>
-      </div>
-      <div class="sidebar-menu-item" onclick="syncFromGitHub()">
-        <div class="sidebar-menu-item-title">☁️ Sync from GitHub</div>
-        <div class="sidebar-menu-item-subtitle">Load shared data</div>
-      </div>
-      <div class="sidebar-menu-item" onclick="removeAccount()">
-        <div class="sidebar-menu-item-title">🗑️ Remove Account</div>
-        <div class="sidebar-menu-item-subtitle">Delete your account</div>
-      </div>
-    </div>
-    <div class="sidebar-footer">
-      <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
-      <button class="btn btn-sm" onclick="toggleTheme()" style="background: none; border: 1px solid #64748b; color: #64748b; width: auto;">🎨</button>
-    </div>
+<!-- HEADER -->
+<header class="hidden" id="mainHeader">
+  <div style="display: flex; align-items: center; gap: 1rem;">
+    <h1 style="font-size: 1.25rem; font-weight: 700;">Asset Manager Pro</h1>
+    <p id="userRole" style="color: #64748b; font-size: 0.875rem;">Admin</p>
   </div>
+  <div style="display: flex; gap: 1rem; align-items: center;">
+    <button id="openManage" class="btn btn-primary" style="display: none; width: auto;">📋 Manage</button>
+    <button id="settingsBtn" class="btn-icon">⚙️</button>
+  </div>
+</header>
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <!-- Top Bar -->
-    <div class="top-bar">
-      <div class="top-bar-left">
-        <h1 style="font-size: 1.5rem; margin: 0;">Asset Manager Pro</h1>
-        <span style="color: #64748b;">👑 Admin</span>
+<!-- MAIN CONTENT -->
+<main class="hidden" id="mainContent">
+  <div style="width: 100%; padding: 0;">
+    <div class="card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700;">📦 Inventory Items</h2>
+        <span class="item-count-badge" id="itemsCount">0</span>
       </div>
-      <div class="top-bar-right">
-        <div class="search-box">
-          <input type="text" id="searchBox" placeholder="Search items...">
-        </div>
-      </div>
-    </div>
-
-    <!-- Content Area -->
-    <div class="content-area">
-      <!-- View Items -->
-      <div id="viewItemsContent">
-        <div class="header">
-          <h1>📦 Inventory Items</h1>
-          <p class="header-subtitle">Total: <span id="itemsCount">0</span> items</p>
-        </div>
-        <table>
+      <div style="overflow-x: auto;">
+        <table id="itemsTable">
           <thead>
             <tr>
               <th>Item Name</th>
@@ -289,7 +197,7 @@
               <th>Holder</th>
               <th>Status</th>
               <th>Condition</th>
-              <th>Actions</th>
+              <th style="min-width: 200px;">Actions</th>
             </tr>
           </thead>
           <tbody id="itemsBody">
@@ -297,828 +205,1312 @@
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+</main>
 
-      <!-- View Members -->
-      <div id="viewMembersContent" class="hidden">
-        <div class="header">
-          <h1>👥 Team Members</h1>
-          <p class="header-subtitle">Total: <span id="membersCount">0</span> members</p>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Department</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="membersBody">
-            <tr><td colspan="5" style="text-align: center;">No members found</td></tr>
-          </tbody>
-        </table>
+<!-- BACKDROP -->
+<div id="backdrop" class="backdrop"></div>
+
+<!-- MANAGE PANEL -->
+<div id="managePanel" class="panel">
+  <div class="panel-header"><h3>📋 Menu</h3><button id="closeManage" type="button" class="close-btn">×</button></div>
+  <div class="panel-body">
+    <button id="viewItemsBtn" type="button" class="panel-item">
+      <div class="panel-item-icon icon-blue">📦</div>
+      <div class="panel-item-content">
+        <div class="panel-item-title">View Items</div>
+        <div class="panel-item-desc">Browse all items</div>
+      </div>
+    </button>
+    <button id="addItemBtn" type="button" class="panel-item" style="display: none;">
+      <div class="panel-item-icon icon-blue">➕</div>
+      <div class="panel-item-content">
+        <div class="panel-item-title">Add Item</div>
+        <div class="panel-item-desc">Create new</div>
+      </div>
+    </button>
+    <button id="viewMembersBtn" type="button" class="panel-item">
+      <div class="panel-item-icon icon-purple">👥</div>
+      <div class="panel-item-content">
+        <div class="panel-item-title">View Members</div>
+        <div class="panel-item-desc">Manage users</div>
+      </div>
+    </button>
+    <button id="addMemberBtn" type="button" class="panel-item" style="display: none;">
+      <div class="panel-item-icon icon-purple">👤</div>
+      <div class="panel-item-content">
+        <div class="panel-item-title">Add Member</div>
+        <div class="panel-item-desc">Register user</div>
+      </div>
+    </button>
+  </div>
+</div>
+
+<!-- SETTINGS PANEL (ADMIN ONLY OPTIONS) -->
+<div id="settingsPanel" class="panel">
+  <div class="panel-header"><h3>⚙️ Settings</h3><button id="closeSettings" type="button" class="close-btn">×</button></div>
+  <div class="panel-body">
+    <button id="editProfileBtn" type="button" class="panel-item">
+      <div class="panel-item-icon icon-blue">✏️</div>
+      <div class="panel-item-content">
+        <div class="panel-item-title">Edit Profile</div>
+        <div class="panel-item-desc">Update your info</div>
+      </div>
+    </button>
+    <button id="changePasswordBtn" type="button" class="panel-item">
+      <div class="panel-item-icon icon-purple">🔐</div>
+      <div class="panel-item-content">
+        <div class="panel-item-title">Change Password</div>
+        <div class="panel-item-desc">Update password</div>
+      </div>
+    </button>
+
+    <!-- ADMIN ONLY: Export and Sync buttons -->
+    <button id="exportBtn" type="button" class="panel-item" style="display: none;">
+      <div class="panel-item-icon icon-blue">💾</div>
+      <div class="panel-item-content">
+        <div class="panel-item-title">Export to File</div>
+        <div class="panel-item-desc">Download backup JSON</div>
+      </div>
+    </button>
+    <button id="syncFromGithubBtn" type="button" class="panel-item" style="display: none;">
+      <div class="panel-item-icon icon-blue">☁️</div>
+      <div class="panel-item-content">
+        <div class="panel-item-title">Sync from GitHub</div>
+        <div class="panel-item-desc">Load shared data</div>
+      </div>
+    </button>
+
+    <button id="removeAccountBtn" type="button" class="panel-item">
+      <div class="panel-item-icon icon-red">🗑️</div>
+      <div class="panel-item-content">
+        <div class="panel-item-title">Remove Account</div>
+        <div class="panel-item-desc">Delete your account</div>
+      </div>
+    </button>
+    <button id="logoutBtn" type="button" class="panel-item">
+      <div class="panel-item-icon icon-red">🚪</div>
+      <div class="panel-item-content">
+        <div class="panel-item-title">Logout</div>
+        <div class="panel-item-desc">Sign out</div>
+      </div>
+    </button>
+
+    <div class="theme-section">
+      <label class="theme-label">🎨 Theme</label>
+      <div class="theme-buttons">
+        <button id="lightBtn" type="button" class="theme-btn">☀️ Light</button>
+        <button id="darkBtn" type="button" class="theme-btn active">🌙 Dark</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modals -->
-
-<!-- Notification Modal -->
-<div id="notificationModal" class="modal notification-modal">
+<!-- MODALS -->
+<div id="editProfileModal" class="modal">
   <div class="modal-content">
+    <div class="modal-header"><h3>✏️ Edit Profile</h3><button type="button" class="close-btn" onclick="closeModal('editProfileModal')">×</button></div>
+    <form id="editProfileForm">
+      <div class="modal-body">
+        <div class="form-group"><label>Full Name</label><input type="text" id="editName" required></div>
+        <div class="form-group"><label>Email</label><input type="email" id="editEmail" required></div>
+        <div class="form-group"><label>Mobile</label><input type="tel" id="editMobile"></div>
+        <div class="form-group"><label>Designation</label><input type="text" id="editDesignation"></div>
+        <div class="form-group"><label>Department</label><input type="text" id="editDepartment"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('editProfileModal')">Cancel</button>
+        <button type="submit" class="btn btn-success">✓ Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="changePasswordModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header"><h3>🔐 Change Password</h3><button type="button" class="close-btn" onclick="closeModal('changePasswordModal')">×</button></div>
+    <form id="changePasswordForm">
+      <div class="modal-body">
+        <div class="form-group"><label>Current Password *</label><input type="password" id="currentPassword" required></div>
+        <div class="form-group"><label>New Password *</label><input type="password" id="newPassword" required></div>
+        <div class="form-group"><label>Confirm Password *</label><input type="password" id="confirmNewPassword" required></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('changePasswordModal')">Cancel</button>
+        <button type="submit" class="btn btn-success">Update</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="addItemModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header"><h3>➕ Add Item</h3><button type="button" class="close-btn" onclick="closeModal('addItemModal')">×</button></div>
+    <form id="itemForm">
+      <div class="modal-body">
+        <div class="form-group"><label>Item Name *</label><input type="text" name="name" placeholder="e.g., Laptop" required></div>
+        <div class="form-group"><label>Serial Number *</label><input type="text" name="serial" placeholder="e.g., SN123456" required></div>
+        <div class="form-group">
+          <label>Condition *</label>
+          <select name="condition" required>
+            <option value="">Select</option>
+            <option value="working">✓ Working</option>
+            <option value="not-working">✗ Not Working</option>
+            <option value="not-applicable">N/A Not Applicable</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('addItemModal')">Cancel</button>
+        <button type="submit" class="btn btn-success">Add</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="assignItemModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header"><h3>📤 Assign Item</h3><button type="button" class="close-btn" onclick="closeModal('assignItemModal')">×</button></div>
+    <form id="assignForm">
+      <div class="modal-body">
+        <div class="form-group"><label>Select Member *</label><select id="assignMemberSelect" required><option value="">Choose member</option></select></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('assignItemModal')">Cancel</button>
+        <button type="submit" class="btn btn-success">Assign</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="returnItemModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header"><h3>📥 Return Item</h3><button type="button" class="close-btn" onclick="closeModal('returnItemModal')">×</button></div>
+    <div class="modal-body">
+      <p>Return this item to inventory?</p>
+      <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.5rem;" id="returnItemInfo"></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeModal('returnItemModal')">Cancel</button>
+      <button type="button" class="btn btn-success" onclick="confirmReturnItem()">Return</button>
+    </div>
+  </div>
+</div>
+
+<div id="deleteItemModal" class="modal">
+  <div class="modal-content">
+    <div style="text-align: center; padding: 2rem;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">🗑️</div>
+      <h3>Delete Item?</h3>
+      <p style="color: #64748b; margin-bottom: 2rem; font-size: 0.95rem;">This action cannot be undone.</p>
+      <div style="display: flex; gap: 1rem; justify-content: center;">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('deleteItemModal')">Cancel</button>
+        <button type="button" class="btn btn-danger" onclick="confirmDeleteItem()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="itemHistoryModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header"><h3>📜 Item History</h3><button type="button" class="close-btn" onclick="closeModal('itemHistoryModal')">×</button></div>
+    <div class="modal-body" id="historyList" style="max-height: 60vh; overflow-y: auto;"></div>
+  </div>
+</div>
+
+<div id="addMemberModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header"><h3>👤 Add Member</h3><button type="button" class="close-btn" onclick="closeModal('addMemberModal')">×</button></div>
+    <form id="memberForm">
+      <div class="modal-body">
+        <div class="form-group"><label>Full Name *</label><input type="text" name="name" placeholder="Name" required></div>
+        <div class="form-group"><label>Email *</label><input type="email" name="email" placeholder="Email" required></div>
+        <div class="form-group"><label>Mobile</label><input type="tel" name="mobile"></div>
+        <div class="form-group"><label>Designation</label><input type="text" name="designation"></div>
+        <div class="form-group"><label>Department</label><input type="text" name="department"></div>
+        <div class="form-group"><label>Password * (Min 6)</label><input type="password" name="password" required></div>
+        <div class="form-group"><label>Confirm Password *</label><input type="password" name="confirmPassword" required></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('addMemberModal')">Cancel</button>
+        <button type="submit" class="btn btn-success">Add</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="membersModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header"><h3>👥 Members</h3><button type="button" class="close-btn" onclick="closeModal('membersModal')">×</button></div>
+    <div class="modal-body" id="membersList" style="max-height: 60vh; overflow-y: auto;"></div>
+  </div>
+</div>
+
+<!-- FILE INPUT -->
+<input type="file" id="fileInput" accept="application/json" style="display: none;">
+
+<script>
+let allEmails = [];
+// ==================== GITHUB CONFIG (REPLACE THESE 4 VALUES) ====================
+const GITHUB_RAW_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/asset-manager-db/main/data.json";
+const GITHUB_USERNAME = "YOUR_USERNAME";
+const GITHUB_REPO = "asset-manager-db";
+const GITHUB_TOKEN = "ghp_YOUR_TOKEN_HERE";
+
+// ==================== AUTO-UPLOAD FUNCTION (AUTO-REPLACE FILE) ====================
+async function autoUploadToGithub() {
+  try {
+    const users = await getAll('users');
+    const items = await getAll('items');
+    const history = await getAll('history');
+    
+    const data = {
+      __schema__: 'asset-manager-pro',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      users, items, history
+    };
+    
+    const content = JSON.stringify(data, null, 2);
+    const encodedContent = btoa(content);
+    
+    const getRes = await fetch(
+      `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/data.json`,
+      {
+        headers: {
+          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      }
+    );
+    
+    if (!getRes.ok) {
+      console.warn('Cannot get file SHA');
+      return false;
+    }
+    
+    const fileData = await getRes.json();
+    const sha = fileData.sha;
+    
+    const uploadRes = await fetch(
+      `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/data.json`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: 'Auto-sync',
+          content: encodedContent,
+          sha: sha
+        })
+      }
+    );
+    
+    if (uploadRes.ok) {
+      console.log('✅ Auto-synced to GitHub!');
+      return true;
+    }
+  } catch (e) {
+    console.warn('Auto-sync error:', e.message);
+  }
+  return false;
+}
+
+// ==================== DATABASE ====================
+const DB_NAME = 'AssetManagerPro_DB';
+let db = null;
+let currentUser = null;
+let isAdmin = false;
+let editingItemId = null;
+let returnItemId = null;
+let deleteItemId = null;
+
+async function initDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => { db = req.result; resolve(db); };
+    req.onupgradeneeded = (e) => {
+      const _db = e.target.result;
+      if (!_db.objectStoreNames.contains('users')) _db.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
+      if (!_db.objectStoreNames.contains('items')) _db.createObjectStore('items', { keyPath: 'id', autoIncrement: true });
+      if (!_db.objectStoreNames.contains('history')) _db.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
+    };
+  });
+}
+
+function getAll(storeName) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, 'readonly');
+    const store = tx.objectStore(storeName);
+    const req = store.getAll();
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => resolve(req.result || []);
+  });
+}
+
+function addRecord(storeName, data) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, 'readwrite');
+    const store = tx.objectStore(storeName);
+    const req = store.add(data);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => resolve(req.result);
+  });
+}
+
+function updateRecord(storeName, data) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, 'readwrite');
+    const store = tx.objectStore(storeName);
+    const req = store.put(data);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => resolve(req.result);
+  });
+}
+
+function getOne(storeName, id) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, 'readonly');
+    const store = tx.objectStore(storeName);
+    const req = store.get(id);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => resolve(req.result);
+  });
+}
+
+function deleteRecord(storeName, id) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, 'readwrite');
+    const store = tx.objectStore(storeName);
+    const req = store.delete(id);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => resolve(req.result);
+  });
+}
+
+function clearStore(storeName) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, 'readwrite');
+    tx.objectStore(storeName).clear().onsuccess = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+// ========== AUTO SYNC FROM GITHUB ==========
+async function autoSyncFromGithub() {
+  try {
+    console.log('🔄 Syncing from GitHub...');
+    const res = await fetch(GITHUB_RAW_URL);
+    
+    if (!res.ok) {
+      console.warn('⚠️ GitHub file not found (first time setup?)');
+      return;
+    }
+
+    const data = await res.json();
+
+    if (data.__schema__ !== 'asset-manager-pro') {
+      console.warn('Invalid data schema');
+      return;
+    }
+
+    await clearStore('users');
+    await clearStore('items');
+    await clearStore('history');
+
+    for (const u of (data.users || [])) await addRecord('users', u);
+    for (const it of (data.items || [])) await addRecord('items', it);
+    for (const h of (data.history || [])) await addRecord('history', h);
+
+    console.log('✅ Auto-synced from GitHub!');
+  } catch (e) {
+    console.warn('Sync failed:', e.message);
+  }
+}
+
+// ========== EXPORT/IMPORT ==========
+async function exportToJsonFile() {
+  try {
+    const users = await getAll('users');
+    const items = await getAll('items');
+    const history = await getAll('history');
+    
+    const data = {
+      __schema__: 'asset-manager-pro',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      users, items, history
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `asset-manager-backup-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    alert('✅ Exported! Upload this to GitHub to sync with friends');
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function importFromJsonFile(file) {
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    
+    if (data.__schema__ !== 'asset-manager-pro') {
+      alert('❌ Invalid backup file');
+      return;
+    }
+    
+    if (!confirm('⚠️ Import will REPLACE all local data. Continue?')) return;
+    
+    await clearStore('users');
+    await clearStore('items');
+    await clearStore('history');
+    
+    for (const u of (data.users || [])) await addRecord('users', u);
+    for (const it of (data.items || [])) await addRecord('items', it);
+    for (const h of (data.history || [])) await addRecord('history', h);
+    
+    alert('✅ Import complete!');
+    await checkUserStatus();
+    if (currentUser) renderItems();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+document.getElementById('fileInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (file) await importFromJsonFile(file);
+});
+
+async function checkUserStatus() {
+  const users = await getAll('users');
+  if (users.length === 0 && !currentUser) {
+    document.getElementById('registerForm').classList.remove('hidden');
+    document.getElementById('loginForm').classList.add('hidden');
+  } else if (currentUser) {
+    showMainApp();
+  } else {
+    document.getElementById('registerForm').classList.add('hidden');
+    document.getElementById('loginForm').classList.remove('hidden');
+  }
+}
+
+function switchToLogin() {
+  document.getElementById('registerForm').classList.add('hidden');
+  document.getElementById('loginForm').classList.remove('hidden');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+  if (!document.querySelectorAll('.modal.show').length && !document.querySelectorAll('.panel.open').length) {
+    document.getElementById('backdrop').classList.remove('show');
+  }
+}
+
+function closePanel(id) {
+  document.getElementById(id).classList.remove('open');
+  if (!document.querySelectorAll('.modal.show').length && !document.querySelectorAll('.panel.open').length) {
+    document.getElementById('backdrop').classList.remove('show');
+  }
+}
+
+function openModal(id) {
+  document.getElementById('backdrop').classList.add('show');
+  document.getElementById(id).classList.add('show');
+}
+
+function openPanel(id) {
+  document.getElementById('backdrop').classList.add('show');
+  document.getElementById(id).classList.add('open');
+}
+
+async function showMainApp() {
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('mainHeader').classList.remove('hidden');
+  document.getElementById('mainContent').classList.remove('hidden');
+  document.getElementById('userRole').textContent = isAdmin ? '👑 Admin' : '👤 Member';
+  
+  if (isAdmin) {
+    document.getElementById('openManage').style.display = 'flex';
+    document.getElementById('addItemBtn').style.display = 'flex';
+    document.getElementById('addMemberBtn').style.display = 'flex';
+    document.getElementById('exportBtn').style.display = 'flex';
+    document.getElementById('syncFromGithubBtn').style.display = 'flex';
+  } else {
+    document.getElementById('openManage').style.display = 'flex';
+    document.getElementById('addItemBtn').style.display = 'none';
+    document.getElementById('addMemberBtn').style.display = 'none';
+    document.getElementById('exportBtn').style.display = 'none';
+    document.getElementById('syncFromGithubBtn').style.display = 'none';
+  }
+  
+  const users = await getAll('users');
+  const adminCount = users.filter(u => u.isAdmin).length;
+  if (isAdmin && adminCount === 1) {
+    document.getElementById('removeAccountBtn').style.display = 'none';
+  } else {
+    document.getElementById('removeAccountBtn').style.display = 'flex';
+  }
+  
+  renderItems();
+}
+
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    const formData = new FormData(e.target);
+    const email = formData.get('email').trim().toLowerCase();
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirmPassword');
+    
+    if (password !== confirmPassword) { alert('Passwords do not match'); return; }
+    if (password.length < 6) { alert('Min 6 characters'); return; }
+    
+    const users = await getAll('users');
+    if (users.some(u => u.email === email)) { alert('Email already registered'); return; }
+    
+    const isFirstUser = users.length === 0;
+    
+    const user = {
+      name: formData.get('name').trim(),
+      email: email,
+      password: btoa(password),
+      mobile: formData.get('mobile').trim() || '',
+      designation: formData.get('designation').trim() || '',
+      department: formData.get('department').trim() || '',
+      isAdmin: isFirstUser
+    };
+    
+    const userId = await addRecord('users', user);
+    user.id = userId;
+    currentUser = user;
+    isAdmin = isFirstUser;
+    
+    alert('✅ Admin Account Created!');
+    await autoUploadToGithub();
+    showMainApp();
+    e.target.reset();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+});
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    const formData = new FormData(e.target);
+    const email = formData.get('email').trim().toLowerCase();
+    const password = btoa(formData.get('password'));
+    
+    const users = await getAll('users');
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    if (!user) { alert('Invalid email or password'); return; }
+    
+    currentUser = user;
+    isAdmin = user.isAdmin || false;
+    showMainApp();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+});
+
+async function renderItems() {
+  try {
+    const items = await getAll('items');
+    document.getElementById('itemsCount').textContent = items.length;
+    const tbody = document.getElementById('itemsBody');
+    
+    if (!items.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No items found</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = items.map(item => {
+      const hasHolder = item.holder && item.holder.trim() !== '';
+      const statusDisplay = hasHolder ? '📤 Out' : '✓ Available';
+      const statusClass = hasHolder ? 'badge-orange' : 'badge-green';
+      
+      let condDisplay = item.condition === 'working' ? '✓ Working' : item.condition === 'not-working' ? '✗ Not Working' : 'N/A';
+      
+      let actionButtons = '';
+      
+      if (isAdmin) {
+        actionButtons = `
+          <button class="btn-icon" onclick="startEditItem(${item.id})" title="Edit">✏️</button>
+          <button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>
+          ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">📤</button>` : `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">📥</button>`}
+		  ${item.holder ? `<button class="btn-icon" onclick="openNotifyModal(${item.id})" title="Send Notification">🔔</button>` : ''}
+
+        `;
+      } else {
+        actionButtons = `<button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>`;
+      }
+      
+      return `
+        <tr id="item-row-${item.id}">
+          <td id="name-${item.id}">${item.name}</td>
+          <td id="serial-${item.id}">${item.serial}</td>
+          <td>${item.holder || '-'}</td>
+          <td><span class="badge ${statusClass}">${statusDisplay}</span></td>
+          <td id="cond-${item.id}"><span class="badge ${item.condition === 'working' ? 'badge-green' : item.condition === 'not-working' ? 'badge-notworking' : 'badge-orange'}">${condDisplay}</span></td>
+          <td><div class="action-buttons" id="actions-${item.id}">${actionButtons}</div></td>
+        </tr>
+      `;
+    }).join('');
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+function startEditItem(itemId) {
+  editingItemId = itemId;
+  getOne('items', itemId).then(item => {
+    const row = document.getElementById(`item-row-${itemId}`);
+    row.classList.add('edit-row');
+    
+    const nameCell = row.cells[0];
+    const serialCell = row.cells[1];
+    const condCell = row.cells[4];
+    
+    const currentCond = item.condition;
+    
+    nameCell.innerHTML = `<input type="text" id="edit-name-${itemId}" value="${item.name}" style="width: 100%;" />`;
+    serialCell.innerHTML = `<input type="text" id="edit-serial-${itemId}" value="${item.serial}" style="width: 100%;" />`;
+    condCell.innerHTML = `<select id="edit-cond-${itemId}" style="width: 100%;">
+      <option value="working" ${currentCond === 'working' ? 'selected' : ''}>✓ Working</option>
+      <option value="not-working" ${currentCond === 'not-working' ? 'selected' : ''}>✗ Not Working</option>
+      <option value="not-applicable" ${currentCond === 'not-applicable' ? 'selected' : ''}>N/A Not Applicable</option>
+    </select>`;
+    
+    const actionCell = document.getElementById(`actions-${itemId}`);
+    actionCell.innerHTML = `
+      <button class="btn-sm btn-success" onclick="saveEditItem(${itemId})">✓ Save</button>
+      <button class="btn-sm btn-secondary" onclick="cancelEditItem()">Cancel</button>
+      <button class="btn-sm btn-danger" onclick="openDeleteModal(${itemId})">🗑️</button>
+    `;
+  });
+}
+
+async function saveEditItem(itemId) {
+  try {
+    const name = document.getElementById(`edit-name-${itemId}`).value.trim();
+    const serial = document.getElementById(`edit-serial-${itemId}`).value.trim();
+    const cond = document.getElementById(`edit-cond-${itemId}`).value;
+    
+    if (!name || !serial) { alert('Name and Serial are required'); return; }
+    
+    const item = await getOne('items', itemId);
+    item.name = name;
+    item.serial = serial;
+    item.condition = cond;
+    
+    await updateRecord('items', item);
+    alert('✅ Item updated!');
+    editingItemId = null;
+    renderItems();
+    await autoUploadToGithub();
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+function cancelEditItem() {
+  editingItemId = null;
+  renderItems();
+}
+
+function openDeleteModal(itemId) {
+  deleteItemId = itemId;
+  openModal('deleteItemModal');
+}
+
+async function confirmDeleteItem() {
+  try {
+    await deleteRecord('items', deleteItemId);
+    alert('✅ Item deleted!');
+    closeModal('deleteItemModal');
+    renderItems();
+    await autoUploadToGithub();
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+async function openAssignModal(itemId) {
+  try {
+    const members = await getAll('users');
+    const select = document.getElementById('assignMemberSelect');
+    select.innerHTML = '<option value="">Choose member</option>' + 
+      members.map(m => `<option value="${m.id}">${m.name} (${m.email})</option>`).join('');
+    select.dataset.itemId = itemId;
+    openModal('assignItemModal');
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+document.getElementById('assignForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    const itemId = parseInt(document.getElementById('assignMemberSelect').dataset.itemId);
+    const memberId = parseInt(document.getElementById('assignMemberSelect').value);
+    
+    if (!memberId) { alert('Select a member'); return; }
+    
+    const item = await getOne('items', itemId);
+    const member = await getOne('users', memberId);
+    
+    const oldHolder = item.holder;
+    item.holder = member.name;
+    
+    await updateRecord('items', item);
+    await addRecord('history', {
+      itemId: itemId,
+      itemName: item.name,
+      action: 'assigned',
+      from: oldHolder || 'Available',
+      to: member.name,
+      date: new Date().toLocaleString(),
+      user: currentUser.name
+    });
+    
+    alert('✅ Item assigned!');
+	const sendNotify = confirm(`Send notification to ${member.name}?`);
+	if (sendNotify) {
+		// [Add code for queueing/sending the notification here.]
+	}
+    closeModal('assignItemModal');
+    renderItems();
+    await autoUploadToGithub();
+  } catch (e) { alert('Error: ' + e.message); }
+});
+
+function openReturnModal(itemId) {
+  returnItemId = itemId;
+  getOne('items', itemId).then(item => {
+    document.getElementById('returnItemInfo').textContent = `Item: ${item.name} | Holder: ${item.holder}`;
+    openModal('returnItemModal');
+  });
+}
+
+async function confirmReturnItem() {
+  try {
+    const item = await getOne('items', returnItemId);
+    const oldHolder = item.holder;
+    item.holder = '';
+    
+    await updateRecord('items', item);
+    await addRecord('history', {
+      itemId: returnItemId,
+      itemName: item.name,
+      action: 'returned',
+      from: oldHolder,
+      to: 'Available',
+      date: new Date().toLocaleString(),
+      user: currentUser.name
+    });
+    
+    alert('✅ Item returned!');
+    closeModal('returnItemModal');
+    renderItems();
+    await autoUploadToGithub();
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+async function openItemHistory(itemId) {
+  try {
+    const allHistory = await getAll('history');
+    const itemHistory = allHistory.filter(h => h.itemId === itemId);
+    const list = document.getElementById('historyList');
+    
+    if (!itemHistory.length) {
+      list.innerHTML = '<p style="text-align: center; color: #94a3b8;">No history for this item</p>';
+      openModal('itemHistoryModal');
+      return;
+    }
+    
+    list.innerHTML = itemHistory.reverse().map(h => {
+      const actionEmoji = h.action === 'assigned' ? '📤' : '📥';
+      return `
+        <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem; margin-bottom: 1rem;">
+          <div style="font-weight: 600; margin-bottom: 0.5rem;">${actionEmoji} ${h.action.toUpperCase()}</div>
+          <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">${h.from} → ${h.to}</div>
+          <div style="font-size: 0.75rem; color: #94a3b8;">${h.date} by ${h.user}</div>
+        </div>
+      `;
+    }).join('');
+    
+    openModal('itemHistoryModal');
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+document.getElementById('itemForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    const formData = new FormData(e.target);
+    const item = {
+      name: formData.get('name').trim(),
+      serial: formData.get('serial').trim(),
+      condition: formData.get('condition'),
+      holder: ''
+    };
+    
+    await addRecord('items', item);
+    alert('✅ Item added!');
+    e.target.reset();
+    closeModal('addItemModal');
+    renderItems();
+    await autoUploadToGithub();
+  } catch (e) { alert('Error: ' + e.message); }
+});
+
+document.getElementById('memberForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    const formData = new FormData(e.target);
+    const email = formData.get('email').trim().toLowerCase();
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirmPassword');
+    
+    if (password !== confirmPassword) { alert('Passwords do not match'); return; }
+    if (password.length < 6) { alert('Min 6 characters'); return; }
+    
+    const users = await getAll('users');
+    if (users.some(u => u.email === email)) { alert('Email exists'); return; }
+    
+    const user = {
+      name: formData.get('name').trim(),
+      email: email,
+      password: btoa(password),
+      mobile: formData.get('mobile').trim() || '',
+      designation: formData.get('designation').trim() || '',
+      department: formData.get('department').trim() || '',
+      isAdmin: false
+    };
+    
+    await addRecord('users', user);
+	await autoUploadToGithub();
+    alert('✅ Member added!');
+	const sendEmail = confirm(`Send welcome email to ${formData.get("email")}?`);
+	if (sendEmail) {
+    queueNotification({
+        recipient: formData.get("email"),
+        subject: "Welcome to Asset Manager",
+        body: `Hi ${formData.get("name")},\n\nYour account has been created...`,
+        timestamp: new Date().toISOString()
+    });
+	}
+	console.log('Queued emails:', allEmails);
+    e.target.reset();
+    closeModal('addMemberModal');
+  } catch (e) { alert('Error: ' + e.message); }
+});
+
+async function renderMembers() {
+  try {
+    const users = await getAll('users');
+    const list = document.getElementById('membersList');
+    
+    if (!users.length) {
+      list.innerHTML = '<p style="text-align: center; color: #94a3b8;">No members</p>';
+      return;
+    }
+    
+    list.innerHTML = users.map(u => {
+      const isCurrentUser = u.id === currentUser.id;
+      let actions = '';
+      
+      if (isAdmin && !isCurrentUser) {
+        actions = `
+          <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+            ${!u.isAdmin ? `<button class="btn btn-sm btn-success" onclick="promoteToAdmin(${u.id})">👑 Promote</button>` : ''}
+            <button class="btn btn-sm btn-danger" onclick="removeMember(${u.id})">🗑️ Remove</button>
+          </div>
+        `;
+      } else if (isCurrentUser) {
+        const adminCount = users.filter(x => x.isAdmin).length;
+        if (!isAdmin || adminCount > 1) {
+          actions = `
+            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+              <button class="btn btn-sm btn-danger" onclick="removeSelf()">Remove Self</button>
+            </div>
+          `;
+        }
+      }
+      
+      return `
+        <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem; margin-bottom: 1rem;">
+          <div style="font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">👤 ${u.name}</div>
+          <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 0.5rem;">📧 ${u.email}</div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem;">${u.designation || 'N/A'} | ${u.department || 'N/A'}</div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem;">${u.isAdmin ? '👑 Admin' : '👤 Member'}</div>
+          ${actions}
+        </div>
+      `;
+    }).join('');
+    
+    openModal('membersModal');
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+async function promoteToAdmin(userId) {
+  if (!confirm('Promote this member to admin?')) return;
+  try {
+    const user = await getOne('users', userId);
+    user.isAdmin = true;
+    await updateRecord('users', user);
+    alert('✅ Promoted to admin!');
+    renderMembers();
+    await autoUploadToGithub();
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+async function removeMember(userId) {
+  if (!confirm('Remove this member?')) return;
+  try {
+    await deleteRecord('users', userId);
+    alert('✅ Member removed!');
+    renderMembers();
+    await autoUploadToGithub();
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+async function removeSelf() {
+  if (!confirm('Remove your account?')) return;
+  try {
+    await deleteRecord('users', currentUser.id);
+    alert('✅ Account removed!');
+    currentUser = null;
+    isAdmin = false;
+    document.getElementById('authScreen').classList.remove('hidden');
+    document.getElementById('mainHeader').classList.add('hidden');
+    document.getElementById('mainContent').classList.add('hidden');
+    closeModal('membersModal');
+    await checkUserStatus();
+    await autoUploadToGithub();
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+document.getElementById('editProfileBtn').addEventListener('click', () => {
+  closePanel('settingsPanel');
+  document.getElementById('editName').value = currentUser.name;
+  document.getElementById('editEmail').value = currentUser.email;
+  document.getElementById('editMobile').value = currentUser.mobile || '';
+  document.getElementById('editDesignation').value = currentUser.designation || '';
+  document.getElementById('editDepartment').value = currentUser.department || '';
+  openModal('editProfileModal');
+});
+
+document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    currentUser.name = document.getElementById('editName').value;
+    currentUser.email = document.getElementById('editEmail').value;
+    currentUser.mobile = document.getElementById('editMobile').value;
+    currentUser.designation = document.getElementById('editDesignation').value;
+    currentUser.department = document.getElementById('editDepartment').value;
+    
+    await updateRecord('users', currentUser);
+    alert('✅ Profile updated!');
+    closeModal('editProfileModal');
+    await autoUploadToGithub();
+  } catch (e) { alert('Error: ' + e.message); }
+});
+
+document.getElementById('changePasswordBtn').addEventListener('click', () => {
+  closePanel('settingsPanel');
+  openModal('changePasswordModal');
+});
+
+document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    const currentPassword = btoa(document.getElementById('currentPassword').value);
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmNewPassword').value;
+    
+    if (currentPassword !== currentUser.password) { alert('Wrong password'); return; }
+    if (newPassword !== confirmPassword) { alert('Passwords do not match'); return; }
+    if (newPassword.length < 6) { alert('Min 6 characters'); return; }
+    
+    currentUser.password = btoa(newPassword);
+    await updateRecord('users', currentUser);
+    alert('✅ Password changed!');
+    document.getElementById('changePasswordForm').reset();
+    closeModal('changePasswordModal');
+    await autoUploadToGithub();
+  } catch (e) { alert('Error: ' + e.message); }
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  closePanel('settingsPanel');
+  exportToJsonFile();
+});
+
+document.getElementById('syncFromGithubBtn').addEventListener('click', async () => {
+  closePanel('settingsPanel');
+  await autoSyncFromGithub();
+  alert('✅ Sync complete! Refresh to see updates.');
+  location.reload();
+});
+
+document.getElementById('removeAccountBtn').addEventListener('click', () => {
+  closePanel('settingsPanel');
+  removeSelf();
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  closePanel('settingsPanel');
+  currentUser = null;
+  isAdmin = false;
+  document.getElementById('authScreen').classList.remove('hidden');
+  document.getElementById('mainHeader').classList.add('hidden');
+  document.getElementById('mainContent').classList.add('hidden');
+  await checkUserStatus();
+});
+
+document.getElementById('openManage').addEventListener('click', () => openPanel('managePanel'));
+document.getElementById('closeManage').addEventListener('click', () => closePanel('managePanel'));
+document.getElementById('settingsBtn').addEventListener('click', () => openPanel('settingsPanel'));
+document.getElementById('closeSettings').addEventListener('click', () => closePanel('settingsPanel'));
+
+document.getElementById('backdrop').addEventListener('click', () => {
+  closePanel('managePanel');
+  closePanel('settingsPanel');
+  document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
+  document.getElementById('backdrop').classList.remove('show');
+});
+
+document.getElementById('viewItemsBtn').addEventListener('click', () => { closePanel('managePanel'); renderItems(); });
+document.getElementById('addItemBtn').addEventListener('click', () => { closePanel('managePanel'); openModal('addItemModal'); });
+document.getElementById('viewMembersBtn').addEventListener('click', () => { closePanel('managePanel'); renderMembers(); });
+document.getElementById('addMemberBtn').addEventListener('click', () => { closePanel('managePanel'); openModal('addMemberModal'); });
+
+function setTheme(theme) {
+  localStorage.setItem('theme', theme);
+  document.documentElement.classList.toggle('dark', theme === 'dark');
+  document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(theme === 'dark' ? 'darkBtn' : 'lightBtn').classList.add('active');
+}
+
+document.getElementById('lightBtn').addEventListener('click', () => setTheme('light'));
+document.getElementById('darkBtn').addEventListener('click', () => setTheme('dark'));
+
+function openNotifyModal(itemId) {
+    getOne('items', itemId).then(item => {
+        getOne('members', item.assignedTo).then(member => {
+            const customMessage = prompt(`📧 Enter message to send to ${member.name}:\n\n(Default: Item "${item.name}" assigned)\n\nCustom message:`);
+            
+            if (customMessage !== null) {  // User didn't cancel
+                const notificationBody = customMessage.trim() || `Item "${item.name}" has been assigned to you. Condition: ${item.condition}`;
+                
+                // Add to notifications/emails queue
+                queueNotification({
+                    recipient: member.email,
+                    subject: `Notification: ${item.name}`,
+                    body: notificationBody,
+                    timestamp: new Date().toISOString()
+                });
+                
+                alert('✅ Notification sent!');
+            }
+        });
+    });
+}
+
+function queueNotification(notification) {
+    allEmails.push({
+        ...notification,
+        status: 'pending',
+        id: Date.now()
+    });
+    // Optionally persist to storage or save to server here
+}
+
+
+
+// ============= STARTUP WITH AUTO SYNC =============
+(async () => {
+  try {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+    await initDB();
+    
+    console.log('🔄 Starting auto-sync...');
+    await autoSyncFromGithub();
+    
+    await checkUserStatus();
+  } catch (e) {
+    console.error('Startup error:', e.message);
+  }
+})();
+
+
+    // ==================== EMAIL NOTIFICATION FUNCTIONS ====================
+    let currentNotifyItemId = null;
+
+    async function openNotifyModal(itemId) {
+      currentNotifyItemId = itemId;
+      try {
+        const items = await getAll('items');
+        const members = await getAll('members');
+
+        const item = items.find(i => String(i.id) === String(itemId));
+        if (!item || !item.holder) {
+          alert('❌ No holder assigned');
+          return;
+        }
+
+        const member = members.find(m => String(m.id) === String(item.holder));
+        if (!member || !member.email) {
+          alert('❌ Member or email not found');
+          return;
+        }
+
+        document.getElementById('notifyRecipientInfo').textContent = 
+          `📧 Sending to: ${member.name} (${member.email})`;
+        document.getElementById('notifySubject').value = `Notification: ${item.name}`;
+        document.getElementById('notifyMessage').value = 
+          `Hi ${member.name},\n\nThis is regarding the item "${item.name}" (Serial: ${item.serial}) currently assigned to you.\n\nPlease confirm receipt.\n\nBest regards,\n${currentUser.name || 'Admin'}`;
+
+        document.getElementById('notificationModal').classList.add('active');
+      } catch(error) {
+        console.error('Error:', error);
+        alert('❌ Error: ' + error.message);
+      }
+    }
+
+    async function sendEmailViaBackend(toEmail, subject, body, fromEmail) {
+      try {
+        const response = await fetch('http://localhost:3000/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ to: toEmail, subject, body, from: fromEmail })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        return data.success || false;
+      } catch(error) {
+        console.error('Email error:', error);
+        alert('❌ Backend error: ' + error.message + '\n\nMake sure to run: npm start');
+        return false;
+      }
+    }
+
+    async function sendNotificationEmail() {
+      const subject = document.getElementById('notifySubject').value.trim();
+      const message = document.getElementById('notifyMessage').value.trim();
+
+      if (!subject || !message) {
+        alert('❌ Please fill in both subject and message');
+        return;
+      }
+
+      try {
+        const items = await getAll('items');
+        const members = await getAll('members');
+
+        const item = items.find(i => String(i.id) === String(currentNotifyItemId));
+        if (!item) {
+          alert('❌ Item not found');
+          return;
+        }
+
+        const member = members.find(m => String(m.id) === String(item.holder));
+        if (!member || !member.email) {
+          alert('❌ Member not found');
+          return;
+        }
+
+        const btn = event.target;
+        btn.innerText = '📤 Sending...';
+        btn.disabled = true;
+
+        const success = await sendEmailViaBackend(
+          member.email,
+          subject,
+          message,
+          currentUser.email || 'admin@assetmanager.com'
+        );
+
+        btn.innerText = '📤 Send';
+        btn.disabled = false;
+
+        if (success) {
+          alert('✅ Email sent successfully!');
+          document.getElementById('notificationModal').classList.remove('active');
+          document.getElementById('notifySubject').value = '';
+          document.getElementById('notifyMessage').value = '';
+        }
+      } catch(error) {
+        console.error('Error:', error);
+        alert('❌ Error: ' + error.message);
+      }
+    }
+
+    async function sendMemberWelcomeEmail(email, name, password) {
+      await sendEmailViaBackend(
+        email,
+        '🎉 Profile Created - Asset Manager Application',
+        `Hi ${name},\n\nYour profile has been successfully created in the Asset Manager Application.\n\nYour login credentials:\n📧 Email: ${email}\n🔑 Password: ${password}\n\nPlease keep your password secure. You can change it after first login.\n\nBest regards,\nAsset Manager Team`,
+        currentUser.email || 'admin@assetmanager.com'
+      );
+    }
+
+    async function sendItemAssignmentEmail(memberEmail, memberName, itemName, itemSerial) {
+      await sendEmailViaBackend(
+        memberEmail,
+        `📦 Item Assignment: ${itemName}`,
+        `Hi ${memberName},\n\nYou have been assigned the following item:\n\n📦 Item Name: ${itemName}\n🔢 Serial Number: ${itemSerial}\n\nPlease ensure you receive and inspect the item. Confirm receipt with your administrator.\n\nBest regards,\nAsset Manager Team`,
+        currentUser.email || 'admin@assetmanager.com'
+      );
+    }
+
+    // Close notification modal on ESC or backdrop click
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('notificationModal').classList.contains('active')) {
+        document.getElementById('notificationModal').classList.remove('active');
+      }
+    });
+
+    document.getElementById('notificationModal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'notificationModal') {
+        document.getElementById('notificationModal').classList.remove('active');
+      }
+    });
+    // ==================== END EMAIL FUNCTIONS ====================
+</script>
+
+
+<!-- 📧 Notification Modal -->
+<div class="modal" id="notificationModal" style="z-index: 9998;">
+  <div class="modal-content" style="max-width: 500px;">
     <div class="modal-header">
-      <h2 class="modal-title">📧 Send Notification</h2>
-      <button class="modal-close" onclick="closeNotificationModal()">×</button>
+      <h2>📧 Send Notification</h2>
+      <button class="modal-close" onclick="document.getElementById('notificationModal').classList.remove('active')">×</button>
     </div>
     <div class="modal-body">
-      <div id="notifyRecipientInfo" class="notify-recipient"></div>
+      <div id="notifyRecipientInfo" style="background: #dbeafe; border-left: 4px solid #0284c7; padding: 1rem; margin-bottom: 1rem; color: #0c4a6e; font-weight: 500; border-radius: 0.5rem;"></div>
       <div class="form-group">
         <label>Subject *</label>
-        <input type="text" id="notifySubject" placeholder="Enter subject">
+        <input type="text" id="notifySubject" placeholder="Enter subject" required>
       </div>
       <div class="form-group">
         <label>Message *</label>
-        <textarea id="notifyMessage" rows="6" placeholder="Enter message..."></textarea>
+        <textarea id="notifyMessage" rows="6" placeholder="Enter message..." required></textarea>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeNotificationModal()">Cancel</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('notificationModal').classList.remove('active')">Cancel</button>
       <button class="btn btn-primary" onclick="sendNotificationEmail()">📤 Send</button>
     </div>
   </div>
 </div>
-
-<!-- Add Item Modal -->
-<div id="addItemModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 class="modal-title">➕ Add Item</h2>
-      <button class="modal-close" onclick="closeModal('addItemModal')">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Item Name *</label>
-        <input type="text" id="itemName" placeholder="Enter item name" required>
-      </div>
-      <div class="form-group">
-        <label>Serial Number *</label>
-        <input type="text" id="itemSerial" placeholder="Enter serial number" required>
-      </div>
-      <div class="form-group">
-        <label>Condition *</label>
-        <select id="itemCondition" required>
-          <option value="">Select</option>
-          <option value="working">✓ Working</option>
-          <option value="not-working">✗ Not Working</option>
-          <option value="na">N/A Not Applicable</option>
-        </select>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('addItemModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="addItem()">Add</button>
-    </div>
-  </div>
-</div>
-
-<!-- Assign Item Modal -->
-<div id="assignItemModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 class="modal-title">📤 Assign Item</h2>
-      <button class="modal-close" onclick="closeModal('assignItemModal')">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Select Member *</label>
-        <select id="assignMemberSelect" required>
-          <option value="">Choose member</option>
-        </select>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('assignItemModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="assignItem()">Assign</button>
-    </div>
-  </div>
-</div>
-
-<!-- Add Member Modal -->
-<div id="addMemberModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 class="modal-title">➕ Add Member</h2>
-      <button class="modal-close" onclick="closeModal('addMemberModal')">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Full Name *</label>
-        <input type="text" id="memberName" placeholder="Enter full name" required>
-      </div>
-      <div class="form-group">
-        <label>Email *</label>
-        <input type="email" id="memberEmail" placeholder="Enter email" required>
-      </div>
-      <div class="form-group">
-        <label>Mobile</label>
-        <input type="tel" id="memberMobile" placeholder="Enter mobile">
-      </div>
-      <div class="form-group">
-        <label>Designation</label>
-        <input type="text" id="memberDesignation" placeholder="Enter designation">
-      </div>
-      <div class="form-group">
-        <label>Department</label>
-        <input type="text" id="memberDepartment" placeholder="Enter department">
-      </div>
-      <div class="form-group">
-        <label>Password * (Min 6)</label>
-        <input type="password" id="memberPassword" placeholder="••••••" required minlength="6">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('addMemberModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="addMember()">Add Member</button>
-    </div>
-  </div>
-</div>
-
-<!-- Edit Profile Modal -->
-<div id="editProfileModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 class="modal-title">✏️ Edit Profile</h2>
-      <button class="modal-close" onclick="closeModal('editProfileModal')">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="editName" placeholder="Enter full name">
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="editEmail" placeholder="Enter email">
-      </div>
-      <div class="form-group">
-        <label>Mobile</label>
-        <input type="tel" id="editMobile" placeholder="Enter mobile">
-      </div>
-      <div class="form-group">
-        <label>Designation</label>
-        <input type="text" id="editDesignation" placeholder="Enter designation">
-      </div>
-      <div class="form-group">
-        <label>Department</label>
-        <input type="text" id="editDepartment" placeholder="Enter department">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('editProfileModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveProfile()">✓ Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- Change Password Modal -->
-<div id="changePasswordModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 class="modal-title">🔐 Change Password</h2>
-      <button class="modal-close" onclick="closeModal('changePasswordModal')">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Current Password *</label>
-        <input type="password" id="currentPassword" placeholder="••••••" required>
-      </div>
-      <div class="form-group">
-        <label>New Password *</label>
-        <input type="password" id="newPassword" placeholder="••••••" required minlength="6">
-      </div>
-      <div class="form-group">
-        <label>Confirm Password *</label>
-        <input type="password" id="confirmNewPassword" placeholder="••••••" required>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('changePasswordModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="changePassword()">Update</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ==================== GLOBAL STATE ====================
-let currentUser = null;
-let currentNotifyItemId = null;
-let currentEditItemId = null;
-
-// ==================== AUTH FUNCTIONS ====================
-async function registerAdmin(e) {
-  e.preventDefault();
-  const name = document.getElementById('setupName').value.trim();
-  const email = document.getElementById('setupEmail').value.trim();
-  const mobile = document.getElementById('setupMobile').value.trim();
-  const designation = document.getElementById('setupDesignation').value.trim();
-  const department = document.getElementById('setupDepartment').value.trim();
-  const password = document.getElementById('setupPassword').value;
-  const confirmPassword = document.getElementById('setupConfirmPassword').value;
-
-  if (password !== confirmPassword) {
-    alert('❌ Passwords do not match');
-    return;
-  }
-
-  const admin = {
-    id: Date.now().toString(),
-    name: name,
-    email: email,
-    mobile: mobile,
-    designation: designation,
-    department: department,
-    password: password,
-    role: 'admin',
-    createdAt: new Date().toISOString()
-  };
-
-  await save('members', admin);
-  localStorage.setItem('currentUser', JSON.stringify(admin));
-  currentUser = admin;
-  showMainScreen();
-  alert('✅ Admin account created successfully!');
-}
-
-function showLogin() {
-  document.getElementById('setupForm').classList.add('hidden');
-  document.getElementById('loginForm').classList.remove('hidden');
-}
-
-function showSetup() {
-  document.getElementById('setupForm').classList.remove('hidden');
-  document.getElementById('loginForm').classList.add('hidden');
-}
-
-async function login(e) {
-  e.preventDefault();
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
-
-  const members = await getAll('members');
-  const user = members.find(m => m.email === email && m.password === password);
-
-  if (user) {
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    currentUser = user;
-    showMainScreen();
-  } else {
-    alert('❌ Invalid email or password');
-  }
-}
-
-function logout() {
-  if (confirm('Are you sure you want to logout?')) {
-    localStorage.removeItem('currentUser');
-    currentUser = null;
-    showAuthScreen();
-  }
-}
-
-// ==================== STORAGE FUNCTIONS ====================
-async function getAll(store) {
-  return JSON.parse(localStorage.getItem(store) || '[]');
-}
-
-async function getOne(store, id) {
-  const items = await getAll(store);
-  return items.find(item => String(item.id) === String(id));
-}
-
-async function save(store, item) {
-  const items = await getAll(store);
-  const index = items.findIndex(i => String(i.id) === String(item.id));
-  if (index >= 0) {
-    items[index] = item;
-  } else {
-    items.push(item);
-  }
-  localStorage.setItem(store, JSON.stringify(items));
-  return item;
-}
-
-async function remove(store, id) {
-  const items = await getAll(store);
-  const filtered = items.filter(i => String(i.id) !== String(id));
-  localStorage.setItem(store, JSON.stringify(filtered));
-}
-
-// ==================== UI NAVIGATION ====================
-function showAuthScreen() {
-  document.getElementById('authScreen').classList.remove('hidden');
-  document.getElementById('mainScreen').classList.add('hidden');
-  
-  const members = JSON.parse(localStorage.getItem('members') || '[]');
-  if (members.length === 0) {
-    showSetup();
-  } else {
-    showLogin();
-  }
-}
-
-function showMainScreen() {
-  document.getElementById('authScreen').classList.add('hidden');
-  document.getElementById('mainScreen').classList.remove('hidden');
-  renderItems();
-}
-
-function showViewItems() {
-  document.getElementById('viewItemsContent').classList.remove('hidden');
-  document.getElementById('viewMembersContent').classList.add('hidden');
-  renderItems();
-}
-
-function showAddItem() {
-  document.getElementById('addItemModal').classList.add('active');
-}
-
-function showViewMembers() {
-  document.getElementById('viewItemsContent').classList.add('hidden');
-  document.getElementById('viewMembersContent').classList.remove('hidden');
-  renderMembers();
-}
-
-function showAddMember() {
-  document.getElementById('addMemberModal').classList.add('active');
-}
-
-function showEditProfile() {
-  const user = currentUser;
-  document.getElementById('editName').value = user.name;
-  document.getElementById('editEmail').value = user.email;
-  document.getElementById('editMobile').value = user.mobile || '';
-  document.getElementById('editDesignation').value = user.designation || '';
-  document.getElementById('editDepartment').value = user.department || '';
-  document.getElementById('editProfileModal').classList.add('active');
-}
-
-function showChangePassword() {
-  document.getElementById('changePasswordModal').classList.add('active');
-}
-
-// ==================== MODAL FUNCTIONS ====================
-function closeModal(modalId) {
-  document.getElementById(modalId).classList.remove('active');
-  if (modalId === 'addItemModal') {
-    document.getElementById('itemName').value = '';
-    document.getElementById('itemSerial').value = '';
-    document.getElementById('itemCondition').value = '';
-  }
-  if (modalId === 'addMemberModal') {
-    document.getElementById('memberName').value = '';
-    document.getElementById('memberEmail').value = '';
-    document.getElementById('memberMobile').value = '';
-    document.getElementById('memberDesignation').value = '';
-    document.getElementById('memberDepartment').value = '';
-    document.getElementById('memberPassword').value = '';
-  }
-  if (modalId === 'changePasswordModal') {
-    document.getElementById('currentPassword').value = '';
-    document.getElementById('newPassword').value = '';
-    document.getElementById('confirmNewPassword').value = '';
-  }
-}
-
-// ==================== ITEM FUNCTIONS ====================
-async function renderItems() {
-  const items = await getAll('items');
-  const members = await getAll('members');
-  const tbody = document.getElementById('itemsBody');
-  const count = document.getElementById('itemsCount');
-
-  count.textContent = items.length;
-
-  if (items.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No items found</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = items.map(item => {
-    const member = members.find(m => String(m.id) === String(item.holder));
-    const status = item.holder ? '📤 Out' : '✓ Available';
-    const statusClass = item.holder ? 'badge-orange' : 'badge-green';
-    const cond = item.condition === 'working' ? '✓ Working' : item.condition === 'not-working' ? '✗ Not Working' : 'N/A';
-    const condClass = item.condition === 'working' ? 'badge-green' : item.condition === 'not-working' ? 'badge-red' : 'badge-orange';
-
-    return `<tr>
-      <td>${item.name}</td>
-      <td>${item.serial}</td>
-      <td>${member ? member.name : '-'}</td>
-      <td><span class="badge ${statusClass}">${status}</span></td>
-      <td><span class="badge ${condClass}">${cond}</span></td>
-      <td>
-        <button class="btn-icon" onclick="editItem('${item.id}')" title="Edit">✏️</button>
-        ${item.holder ? `<button class="btn-icon" onclick="openNotifyModal('${item.id}')" title="Send Notification">🔔</button>` : `<button class="btn-icon" onclick="returnItem('${item.id}')" title="Return">📥</button>`}
-        <button class="btn-icon" onclick="deleteItem('${item.id}')" title="Delete">🗑️</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-async function addItem() {
-  const name = document.getElementById('itemName').value.trim();
-  const serial = document.getElementById('itemSerial').value.trim();
-  const condition = document.getElementById('itemCondition').value;
-
-  if (!name || !serial || !condition) {
-    alert('❌ Fill all required fields');
-    return;
-  }
-
-  const item = {
-    id: Date.now().toString(),
-    name: name,
-    serial: serial,
-    condition: condition,
-    holder: '',
-    createdAt: new Date().toISOString()
-  };
-
-  await save('items', item);
-  closeModal('addItemModal');
-  renderItems();
-  alert('✅ Item added successfully!');
-}
-
-async function editItem(itemId) {
-  const items = await getAll('items');
-  const members = await getAll('members');
-  const item = items.find(i => String(i.id) === String(itemId));
-
-  if (!item) return;
-
-  currentEditItemId = itemId;
-  const memberOptions = members.map(m => `<option value="${m.id}" ${item.holder === m.id ? 'selected' : ''}>${m.name}</option>`).join('');
-  
-  const newName = prompt('Item Name:', item.name);
-  if (newName === null) return;
-
-  const newSerial = prompt('Serial Number:', item.serial);
-  if (newSerial === null) return;
-
-  item.name = newName;
-  item.serial = newSerial;
-  await save('items', item);
-  renderItems();
-  alert('✅ Item updated!');
-}
-
-async function deleteItem(itemId) {
-  if (!confirm('Are you sure you want to delete this item?')) return;
-  await remove('items', itemId);
-  renderItems();
-  alert('✅ Item deleted!');
-}
-
-async function returnItem(itemId) {
-  const item = await getOne('items', itemId);
-  item.holder = '';
-  await save('items', item);
-  renderItems();
-  alert('✅ Item returned!');
-}
-
-// ==================== NOTIFICATION FUNCTIONS ====================
-let currentNotifyItemId = null;
-
-async function openNotifyModal(itemId) {
-  currentNotifyItemId = itemId;
-  console.log('Opening notify modal for item:', itemId);
-  
-  try {
-    const items = await getAll('items');
-    const members = await getAll('members');
-    
-    console.log('Items:', items);
-    console.log('Members:', members);
-    
-    const item = items.find(i => String(i.id) === String(itemId));
-    console.log('Found item:', item);
-    
-    if (!item) {
-      alert('❌ Item not found');
-      return;
-    }
-    
-    if (!item.holder || item.holder.trim() === '') {
-      alert('❌ No holder assigned to this item');
-      return;
-    }
-    
-    const member = members.find(m => String(m.id) === String(item.holder));
-    console.log('Found member:', member);
-    
-    if (!member) {
-      alert('❌ Member not found');
-      return;
-    }
-    
-    if (!member.email || member.email.trim() === '') {
-      alert('❌ Member does not have an email');
-      return;
-    }
-    
-    document.getElementById('notifyRecipientInfo').textContent = 
-      `📧 Sending to: ${member.name} (${member.email})`;
-    
-    document.getElementById('notifySubject').value = 
-      `Notification: ${item.name}`;
-    document.getElementById('notifyMessage').value = 
-      `Hi ${member.name},\n\nThis is regarding the item "${item.name}" (Serial: ${item.serial}) currently assigned to you.\n\nPlease check and confirm receipt.\n\nBest regards,\n${currentUser.name || 'Admin'}`;
-    
-    document.getElementById('notificationModal').classList.add('active');
-    
-  } catch(error) {
-    console.error('Error:', error);
-    alert('❌ Error: ' + error.message);
-  }
-}
-
-function closeNotificationModal() {
-  document.getElementById('notificationModal').classList.remove('active');
-  currentNotifyItemId = null;
-  document.getElementById('notifySubject').value = '';
-  document.getElementById('notifyMessage').value = '';
-}
-
-async function sendEmailViaBackend(toEmail, subject, body, fromEmail) {
-  try {
-    const response = await fetch('http://localhost:3000/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        to: toEmail,
-        subject: subject,
-        body: body,
-        from: fromEmail
-      })
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    if (data.success) {
-      return true;
-    } else {
-      alert('❌ Email failed: ' + (data.error || 'Unknown error'));
-      return false;
-    }
-  } catch(error) {
-    console.error('Email error:', error);
-    alert('❌ Backend error: ' + error.message + '\n\nMake sure: npm start');
-    return false;
-  }
-}
-
-async function sendNotificationEmail() {
-  const subject = document.getElementById('notifySubject').value.trim();
-  const message = document.getElementById('notifyMessage').value.trim();
-  
-  if (!subject || !message) {
-    alert('❌ Fill subject and message');
-    return;
-  }
-  
-  try {
-    const items = await getAll('items');
-    const members = await getAll('members');
-    
-    const item = items.find(i => String(i.id) === String(currentNotifyItemId));
-    if (!item) {
-      alert('❌ Item not found');
-      return;
-    }
-    
-    const member = members.find(m => String(m.id) === String(item.holder));
-    if (!member || !member.email) {
-      alert('❌ Member or email not found');
-      return;
-    }
-    
-    const btn = event.target;
-    const originalText = btn.innerText;
-    btn.innerText = '📤 Sending...';
-    btn.disabled = true;
-    
-    const success = await sendEmailViaBackend(
-      member.email,
-      subject,
-      message,
-      currentUser.email || 'admin@assetmanager.com'
-    );
-    
-    btn.innerText = originalText;
-    btn.disabled = false;
-    
-    if (success) {
-      alert('✅ Email sent!');
-      closeNotificationModal();
-    }
-  } catch(error) {
-    console.error('Error:', error);
-    alert('❌ Failed: ' + error.message);
-  }
-}
-
-// ==================== MEMBER FUNCTIONS ====================
-async function renderMembers() {
-  const members = await getAll('members');
-  const tbody = document.getElementById('membersBody');
-  const count = document.getElementById('membersCount');
-
-  count.textContent = members.length;
-
-  if (members.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No members found</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = members.map(member => {
-    return `<tr>
-      <td>${member.name}</td>
-      <td>${member.email}</td>
-      <td>${member.role || 'User'}</td>
-      <td>${member.department || '-'}</td>
-      <td>
-        <button class="btn-icon" onclick="editMember('${member.id}')" title="Edit">✏️</button>
-        <button class="btn-icon" onclick="deleteMember('${member.id}')" title="Delete">🗑️</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-async function addMember() {
-  const name = document.getElementById('memberName').value.trim();
-  const email = document.getElementById('memberEmail').value.trim();
-  const mobile = document.getElementById('memberMobile').value.trim();
-  const designation = document.getElementById('memberDesignation').value.trim();
-  const department = document.getElementById('memberDepartment').value.trim();
-  const password = document.getElementById('memberPassword').value;
-
-  if (!name || !email || !password) {
-    alert('❌ Fill all required fields');
-    return;
-  }
-
-  const newMember = {
-    id: Date.now().toString(),
-    name: name,
-    email: email,
-    mobile: mobile,
-    designation: designation,
-    department: department,
-    password: password,
-    role: 'user',
-    createdAt: new Date().toISOString()
-  };
-
-  await save('members', newMember);
-  
-  // Send welcome email
-  await sendEmailViaBackend(
-    email,
-    '🎉 Profile Created - Asset Manager Application',
-    `Hi ${name},\n\nYour profile has been successfully created in the Asset Manager Application.\n\nYour login credentials:\n📧 Email: ${email}\n🔑 Password: ${password}\n\nPlease keep your password secure. You can change it after first login.\n\nBest regards,\nAsset Manager Team`,
-    currentUser.email || 'admin@assetmanager.com'
-  );
-
-  closeModal('addMemberModal');
-  renderMembers();
-  alert('✅ Member added! Welcome email sent.');
-}
-
-async function editMember(memberId) {
-  const member = await getOne('members', memberId);
-  if (!member) return;
-
-  const newName = prompt('Name:', member.name);
-  if (newName === null) return;
-
-  member.name = newName;
-  await save('members', member);
-  renderMembers();
-  alert('✅ Member updated!');
-}
-
-async function deleteMember(memberId) {
-  if (!confirm('Delete this member?')) return;
-  await remove('members', memberId);
-  renderMembers();
-  alert('✅ Member deleted!');
-}
-
-// ==================== PROFILE FUNCTIONS ====================
-async function saveProfile() {
-  const name = document.getElementById('editName').value.trim();
-  const email = document.getElementById('editEmail').value.trim();
-  const mobile = document.getElementById('editMobile').value.trim();
-  const designation = document.getElementById('editDesignation').value.trim();
-  const department = document.getElementById('editDepartment').value.trim();
-
-  currentUser.name = name;
-  currentUser.email = email;
-  currentUser.mobile = mobile;
-  currentUser.designation = designation;
-  currentUser.department = department;
-
-  await save('members', currentUser);
-  localStorage.setItem('currentUser', JSON.stringify(currentUser));
-  closeModal('editProfileModal');
-  alert('✅ Profile updated!');
-}
-
-async function changePassword() {
-  const current = document.getElementById('currentPassword').value;
-  const newPass = document.getElementById('newPassword').value;
-  const confirm = document.getElementById('confirmNewPassword').value;
-
-  if (current !== currentUser.password) {
-    alert('❌ Current password is incorrect');
-    return;
-  }
-
-  if (newPass !== confirm) {
-    alert('❌ New passwords do not match');
-    return;
-  }
-
-  currentUser.password = newPass;
-  await save('members', currentUser);
-  localStorage.setItem('currentUser', JSON.stringify(currentUser));
-  closeModal('changePasswordModal');
-  alert('✅ Password updated!');
-}
-
-// ==================== EXPORT & SYNC ====================
-async function exportData() {
-  const items = await getAll('items');
-  const members = await getAll('members');
-  const data = { items, members, exportedAt: new Date().toISOString() };
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `asset-manager-backup-${Date.now()}.json`;
-  a.click();
-  alert('✅ Data exported!');
-}
-
-function syncFromGitHub() {
-  alert('☁️ This feature requires GitHub integration setup.');
-}
-
-async function removeAccount() {
-  if (!confirm('⚠️ This will delete your account. Are you sure?')) return;
-  const members = await getAll('members');
-  const filtered = members.filter(m => String(m.id) !== String(currentUser.id));
-  localStorage.setItem('members', JSON.stringify(filtered));
-  logout();
-}
-
-// ==================== THEME TOGGLE ====================
-function toggleTheme() {
-  document.documentElement.classList.toggle('dark');
-  localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-}
-
-// ==================== INIT ====================
-window.addEventListener('load', () => {
-  const theme = localStorage.getItem('theme') || 'light';
-  if (theme === 'dark') {
-    document.documentElement.classList.add('dark');
-  }
-
-  const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
-  if (user) {
-    currentUser = user;
-    showMainScreen();
-  } else {
-    showAuthScreen();
-  }
-});
-
-// Close modals on background click
-document.querySelectorAll('.modal').forEach(modal => {
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.classList.remove('active');
-    }
-  });
-});
-</script>
 
 </body>
 </html>
