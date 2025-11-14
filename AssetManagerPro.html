@@ -65,7 +65,6 @@
       display: none !important;
     }
 
-    /* FIXED: Centering */
     .auth-screen {
       position: fixed;
       top: 0;
@@ -320,6 +319,7 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       padding: 2rem;
       overflow-x: auto;
+      margin-bottom: 2rem;
     }
 
     html.dark .card {
@@ -650,6 +650,51 @@
       background: rgba(37, 99, 235, 0.2);
     }
 
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 2rem;
+    }
+
+    html.dark .tabs {
+      border-bottom-color: #30363d;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      color: #2563eb;
+      border-bottom-color: #2563eb;
+    }
+
+    html.dark .tab-btn {
+      color: #94a3b8;
+    }
+
+    html.dark .tab-btn.active {
+      color: #58a6ff;
+      border-bottom-color: #58a6ff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
     @media (max-width: 768px) {
       .auth-card {
         padding: 2rem;
@@ -756,15 +801,22 @@
 
   <!-- MAIN CONTENT -->
   <main class="hidden" id="mainContent">
-    <div style="width: 100%; padding: 0;">
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('assets')">📦 Assets</button>
+      <button class="tab-btn" onclick="switchTab('consumables')">📦 Consumables</button>
+    </div>
+
+    <!-- ASSETS TAB -->
+    <div id="assets-tab" class="tab-content active">
       <div class="card">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
           <h2 style="font-size: 1.5rem; font-weight: 700;">📦 Inventory Items</h2>
-          <span class="item-count-badge" id="itemsCount">0</span>
+          <span class="item-count-badge" id="assetsCount">0</span>
         </div>
 
         <div style="overflow-x: auto;">
-          <table id="itemsTable">
+          <table id="assetsTable">
             <thead>
               <tr>
                 <th>Item Name</th>
@@ -775,9 +827,37 @@
                 <th style="min-width: 200px;">Actions</th>
               </tr>
             </thead>
-            <tbody id="itemsBody">
+            <tbody id="assetsBody">
               <tr>
                 <td colspan="6" style="text-align: center;">No items found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSUMABLES TAB -->
+    <div id="consumables-tab" class="tab-content">
+      <div class="card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 700;">📦 Consumable Items</h2>
+          <span class="item-count-badge" id="consumablesCount">0</span>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table id="consumablesTable">
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Part Number</th>
+                <th>Quantity</th>
+                <th style="min-width: 200px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="consumablesBody">
+              <tr>
+                <td colspan="4" style="text-align: center;">No consumables found</td>
               </tr>
             </tbody>
           </table>
@@ -895,7 +975,276 @@
     </div>
   </div>
 
-  <!-- MODALS - Edit Profile, Change Password, Add Item, Add Member, etc. -->
+  <!-- ITEM TYPE SELECTOR MODAL -->
+  <div id="itemTypeModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>➕ Add Item</h3>
+        <button type="button" class="close-btn" onclick="closeModal('itemTypeModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 2rem; text-align: center;">What type of item do you want to add?</p>
+        <button type="button" class="btn btn-primary" onclick="openAddAssetModal()" style="margin-bottom: 1rem;">📦 Asset Item</button>
+        <button type="button" class="btn btn-primary" onclick="openAddConsumableModal()">📦 Consumable Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD ASSET MODAL -->
+  <div id="addAssetModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>➕ Add Asset</h3>
+        <button type="button" class="close-btn" onclick="closeModal('addAssetModal')">✕</button>
+      </div>
+      <form id="assetForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Item Name *</label>
+            <input type="text" name="name" placeholder="e.g., Laptop" required>
+          </div>
+          <div class="form-group">
+            <label>Serial Number *</label>
+            <input type="text" name="serial" placeholder="e.g., SN123456" required>
+          </div>
+          <div class="form-group">
+            <label>Condition *</label>
+            <select name="condition" required>
+              <option value="">Select</option>
+              <option value="working">✓ Working</option>
+              <option value="not-working">✗ Not Working</option>
+              <option value="not-applicable">N/A - Not Applicable</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('addAssetModal')">Cancel</button>
+          <button type="submit" class="btn btn-success">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD CONSUMABLE MODAL -->
+  <div id="addConsumableModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>➕ Add Consumable</h3>
+        <button type="button" class="close-btn" onclick="closeModal('addConsumableModal')">✕</button>
+      </div>
+      <form id="consumableForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Item Name *</label>
+            <input type="text" name="name" placeholder="e.g., Solder Wire" required>
+          </div>
+          <div class="form-group">
+            <label>Part Number *</label>
+            <input type="text" name="partNumber" placeholder="e.g., PN123456" required>
+          </div>
+          <div class="form-group">
+            <label>Quantity *</label>
+            <input type="number" name="quantity" placeholder="e.g., 100" min="1" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('addConsumableModal')">Cancel</button>
+          <button type="submit" class="btn btn-success">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- EDIT ASSET MODAL -->
+  <div id="editAssetModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>✏️ Edit Asset</h3>
+        <button type="button" class="close-btn" onclick="closeModal('editAssetModal')">✕</button>
+      </div>
+      <form id="editAssetForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Item Name</label>
+            <input type="text" id="editAssetName" required>
+          </div>
+          <div class="form-group">
+            <label>Serial Number</label>
+            <input type="text" id="editAssetSerial" required>
+          </div>
+          <div class="form-group">
+            <label>Condition</label>
+            <select id="editAssetCond" required>
+              <option value="working">✓ Working</option>
+              <option value="not-working">✗ Not Working</option>
+              <option value="not-applicable">N/A - Not Applicable</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('editAssetModal')">Cancel</button>
+          <button type="submit" class="btn btn-success">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- EDIT CONSUMABLE MODAL -->
+  <div id="editConsumableModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>✏️ Edit Consumable</h3>
+        <button type="button" class="close-btn" onclick="closeModal('editConsumableModal')">✕</button>
+      </div>
+      <form id="editConsumableForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Item Name</label>
+            <input type="text" id="editConsName" required>
+          </div>
+          <div class="form-group">
+            <label>Part Number</label>
+            <input type="text" id="editConsPartNumber" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('editConsumableModal')">Cancel</button>
+          <button type="submit" class="btn btn-success">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD QUANTITY MODAL -->
+  <div id="addQuantityModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>➕ Add Quantity</h3>
+        <button type="button" class="close-btn" onclick="closeModal('addQuantityModal')">✕</button>
+      </div>
+      <form id="addQuantityForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Item Name</label>
+            <input type="text" id="quantityItemName" disabled>
+          </div>
+          <div class="form-group">
+            <label>Quantity to Add *</label>
+            <input type="number" id="quantityToAdd" min="1" placeholder="Enter quantity" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('addQuantityModal')">Cancel</button>
+          <button type="submit" class="btn btn-success">Add Quantity</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ASSIGN CONSUMABLE MODAL -->
+  <div id="assignConsumableModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📤 Assign Consumable</h3>
+        <button type="button" class="close-btn" onclick="closeModal('assignConsumableModal')">✕</button>
+      </div>
+      <form id="assignConsumableForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Item Name</label>
+            <input type="text" id="assignConsItemName" disabled>
+          </div>
+          <div class="form-group">
+            <label>Available Quantity</label>
+            <input type="text" id="assignConsAvailQty" disabled>
+          </div>
+          <div class="form-group">
+            <label>Select Member *</label>
+            <select id="assignConsMember" required>
+              <option value="">Choose member</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Quantity to Assign *</label>
+            <input type="number" id="assignConsQty" min="1" placeholder="Enter quantity" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('assignConsumableModal')">Cancel</button>
+          <button type="submit" class="btn btn-success">Assign</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ASSIGN ASSET MODAL -->
+  <div id="assignAssetModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📤 Assign Asset</h3>
+        <button type="button" class="close-btn" onclick="closeModal('assignAssetModal')">✕</button>
+      </div>
+      <form id="assignAssetForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Select Member *</label>
+            <select id="assignAssetMember" required>
+              <option value="">Choose member</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('assignAssetModal')">Cancel</button>
+          <button type="submit" class="btn btn-success">Assign</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- RETURN ASSET MODAL -->
+  <div id="returnAssetModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📥 Return Asset</h3>
+      </div>
+      <div class="modal-body">
+        <p>Return this asset to inventory?</p>
+        <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.5rem;" id="returnAssetInfo"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('returnAssetModal')">Cancel</button>
+        <button type="button" class="btn btn-success" onclick="confirmReturnAsset()">Return</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <div style="text-align: center; padding: 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🗑️</div>
+        <h3>Delete Item?</h3>
+        <p style="color: #64748b; margin-bottom: 2rem; font-size: 0.95rem;">This action cannot be undone.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+          <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY MODAL -->
+  <div id="historyModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📜 Item History</h3>
+        <button type="button" class="close-btn" onclick="closeModal('historyModal')">✕</button>
+      </div>
+      <div class="modal-body" id="historyList" style="max-height: 60vh; overflow-y: auto;"></div>
+    </div>
+  </div>
+
+  <!-- EDIT PROFILE MODAL -->
   <div id="editProfileModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -933,6 +1282,7 @@
     </div>
   </div>
 
+  <!-- CHANGE PASSWORD MODAL -->
   <div id="changePasswordModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -962,108 +1312,11 @@
     </div>
   </div>
 
-  <div id="addItemModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>➕ Add Item</h3>
-        <button type="button" class="close-btn" onclick="closeModal('addItemModal')">✕</button>
-      </div>
-      <form id="itemForm">
-        <div class="modal-body">
-          <div class="form-group">
-            <label>Item Name *</label>
-            <input type="text" name="name" placeholder="e.g., Laptop" required>
-          </div>
-          <div class="form-group">
-            <label>Serial Number *</label>
-            <input type="text" name="serial" placeholder="e.g., SN123456" required>
-          </div>
-          <div class="form-group">
-            <label>Condition *</label>
-            <select name="condition" required>
-              <option value="">Select</option>
-              <option value="working">✓ Working</option>
-              <option value="not-working">✗ Not Working</option>
-              <option value="not-applicable">N/A - Not Applicable</option>
-            </select>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('addItemModal')">Cancel</button>
-          <button type="submit" class="btn btn-success">Add</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div id="assignItemModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>📤 Assign Item</h3>
-        <button type="button" class="close-btn" onclick="closeModal('assignItemModal')">✕</button>
-      </div>
-      <form id="assignForm">
-        <div class="modal-body">
-          <div class="form-group">
-            <label>Select Member *</label>
-            <select id="assignMemberSelect" required>
-              <option value="">Choose member</option>
-            </select>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('assignItemModal')">Cancel</button>
-          <button type="submit" class="btn btn-success">Assign</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div id="returnItemModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>📥 Return Item</h3>
-        <button type="button" class="close-btn" onclick="closeModal('returnItemModal')">✕</button>
-      </div>
-      <div class="modal-body">
-        <p>Return this item to inventory?</p>
-        <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.5rem;" id="returnItemInfo"></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('returnItemModal')">Cancel</button>
-        <button type="button" class="btn btn-success" onclick="confirmReturnItem()">Return</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="deleteItemModal" class="modal">
-    <div class="modal-content">
-      <div style="text-align: center; padding: 2rem;">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">🗑️</div>
-        <h3>Delete Item?</h3>
-        <p style="color: #64748b; margin-bottom: 2rem; font-size: 0.95rem;">This action cannot be undone.</p>
-        <div style="display: flex; gap: 1rem; justify-content: center;">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('deleteItemModal')">Cancel</button>
-          <button type="button" class="btn btn-danger" onclick="confirmDeleteItem()">Delete</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="itemHistoryModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>📜 Item History</h3>
-        <button type="button" class="close-btn" onclick="closeModal('itemHistoryModal')">✕</button>
-      </div>
-      <div class="modal-body" id="historyList" style="max-height: 60vh; overflow-y: auto;"></div>
-    </div>
-  </div>
-
+  <!-- ADD MEMBER MODAL -->
   <div id="addMemberModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>➕ Add Member</h3>
+        <h3>👤 Add Member</h3>
         <button type="button" class="close-btn" onclick="closeModal('addMemberModal')">✕</button>
       </div>
       <form id="memberForm">
@@ -1105,6 +1358,7 @@
     </div>
   </div>
 
+  <!-- MEMBERS MODAL -->
   <div id="membersModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1116,19 +1370,20 @@
   </div>
 
   <script>
+    // ========== GITHUB CONFIG ==========
+    const GITHUBRAWURL = 'https://raw.githubusercontent.com/riyasma07/asset-manager-db/main/data.json';
+
     // ========== DATABASE SETUP ==========
     const DBNAME = 'AssetManagerProDB';
     let db = null;
     let currentUser = null;
     let isAdmin = false;
     let editingItemId = null;
-    let returnItemId = null;
-    let deleteItemId = null;
+    let editingItemType = null;
+    let deletingItemId = null;
+    let deletingItemType = null;
+    let returningAssetId = null;
 
-    // GitHub Config - UPDATE THESE
-    const GITHUBRAWURL = 'https://raw.githubusercontent.com/riyasma07/asset-manager-db/main/data.json';
-
-    // Initialize IndexedDB
     async function initDB() {
       return new Promise((resolve, reject) => {
         const req = indexedDB.open(DBNAME, 2);
@@ -1143,8 +1398,11 @@
           if (!database.objectStoreNames.contains('users')) {
             database.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
           }
-          if (!database.objectStoreNames.contains('items')) {
-            database.createObjectStore('items', { keyPath: 'id', autoIncrement: true });
+          if (!database.objectStoreNames.contains('assets')) {
+            database.createObjectStore('assets', { keyPath: 'id', autoIncrement: true });
+          }
+          if (!database.objectStoreNames.contains('consumables')) {
+            database.createObjectStore('consumables', { keyPath: 'id', autoIncrement: true });
           }
           if (!database.objectStoreNames.contains('history')) {
             database.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
@@ -1203,40 +1461,46 @@
       });
     }
 
+    function clearStore(storeName) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const req = tx.objectStore(storeName).clear();
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      });
+    }
+
     // ========== AUTO SYNC FROM GITHUB ==========
     async function autoSyncFromGithub() {
       try {
         console.log('🔄 Syncing from GitHub...');
         const res = await fetch(GITHUBRAWURL);
         if (!res.ok) {
-          console.warn('GitHub file not found (first time setup?)');
+          console.warn('GitHub file not found');
           return;
         }
 
         const data = await res.json();
-        if (data.schema !== 'asset-manager-pro') {
+        if (data.__schema__ !== 'asset-manager-pro') {
           console.warn('Invalid data schema');
           return;
         }
 
-        // Clear stores
-        const clearUsersTx = db.transaction('users', 'readwrite');
-        clearUsersTx.objectStore('users').clear();
+        await clearStore('users');
+        await clearStore('assets');
+        await clearStore('consumables');
+        await clearStore('history');
 
-        const clearItemsTx = db.transaction('items', 'readwrite');
-        clearItemsTx.objectStore('items').clear();
-
-        const clearHistoryTx = db.transaction('history', 'readwrite');
-        clearHistoryTx.objectStore('history').clear();
-
-        // Add data from GitHub
         for (const u of data.users) {
           await addRecord('users', u);
         }
-        for (const it of data.items) {
-          await addRecord('items', it);
+        for (const a of data.assets || []) {
+          await addRecord('assets', a);
         }
-        for (const h of data.history) {
+        for (const c of data.consumables || []) {
+          await addRecord('consumables', c);
+        }
+        for (const h of data.history || []) {
           await addRecord('history', h);
         }
 
@@ -1246,7 +1510,52 @@
       }
     }
 
+    // ========== SEND EMAIL FUNCTION ==========
+    async function sendEmailNotification(recipient, subject, body, itemInfo) {
+      try {
+        const response = await fetch('http://localhost:3000/api/send-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: recipient,
+            subject: subject,
+            body: body,
+            itemInfo: itemInfo,
+            from: currentUser.email
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('✓ Email sent:', data);
+          return true;
+        } else {
+          console.warn('Email send failed:', response.status);
+          return false;
+        }
+      } catch (e) {
+        console.error('Email error:', e);
+        alert('Email notification queued (backend may be offline)');
+        return false;
+      }
+    }
+
     // ========== UI FUNCTIONS ==========
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      if (tab === 'assets') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('assets-tab').classList.add('active');
+      } else if (tab === 'consumables') {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('consumables-tab').classList.add('active');
+      }
+    }
+
     function switchToLogin() {
       document.getElementById('registerForm').classList.add('hidden');
       document.getElementById('loginForm').classList.remove('hidden');
@@ -1276,6 +1585,16 @@
       document.getElementById(id).classList.add('open');
     }
 
+    function openAddAssetModal() {
+      closeModal('itemTypeModal');
+      openModal('addAssetModal');
+    }
+
+    function openAddConsumableModal() {
+      closeModal('itemTypeModal');
+      openModal('addConsumableModal');
+    }
+
     async function showMainApp() {
       document.getElementById('authScreen').classList.add('hidden');
       document.getElementById('mainHeader').classList.remove('hidden');
@@ -1290,161 +1609,159 @@
         document.getElementById('syncFromGithubBtn').style.display = 'flex';
       }
 
-      renderItems();
+      renderAssets();
+      renderConsumables();
     }
 
-    async function renderItems() {
+    async function renderAssets() {
       try {
-        const items = await getAll('items');
-        document.getElementById('itemsCount').textContent = items.length;
-        const tbody = document.getElementById('itemsBody');
+        const assets = await getAll('assets');
+        document.getElementById('assetsCount').textContent = assets.length;
+        const tbody = document.getElementById('assetsBody');
 
-        if (!items.length) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No items found</td></tr>';
+        if (!assets.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No assets found</td></tr>';
           return;
         }
 
-        tbody.innerHTML = items.map(item => {
-          const hasHolder = item.holder && item.holder.trim() !== '';
+        tbody.innerHTML = assets.map(asset => {
+          const hasHolder = asset.holder && asset.holder.trim() !== '';
           const statusDisplay = hasHolder ? 'Out' : 'Available';
           const statusClass = hasHolder ? 'badge-orange' : 'badge-green';
-          let condDisplay = item.condition === 'working' ? 'Working' : item.condition === 'not-working' ? 'Not Working' : 'N/A';
+          let condDisplay = asset.condition === 'working' ? 'Working' : asset.condition === 'not-working' ? 'Not Working' : 'N/A';
 
           let actionButtons = '';
           if (isAdmin) {
             actionButtons = `
-              <button class="btn-icon" onclick="startEditItem(${item.id})" title="Edit">✏️</button>
-              <button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>
-              ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">📤</button>` : ''}
-              ${item.holder ? `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">↩️</button>` : ''}
-              <button class="btn-icon" onclick="openDeleteModal(${item.id})" title="Delete">🗑️</button>
+              <button class="btn-icon" onclick="openEditAssetModal(${asset.id})" title="Edit">✏️</button>
+              <button class="btn-icon" onclick="openAssetHistory(${asset.id})" title="History">📜</button>
+              ${!hasHolder ? `<button class="btn-icon" onclick="openAssignAssetModal(${asset.id})" title="Assign">📤</button>` : ''}
+              ${hasHolder ? `<button class="btn-icon" onclick="openReturnAssetModal(${asset.id})" title="Return">↩️</button>` : ''}
+              <button class="btn-icon" onclick="openDeleteModal(${asset.id}, 'assets')" title="Delete">🗑️</button>
             `;
           } else {
-            actionButtons = `<button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>`;
+            actionButtons = `<button class="btn-icon" onclick="openAssetHistory(${asset.id})" title="History">📜</button>`;
           }
 
           return `
-            <tr id="item-row-${item.id}">
-              <td id="name-${item.id}">${item.name}</td>
-              <td id="serial-${item.id}">${item.serial}</td>
-              <td>${item.holder || '-'}</td>
+            <tr>
+              <td>${asset.name}</td>
+              <td>${asset.serial}</td>
+              <td>${asset.holder || '-'}</td>
               <td><span class="badge ${statusClass}">${statusDisplay}</span></td>
-              <td id="cond-${item.id}"><span class="badge ${item.condition === 'working' ? 'badge-green' : item.condition === 'not-working' ? 'badge-notworking' : 'badge-orange'}">${condDisplay}</span></td>
-              <td><div class="action-buttons" id="actions-${item.id}">${actionButtons}</div></td>
+              <td><span class="badge ${asset.condition === 'working' ? 'badge-green' : asset.condition === 'not-working' ? 'badge-notworking' : 'badge-orange'}">${condDisplay}</span></td>
+              <td><div class="action-buttons">${actionButtons}</div></td>
             </tr>
           `;
         }).join('');
       } catch (e) {
-        alert('Error: ' + e.message);
+        console.error('Render error:', e);
       }
     }
 
-    function startEditItem(itemId) {
-      editingItemId = itemId;
-      getOne('items', itemId).then(item => {
-        const row = document.getElementById(`item-row-${itemId}`);
-        row.classList.add('edit-row');
-
-        const nameCell = row.cells[0];
-        const serialCell = row.cells[1];
-        const condCell = row.cells[4];
-
-        nameCell.innerHTML = `<input type="text" id="edit-name-${itemId}" value="${item.name}" style="width: 100%;">`;
-        serialCell.innerHTML = `<input type="text" id="edit-serial-${itemId}" value="${item.serial}" style="width: 100%;">`;
-        condCell.innerHTML = `
-          <select id="edit-cond-${itemId}" style="width: 100%;">
-            <option value="working" ${item.condition === 'working' ? 'selected' : ''}>Working</option>
-            <option value="not-working" ${item.condition === 'not-working' ? 'selected' : ''}>Not Working</option>
-            <option value="not-applicable" ${item.condition === 'not-applicable' ? 'selected' : ''}>N/A</option>
-          </select>
-        `;
-
-        const actionCell = document.getElementById(`actions-${itemId}`);
-        actionCell.innerHTML = `
-          <button class="btn btn-sm btn-success" onclick="saveEditItem(${itemId})">Save</button>
-          <button class="btn btn-sm btn-secondary" onclick="cancelEditItem()">Cancel</button>
-        `;
-      });
-    }
-
-    async function saveEditItem(itemId) {
+    async function renderConsumables() {
       try {
-        const name = document.getElementById(`edit-name-${itemId}`).value.trim();
-        const serial = document.getElementById(`edit-serial-${itemId}`).value.trim();
-        const cond = document.getElementById(`edit-cond-${itemId}`).value;
+        const consumables = await getAll('consumables');
+        document.getElementById('consumablesCount').textContent = consumables.length;
+        const tbody = document.getElementById('consumablesBody');
 
-        if (!name || !serial) {
-          alert('Name and Serial are required');
+        if (!consumables.length) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No consumables found</td></tr>';
           return;
         }
 
-        const item = await getOne('items', itemId);
-        item.name = name;
-        item.serial = serial;
-        item.condition = cond;
-        await updateRecord('items', item);
+        tbody.innerHTML = consumables.map(cons => {
+          let actionButtons = '';
+          if (isAdmin) {
+            actionButtons = `
+              <button class="btn-icon" onclick="openEditConsumableModal(${cons.id})" title="Edit">✏️</button>
+              <button class="btn-icon" onclick="openAddQuantityModal(${cons.id})" title="Add Qty">➕</button>
+              <button class="btn-icon" onclick="openAssignConsumableModal(${cons.id})" title="Assign">📤</button>
+              <button class="btn-icon" onclick="openDeleteModal(${cons.id}, 'consumables')" title="Delete">🗑️</button>
+            `;
+          }
 
-        alert('Item updated!');
-        editingItemId = null;
-        renderItems();
+          return `
+            <tr>
+              <td>${cons.name}</td>
+              <td>${cons.partNumber}</td>
+              <td><span class="badge badge-green">${cons.quantity}</span></td>
+              <td><div class="action-buttons">${actionButtons}</div></td>
+            </tr>
+          `;
+        }).join('');
       } catch (e) {
-        alert('Error: ' + e.message);
+        console.error('Render error:', e);
       }
     }
 
-    function cancelEditItem() {
-      editingItemId = null;
-      renderItems();
-    }
-
-    function openDeleteModal(itemId) {
-      deleteItemId = itemId;
-      openModal('deleteItemModal');
-    }
-
-    async function confirmDeleteItem() {
+    // ========== ASSET FUNCTIONS ==========
+    async function openEditAssetModal(assetId) {
       try {
-        await deleteRecord('items', deleteItemId);
-        alert('Item deleted!');
-        closeModal('deleteItemModal');
-        renderItems();
+        editingItemId = assetId;
+        editingItemType = 'assets';
+        const asset = await getOne('assets', assetId);
+        
+        document.getElementById('editAssetName').value = asset.name;
+        document.getElementById('editAssetSerial').value = asset.serial;
+        document.getElementById('editAssetCond').value = asset.condition;
+        
+        openModal('editAssetModal');
       } catch (e) {
         alert('Error: ' + e.message);
       }
     }
 
-    async function openAssignModal(itemId) {
-      try {
-        const members = await getAll('users');
-        const select = document.getElementById('assignMemberSelect');
-        select.innerHTML = `<option value="">Choose member</option>` + members.map(m => `<option value="${m.id}">${m.name} (${m.email})</option>`).join('');
-        select.dataset.itemId = itemId;
-        openModal('assignItemModal');
-      } catch (e) {
-        alert('Error: ' + e.message);
-      }
-    }
-
-    document.getElementById('assignForm').addEventListener('submit', async (e) => {
+    document.getElementById('editAssetForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
-        const itemId = parseInt(document.getElementById('assignMemberSelect').dataset.itemId);
-        const memberId = parseInt(document.getElementById('assignMemberSelect').value);
+        const asset = await getOne('assets', editingItemId);
+        asset.name = document.getElementById('editAssetName').value;
+        asset.serial = document.getElementById('editAssetSerial').value;
+        asset.condition = document.getElementById('editAssetCond').value;
+        
+        await updateRecord('assets', asset);
+        alert('Asset updated!');
+        closeModal('editAssetModal');
+        renderAssets();
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    });
+
+    async function openAssignAssetModal(assetId) {
+      try {
+        const members = await getAll('users');
+        const select = document.getElementById('assignAssetMember');
+        select.innerHTML = '<option value="">Choose member</option>' + members.map(m => `<option value="${m.id}">${m.name} (${m.email})</option>`).join('');
+        select.dataset.assetId = assetId;
+        openModal('assignAssetModal');
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    document.getElementById('assignAssetForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const assetId = parseInt(document.getElementById('assignAssetMember').dataset.assetId);
+        const memberId = parseInt(document.getElementById('assignAssetMember').value);
 
         if (!memberId) {
           alert('Select a member');
           return;
         }
 
-        const item = await getOne('items', itemId);
+        const asset = await getOne('assets', assetId);
         const member = await getOne('users', memberId);
-        const oldHolder = item.holder || 'Available';
-        item.holder = member.name;
-        await updateRecord('items', item);
+        const oldHolder = asset.holder || 'Available';
+        asset.holder = member.name;
+        
+        await updateRecord('assets', asset);
 
         await addRecord('history', {
-          itemId: itemId,
-          itemName: item.name,
+          itemId: assetId,
+          itemName: asset.name,
           action: 'assigned',
           from: oldHolder,
           to: member.name,
@@ -1452,32 +1769,43 @@
           user: currentUser.name
         });
 
-        alert('Item assigned!');
-        closeModal('assignItemModal');
-        renderItems();
+        // Send email notification
+        await sendEmailNotification(
+          member.email,
+          `Asset Assigned: ${asset.name}`,
+          `Hi ${member.name},\n\nThe asset "${asset.name}" (Serial: ${asset.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`
+        );
+
+        alert('Asset assigned!');
+        closeModal('assignAssetModal');
+        renderAssets();
       } catch (e) {
         alert('Error: ' + e.message);
       }
     });
 
-    function openReturnModal(itemId) {
-      returnItemId = itemId;
-      getOne('items', itemId).then(item => {
-        document.getElementById('returnItemInfo').textContent = `Item: ${item.name} | Holder: ${item.holder}`;
-        openModal('returnItemModal');
-      });
+    async function openReturnAssetModal(assetId) {
+      try {
+        returningAssetId = assetId;
+        const asset = await getOne('assets', assetId);
+        document.getElementById('returnAssetInfo').textContent = `Asset: ${asset.name} | Holder: ${asset.holder}`;
+        openModal('returnAssetModal');
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
     }
 
-    async function confirmReturnItem() {
+    async function confirmReturnAsset() {
       try {
-        const item = await getOne('items', returnItemId);
-        const oldHolder = item.holder;
-        item.holder = '';
-        await updateRecord('items', item);
+        const asset = await getOne('assets', returningAssetId);
+        const oldHolder = asset.holder;
+        asset.holder = '';
+        
+        await updateRecord('assets', asset);
 
         await addRecord('history', {
-          itemId: returnItemId,
-          itemName: item.name,
+          itemId: returningAssetId,
+          itemName: asset.name,
           action: 'returned',
           from: oldHolder,
           to: 'Available',
@@ -1485,23 +1813,23 @@
           user: currentUser.name
         });
 
-        alert('Item returned!');
-        closeModal('returnItemModal');
-        renderItems();
+        alert('Asset returned!');
+        closeModal('returnAssetModal');
+        renderAssets();
       } catch (e) {
         alert('Error: ' + e.message);
       }
     }
 
-    async function openItemHistory(itemId) {
+    async function openAssetHistory(assetId) {
       try {
         const allHistory = await getAll('history');
-        const itemHistory = allHistory.filter(h => h.itemId === itemId);
+        const itemHistory = allHistory.filter(h => h.itemId === assetId);
         const list = document.getElementById('historyList');
 
         if (!itemHistory.length) {
-          list.innerHTML = `<p style="text-align: center; color: #94a3b8;">No history for this item</p>`;
-          openModal('itemHistoryModal');
+          list.innerHTML = '<p style="text-align: center; color: #94a3b8;">No history</p>';
+          openModal('historyModal');
           return;
         }
 
@@ -1513,13 +1841,205 @@
           </div>
         `).join('');
 
-        openModal('itemHistoryModal');
+        openModal('historyModal');
       } catch (e) {
         alert('Error: ' + e.message);
       }
     }
 
-    // ========== REGISTRATION ==========
+    // ========== CONSUMABLE FUNCTIONS ==========
+    async function openEditConsumableModal(consId) {
+      try {
+        editingItemId = consId;
+        editingItemType = 'consumables';
+        const cons = await getOne('consumables', consId);
+        
+        document.getElementById('editConsName').value = cons.name;
+        document.getElementById('editConsPartNumber').value = cons.partNumber;
+        
+        openModal('editConsumableModal');
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    document.getElementById('editConsumableForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const cons = await getOne('consumables', editingItemId);
+        cons.name = document.getElementById('editConsName').value;
+        cons.partNumber = document.getElementById('editConsPartNumber').value;
+        
+        await updateRecord('consumables', cons);
+        alert('Consumable updated!');
+        closeModal('editConsumableModal');
+        renderConsumables();
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    });
+
+    async function openAddQuantityModal(consId) {
+      try {
+        editingItemId = consId;
+        const cons = await getOne('consumables', consId);
+        document.getElementById('quantityItemName').value = cons.name;
+        document.getElementById('quantityToAdd').value = '';
+        openModal('addQuantityModal');
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    document.getElementById('addQuantityForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const cons = await getOne('consumables', editingItemId);
+        const qtyToAdd = parseInt(document.getElementById('quantityToAdd').value);
+        
+        cons.quantity += qtyToAdd;
+        await updateRecord('consumables', cons);
+        
+        alert(`Added ${qtyToAdd} units!`);
+        closeModal('addQuantityModal');
+        renderConsumables();
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    });
+
+    async function openAssignConsumableModal(consId) {
+      try {
+        editingItemId = consId;
+        const cons = await getOne('consumables', consId);
+        const members = await getAll('users');
+        
+        document.getElementById('assignConsItemName').value = cons.name;
+        document.getElementById('assignConsAvailQty').value = cons.quantity;
+        
+        const select = document.getElementById('assignConsMember');
+        select.innerHTML = '<option value="">Choose member</option>' + members.map(m => `<option value="${m.id}">${m.name} (${m.email})</option>`).join('');
+        
+        openModal('assignConsumableModal');
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    document.getElementById('assignConsumableForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const memberId = parseInt(document.getElementById('assignConsMember').value);
+        const qtyToAssign = parseInt(document.getElementById('assignConsQty').value);
+
+        if (!memberId) {
+          alert('Select a member');
+          return;
+        }
+
+        const cons = await getOne('consumables', editingItemId);
+        if (qtyToAssign > cons.quantity) {
+          alert('Insufficient quantity!');
+          return;
+        }
+
+        const member = await getOne('users', memberId);
+        
+        cons.quantity -= qtyToAssign;
+        await updateRecord('consumables', cons);
+
+        await addRecord('history', {
+          itemId: editingItemId,
+          itemName: cons.name,
+          action: 'assigned',
+          from: `${cons.quantity + qtyToAssign} units`,
+          to: `${member.name} (${qtyToAssign} units)`,
+          date: new Date().toLocaleString(),
+          user: currentUser.name
+        });
+
+        // Send email notification
+        await sendEmailNotification(
+          member.email,
+          `Consumable Item Assigned: ${cons.name}`,
+          `Hi ${member.name},\n\nYou have been assigned ${qtyToAssign} unit(s) of "${cons.name}" (Part#: ${cons.partNumber}).\n\nRegards,\n${currentUser.name}`
+        );
+
+        alert(`${qtyToAssign} unit(s) assigned to ${member.name}!`);
+        closeModal('assignConsumableModal');
+        renderConsumables();
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    });
+
+    // ========== DELETE MODAL ==========
+    function openDeleteModal(itemId, itemType) {
+      deletingItemId = itemId;
+      deletingItemType = itemType;
+      openModal('deleteModal');
+    }
+
+    async function confirmDelete() {
+      try {
+        await deleteRecord(deletingItemType, deletingItemId);
+        alert('Item deleted!');
+        closeModal('deleteModal');
+        
+        if (deletingItemType === 'assets') {
+          renderAssets();
+        } else if (deletingItemType === 'consumables') {
+          renderConsumables();
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    // ========== ASSET FORM ==========
+    document.getElementById('assetForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const formData = new FormData(e.target);
+        const asset = {
+          name: formData.get('name').trim(),
+          serial: formData.get('serial').trim(),
+          condition: formData.get('condition'),
+          holder: ''
+        };
+
+        await addRecord('assets', asset);
+        alert('Asset added!');
+        e.target.reset();
+        closeModal('addAssetModal');
+        renderAssets();
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    });
+
+    // ========== CONSUMABLE FORM ==========
+    document.getElementById('consumableForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const formData = new FormData(e.target);
+        const consumable = {
+          name: formData.get('name').trim(),
+          partNumber: formData.get('partNumber').trim(),
+          quantity: parseInt(formData.get('quantity'))
+        };
+
+        await addRecord('consumables', consumable);
+        alert('Consumable added!');
+        e.target.reset();
+        closeModal('addConsumableModal');
+        renderConsumables();
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    });
+
+    // ========== REGISTRATION & LOGIN ==========
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
@@ -1544,7 +2064,6 @@
           return;
         }
 
-        const isFirstUser = users.length === 0;
         const user = {
           name: formData.get('name').trim(),
           email: email,
@@ -1552,15 +2071,15 @@
           mobile: formData.get('mobile').trim() || '',
           designation: formData.get('designation').trim() || '',
           department: formData.get('department').trim() || '',
-          isAdmin: isFirstUser
+          isAdmin: users.length === 0
         };
 
         const userId = await addRecord('users', user);
         user.id = userId;
         currentUser = user;
-        isAdmin = isFirstUser;
+        isAdmin = user.isAdmin;
 
-        alert('Admin Account Created!');
+        alert('Account created!');
         showMainApp();
         e.target.reset();
       } catch (e) {
@@ -1568,7 +2087,6 @@
       }
     });
 
-    // ========== LOGIN ==========
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
@@ -1576,11 +2094,7 @@
         const email = formData.get('email').trim().toLowerCase();
         const password = btoa(formData.get('password'));
 
-        console.log('Login attempt:', email);
-
         const users = await getAll('users');
-        console.log('Users found:', users.length);
-
         const user = users.find(u => u.email === email && u.password === password);
 
         if (!user) {
@@ -1590,36 +2104,96 @@
 
         currentUser = user;
         isAdmin = user.isAdmin || false;
-        alert(`Welcome, ${user.name}!`);
         showMainApp();
       } catch (e) {
         alert('Error: ' + e.message);
       }
     });
 
-    // ========== ADD ITEM ==========
-    document.getElementById('itemForm').addEventListener('submit', async (e) => {
+    // ========== SETTINGS ==========
+    document.getElementById('editProfileBtn').addEventListener('click', () => {
+      closePanel('settingsPanel');
+      document.getElementById('editName').value = currentUser.name;
+      document.getElementById('editEmail').value = currentUser.email;
+      document.getElementById('editMobile').value = currentUser.mobile || '';
+      document.getElementById('editDesignation').value = currentUser.designation || '';
+      document.getElementById('editDepartment').value = currentUser.department || '';
+      openModal('editProfileModal');
+    });
+
+    document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
-        const formData = new FormData(e.target);
-        const item = {
-          name: formData.get('name').trim(),
-          serial: formData.get('serial').trim(),
-          condition: formData.get('condition'),
-          holder: ''
-        };
+        currentUser.name = document.getElementById('editName').value.trim();
+        currentUser.email = document.getElementById('editEmail').value.trim();
+        currentUser.mobile = document.getElementById('editMobile').value.trim();
+        currentUser.designation = document.getElementById('editDesignation').value.trim();
+        currentUser.department = document.getElementById('editDepartment').value.trim();
 
-        await addRecord('items', item);
-        alert('Item added!');
-        e.target.reset();
-        closeModal('addItemModal');
-        renderItems();
+        await updateRecord('users', currentUser);
+        alert('Profile updated!');
+        closeModal('editProfileModal');
       } catch (e) {
         alert('Error: ' + e.message);
       }
     });
 
-    // ========== ADD MEMBER ==========
+    document.getElementById('changePasswordBtn').addEventListener('click', () => {
+      closePanel('settingsPanel');
+      openModal('changePasswordModal');
+    });
+
+    document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const currentPassword = btoa(document.getElementById('currentPassword').value);
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmNewPassword').value;
+
+        if (currentPassword !== currentUser.password) {
+          alert('Wrong password');
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          alert('Passwords do not match');
+          return;
+        }
+
+        if (newPassword.length < 6) {
+          alert('Min 6 characters');
+          return;
+        }
+
+        currentUser.password = btoa(newPassword);
+        await updateRecord('users', currentUser);
+        alert('Password changed!');
+        document.getElementById('changePasswordForm').reset();
+        closeModal('changePasswordModal');
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      closePanel('settingsPanel');
+      currentUser = null;
+      isAdmin = false;
+      document.getElementById('authScreen').classList.remove('hidden');
+      document.getElementById('mainHeader').classList.add('hidden');
+      document.getElementById('mainContent').classList.add('hidden');
+    });
+
+    document.getElementById('addItemBtn').addEventListener('click', () => {
+      closePanel('managePanel');
+      openModal('itemTypeModal');
+    });
+
+    document.getElementById('addMemberBtn').addEventListener('click', () => {
+      closePanel('managePanel');
+      openModal('addMemberModal');
+    });
+
     document.getElementById('memberForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
@@ -1663,113 +2237,6 @@
       }
     });
 
-    // ========== EDIT PROFILE ==========
-    document.getElementById('editProfileBtn').addEventListener('click', () => {
-      closePanel('settingsPanel');
-      document.getElementById('editName').value = currentUser.name;
-      document.getElementById('editEmail').value = currentUser.email;
-      document.getElementById('editMobile').value = currentUser.mobile || '';
-      document.getElementById('editDesignation').value = currentUser.designation || '';
-      document.getElementById('editDepartment').value = currentUser.department || '';
-      openModal('editProfileModal');
-    });
-
-    document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      try {
-        currentUser.name = document.getElementById('editName').value.trim();
-        currentUser.email = document.getElementById('editEmail').value.trim();
-        currentUser.mobile = document.getElementById('editMobile').value.trim();
-        currentUser.designation = document.getElementById('editDesignation').value.trim();
-        currentUser.department = document.getElementById('editDepartment').value.trim();
-
-        await updateRecord('users', currentUser);
-        alert('Profile updated!');
-        closeModal('editProfileModal');
-      } catch (e) {
-        alert('Error: ' + e.message);
-      }
-    });
-
-    // ========== CHANGE PASSWORD ==========
-    document.getElementById('changePasswordBtn').addEventListener('click', () => {
-      closePanel('settingsPanel');
-      openModal('changePasswordModal');
-    });
-
-    document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      try {
-        const currentPassword = btoa(document.getElementById('currentPassword').value);
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmPassword = document.getElementById('confirmNewPassword').value;
-
-        if (currentPassword !== currentUser.password) {
-          alert('Wrong password');
-          return;
-        }
-
-        if (newPassword !== confirmPassword) {
-          alert('Passwords do not match');
-          return;
-        }
-
-        if (newPassword.length < 6) {
-          alert('Min 6 characters');
-          return;
-        }
-
-        currentUser.password = btoa(newPassword);
-        await updateRecord('users', currentUser);
-        alert('Password changed!');
-        document.getElementById('changePasswordForm').reset();
-        closeModal('changePasswordModal');
-      } catch (e) {
-        alert('Error: ' + e.message);
-      }
-    });
-
-    // ========== SYNC FROM GITHUB BUTTON ==========
-    document.getElementById('syncFromGithubBtn').addEventListener('click', async () => {
-      closePanel('settingsPanel');
-      await autoSyncFromGithub();
-      alert('Sync complete! Refresh to see updates.');
-      location.reload();
-    });
-
-    // ========== LOGOUT ==========
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      closePanel('settingsPanel');
-      currentUser = null;
-      isAdmin = false;
-      document.getElementById('authScreen').classList.remove('hidden');
-      document.getElementById('mainHeader').classList.add('hidden');
-      document.getElementById('mainContent').classList.add('hidden');
-    });
-
-    // ========== PANELS ==========
-    document.getElementById('openManage').addEventListener('click', () => openPanel('managePanel'));
-    document.getElementById('closeManage').addEventListener('click', () => closePanel('managePanel'));
-    document.getElementById('settingsBtn').addEventListener('click', () => openPanel('settingsPanel'));
-    document.getElementById('closeSettings').addEventListener('click', () => closePanel('settingsPanel'));
-
-    document.getElementById('backdrop').addEventListener('click', () => {
-      closePanel('managePanel');
-      closePanel('settingsPanel');
-      document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
-      document.getElementById('backdrop').classList.remove('show');
-    });
-
-    document.getElementById('viewItemsBtn').addEventListener('click', () => {
-      closePanel('managePanel');
-      renderItems();
-    });
-
-    document.getElementById('addItemBtn').addEventListener('click', () => {
-      closePanel('managePanel');
-      openModal('addItemModal');
-    });
-
     document.getElementById('viewMembersBtn').addEventListener('click', async () => {
       closePanel('managePanel');
       try {
@@ -1797,11 +2264,6 @@
       }
     });
 
-    document.getElementById('addMemberBtn').addEventListener('click', () => {
-      closePanel('managePanel');
-      openModal('addMemberModal');
-    });
-
     // ========== THEME ==========
     document.getElementById('lightBtn').addEventListener('click', () => {
       document.documentElement.classList.remove('dark');
@@ -1817,7 +2279,25 @@
       document.getElementById('lightBtn').classList.remove('active');
     });
 
-    // ========== STARTUP - WITH AUTO SYNC ==========
+    // ========== PANELS ==========
+    document.getElementById('openManage').addEventListener('click', () => openPanel('managePanel'));
+    document.getElementById('closeManage').addEventListener('click', () => closePanel('managePanel'));
+    document.getElementById('settingsBtn').addEventListener('click', () => openPanel('settingsPanel'));
+    document.getElementById('closeSettings').addEventListener('click', () => closePanel('settingsPanel'));
+
+    document.getElementById('backdrop').addEventListener('click', () => {
+      closePanel('managePanel');
+      closePanel('settingsPanel');
+      document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
+      document.getElementById('backdrop').classList.remove('show');
+    });
+
+    document.getElementById('viewItemsBtn').addEventListener('click', () => {
+      closePanel('managePanel');
+      switchTab('assets');
+    });
+
+    // ========== STARTUP ==========
     (async () => {
       try {
         const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -1827,12 +2307,10 @@
 
         await initDB();
         console.log('✓ Database ready');
-
-        // AUTO SYNC FROM GITHUB AT STARTUP
         await autoSyncFromGithub();
-        console.log('✓ App ready');
+        console.log('✓ App ready!');
       } catch (e) {
-        console.error('Startup error:', e.message);
+        console.error('Error:', e.message);
         alert('Error: ' + e.message);
       }
     })();
