@@ -196,17 +196,6 @@
             border-radius: 4px;
         }
 
-        .btn-icon {
-            padding: 8px 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
         .text-muted {
             color: #64748b;
             font-size: 13px;
@@ -214,16 +203,6 @@
 
         html.dark .text-muted {
             color: #8b949e;
-        }
-
-        .text-link {
-            color: #667eea;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .text-link:hover {
-            text-decoration: underline;
         }
 
         .main-container {
@@ -370,12 +349,6 @@
             border-bottom-color: #30363d;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
         .header-title {
             font-size: 20px;
             font-weight: 700;
@@ -468,11 +441,6 @@
             align-items: center;
             justify-content: center;
             font-size: 20px;
-        }
-
-        .search-bar {
-            display: flex;
-            gap: 12px;
         }
 
         .search-input {
@@ -698,24 +666,6 @@
             background: #166a45;
         }
 
-        .action-btn-notify {
-            background: #f3e8ff;
-            color: #6b21a8;
-        }
-
-        .action-btn-notify:hover {
-            background: #e9d5ff;
-        }
-
-        html.dark .action-btn-notify {
-            background: #3d1f47;
-            color: #d291f7;
-        }
-
-        html.dark .action-btn-notify:hover {
-            background: #5a2e6b;
-        }
-
         .action-btn-delete {
             background: #fee2e2;
             color: #991b1b;
@@ -750,22 +700,6 @@
 
         html.dark .action-btn-add-qty:hover {
             background: #3a4266;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 48px 24px;
-            color: #64748b;
-        }
-
-        html.dark .empty-state {
-            color: #8b949e;
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-            opacity: 0.5;
         }
 
         .modal {
@@ -828,17 +762,6 @@
             display: flex;
             gap: 12px;
             justify-content: flex-end;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .form-row.full {
-            grid-template-columns: 1fr;
         }
 
         .message {
@@ -947,121 +870,16 @@
             border-color: #da3633;
         }
 
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            min-width: 180px;
-            z-index: 100;
-            margin-top: 8px;
+        .toast-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
         }
 
-        html.dark .dropdown-menu {
-            background: #161b22;
-            border-color: #30363d;
-        }
-
-        .dropdown-menu a,
-        .dropdown-menu button {
-            display: block;
-            width: 100%;
-            padding: 12px 16px;
-            border: none;
-            background: none;
-            text-align: left;
-            cursor: pointer;
-            font-size: 14px;
-            color: #334155;
-            border-bottom: 1px solid #f1f5f9;
-            transition: background 0.2s ease;
-            font-family: inherit;
-        }
-
-        html.dark .dropdown-menu a,
-        html.dark .dropdown-menu button {
-            color: #c9d1d9;
-            border-bottom-color: #21262d;
-        }
-
-        .dropdown-menu a:last-child,
-        .dropdown-menu button:last-child {
-            border-bottom: none;
-        }
-
-        .dropdown-menu a:hover,
-        .dropdown-menu button:hover {
-            background: #f1f5f9;
-        }
-
-        html.dark .dropdown-menu a:hover,
-        html.dark .dropdown-menu button:hover {
-            background: #21262d;
-        }
-
-        .dropdown-menu a.danger,
-        .dropdown-menu button.danger {
-            color: #dc2626;
-        }
-
-        html.dark .dropdown-menu a.danger,
-        html.dark .dropdown-menu button.danger {
-            color: #f85149;
-        }
-
-        .history-item {
-            padding: 12px;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 13px;
-        }
-
-        html.dark .history-item {
-            border-bottom-color: #30363d;
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        .history-time {
-            color: #94a3b8;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        html.dark .history-time {
-            color: #6e7681;
-        }
-
-        .history-action {
-            color: #334155;
-        }
-
-        html.dark .history-action {
-            color: #c9d1d9;
-        }
-
-        .history-person {
-            color: #667eea;
-            font-weight: 600;
-        }
-
-        .no-items-message {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 32px;
-            color: #94a3b8;
-        }
-
-        html.dark .no-items-message {
-            color: #6e7681;
-        }
-
-        .relative {
-            position: relative;
+        html.dark .toast-warning {
+            background: #3d2817;
+            color: #d29922;
+            border-color: #8b6914;
         }
 
         .members-grid {
@@ -1086,13 +904,6 @@
         .member-card:hover {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-color: #667eea;
-        }
-
-        .member-card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
         }
 
         .member-avatar {
@@ -1177,28 +988,12 @@
                 padding: 12px 0;
             }
 
-            .search-bar {
-                flex-direction: column;
-            }
-
-            .search-input {
-                width: 100%;
-            }
-
-            .action-buttons {
-                flex-wrap: wrap;
-            }
-
             table {
                 font-size: 12px;
             }
 
             td, th {
                 padding: 12px 8px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -1298,20 +1093,14 @@
             <!-- Main Content -->
             <div class="content">
                 <div class="header">
-                    <div class="header-left">
-                        <div class="header-title" id="pageTitle">📦 Inventory Items</div>
-                    </div>
+                    <div class="header-title" id="pageTitle">📦 Inventory Items</div>
                     <div class="header-right">
-                        <div class="user-profile" onclick="toggleUserMenu()">
+                        <div class="user-profile">
                             <div class="user-avatar" id="userAvatar">A</div>
                             <div class="user-info">
                                 <div class="user-name" id="userName">Admin</div>
                                 <div class="user-email" id="userEmail">admin@example.com</div>
                             </div>
-                        </div>
-                        <div id="userMenu" class="dropdown-menu hidden">
-                            <button onclick="switchView('settings')">⚙️ Settings</button>
-                            <button onclick="handleLogout()" class="danger">Logout</button>
                         </div>
                     </div>
                 </div>
@@ -1324,9 +1113,7 @@
                                 <span class="items-count-number" id="itemsCountDisplay">0</span>
                                 <span>Items</span>
                             </div>
-                            <div class="search-bar">
-                                <input type="text" class="search-input" id="searchItems" placeholder="Search items...">
-                            </div>
+                            <input type="text" class="search-input" id="searchItems" placeholder="Search items...">
                         </div>
 
                         <div class="table-container">
@@ -1342,9 +1129,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="itemsTableBody">
-                                    <tr>
-                                        <td colspan="6" class="no-items-message">No items found</td>
-                                    </tr>
+                                    <tr><td colspan="6" style="text-align: center; color: #94a3b8;">No items found</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1357,9 +1142,7 @@
                                 <span class="items-count-number" id="consumablesCountDisplay">0</span>
                                 <span>Consumables</span>
                             </div>
-                            <div class="search-bar">
-                                <input type="text" class="search-input" id="searchConsumables" placeholder="Search consumables...">
-                            </div>
+                            <input type="text" class="search-input" id="searchConsumables" placeholder="Search consumables...">
                         </div>
 
                         <div class="table-container">
@@ -1373,9 +1156,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="consumablesTableBody">
-                                    <tr>
-                                        <td colspan="4" class="no-items-message">No consumables found</td>
-                                    </tr>
+                                    <tr><td colspan="4" style="text-align: center; color: #94a3b8;">No consumables found</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1383,22 +1164,12 @@
 
                     <!-- Manage View -->
                     <div id="manageView" class="view hidden">
-                        <div class="items-count" style="margin-bottom: 24px;">
-                            📋 Manage Inventory
-                        </div>
+                        <div class="items-count" style="margin-bottom: 24px;">📋 Manage Inventory</div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.2s ease;" class="manage-card" onclick="openAddItemTypeModal()">
+                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer;" onclick="openAddItemTypeModal()">
                                 <div style="font-size: 32px; margin-bottom: 12px;">➕</div>
                                 <div style="font-weight: 600; font-size: 16px;">Add Item</div>
                                 <div style="color: #64748b; font-size: 13px;">Create new asset or consumable</div>
-                            </div>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 32px;">
-                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.2s ease;" class="manage-card" onclick="switchView('members')">
-                                <div style="font-size: 32px; margin-bottom: 12px;">👥</div>
-                                <div style="font-weight: 600; font-size: 16px;">Manage Members</div>
-                                <div style="color: #64748b; font-size: 13px;">Add/edit users</div>
                             </div>
                         </div>
                     </div>
@@ -1409,40 +1180,30 @@
                             <div class="items-count">👥 Members</div>
                             <button class="btn btn-primary" style="width: auto;" onclick="openAddMemberModal()">➕ Add Member</button>
                         </div>
-
                         <div class="members-grid" id="membersGrid">
-                            <div class="no-items-message" style="grid-column: 1 / -1;">No members found</div>
+                            <div style="grid-column: 1 / -1; text-align: center; color: #94a3b8;">No members found</div>
                         </div>
                     </div>
 
                     <!-- Settings View -->
                     <div id="settingsView" class="view hidden">
                         <div class="items-count" style="margin-bottom: 24px;">⚙️ Settings</div>
-
                         <div style="display: grid; gap: 16px;">
                             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer;" onclick="openEditProfileModal()">
                                 <div style="font-weight: 600; margin-bottom: 8px;">✏️ Edit Profile</div>
                                 <div style="color: #64748b; font-size: 13px;">Update your information</div>
                             </div>
-
                             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer;" onclick="openChangePasswordModal()">
                                 <div style="font-weight: 600; margin-bottom: 8px;">🔐 Change Password</div>
                                 <div style="color: #64748b; font-size: 13px;">Update your password</div>
                             </div>
-
                             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer;" onclick="exportToFile()">
                                 <div style="font-weight: 600; margin-bottom: 8px;">📤 Export to File</div>
                                 <div style="color: #64748b; font-size: 13px;">Download backup JSON</div>
                             </div>
-
                             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer;" onclick="syncFromGithub()">
                                 <div style="font-weight: 600; margin-bottom: 8px;">☁️ Sync from GitHub</div>
                                 <div style="color: #64748b; font-size: 13px;">Reload data from repository</div>
-                            </div>
-
-                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer;" onclick="handleLogout()">
-                                <div style="font-weight: 600; margin-bottom: 8px;">🗑️ Logout</div>
-                                <div style="color: #64748b; font-size: 13px;">Sign out of your account</div>
                             </div>
                         </div>
                     </div>
@@ -1451,23 +1212,19 @@
         </div>
     </div>
 
-    <!-- Modals (truncated for space - include all modals from previous code) -->
-
-    <!-- Item Type Selection Modal -->
+    <!-- Modals - Item Type Modal -->
     <div id="itemTypeModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">➕ Add Item</div>
             <div class="modal-body">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div style="background: white; border: 2px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer; text-align: center; transition: all 0.2s ease;" onclick="openAddAssetModal()" onmouseover="this.style.borderColor='#667eea'" onmouseout="this.style.borderColor='#e2e8f0'">
+                    <div style="background: white; border: 2px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer; text-align: center;" onclick="openAddAssetModal()">
                         <div style="font-size: 36px; margin-bottom: 12px;">📦</div>
                         <div style="font-weight: 600;">Asset Item</div>
-                        <div style="color: #64748b; font-size: 12px; margin-top: 8px;">Manage assets with tracking</div>
                     </div>
-                    <div style="background: white; border: 2px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer; text-align: center; transition: all 0.2s ease;" onclick="openAddConsumableModal()" onmouseover="this.style.borderColor='#667eea'" onmouseout="this.style.borderColor='#e2e8f0'">
+                    <div style="background: white; border: 2px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer; text-align: center;" onclick="openAddConsumableModal()">
                         <div style="font-size: 36px; margin-bottom: 12px;">🛠️</div>
                         <div style="font-weight: 600;">Consumable Item</div>
-                        <div style="color: #64748b; font-size: 12px; margin-top: 8px;">Track consumables with quantity</div>
                     </div>
                 </div>
             </div>
@@ -1480,7 +1237,7 @@
     <!-- Add Asset Modal -->
     <div id="addAssetModal" class="modal hidden">
         <div class="modal-content">
-            <div class="modal-header">➕ Add Asset Item</div>
+            <div class="modal-header">➕ Add Asset</div>
             <div class="modal-body">
                 <div class="form-group">
                     <label>Item Name *</label>
@@ -1496,7 +1253,7 @@
                         <option value="">Select condition</option>
                         <option value="Working">✓ Working</option>
                         <option value="Not Working">✗ Not Working</option>
-                        <option value="N/A">N/A Not Applicable</option>
+                        <option value="N/A">N/A</option>
                     </select>
                 </div>
             </div>
@@ -1510,7 +1267,7 @@
     <!-- Add Consumable Modal -->
     <div id="addConsumableModal" class="modal hidden">
         <div class="modal-content">
-            <div class="modal-header">➕ Add Consumable Item</div>
+            <div class="modal-header">➕ Add Consumable</div>
             <div class="modal-body">
                 <div class="form-group">
                     <label>Item Name *</label>
@@ -1527,167 +1284,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('addConsumableModal')">Cancel</button>
-                <button class="btn btn-primary" style="width: auto;" onclick="addConsumable()">Add Consumable</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Asset Modal -->
-    <div id="editAssetModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">✏️ Edit Asset Item</div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Item Name *</label>
-                    <input type="text" id="editAssetName" placeholder="Enter item name">
-                </div>
-                <div class="form-group">
-                    <label>Serial Number *</label>
-                    <input type="text" id="editAssetSerial" placeholder="Enter serial number">
-                </div>
-                <div class="form-group">
-                    <label>Condition *</label>
-                    <select id="editAssetCondition">
-                        <option value="">Select condition</option>
-                        <option value="Working">✓ Working</option>
-                        <option value="Not Working">✗ Not Working</option>
-                        <option value="N/A">N/A Not Applicable</option>
-                    </select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('editAssetModal')">Cancel</button>
-                <button class="btn btn-primary" style="width: auto;" onclick="updateAsset()">Update Asset</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Consumable Modal -->
-    <div id="editConsumableModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">✏️ Edit Consumable Item</div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Item Name *</label>
-                    <input type="text" id="editConsumableName" placeholder="Enter item name">
-                </div>
-                <div class="form-group">
-                    <label>Part Number *</label>
-                    <input type="text" id="editConsumablePartNumber" placeholder="Enter part number">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('editConsumableModal')">Cancel</button>
-                <button class="btn btn-primary" style="width: auto;" onclick="updateConsumable()">Update Consumable</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Quantity Modal -->
-    <div id="addQuantityModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">➕ Add Quantity</div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Item Name</label>
-                    <input type="text" id="addQtyItemName" disabled style="background: #f1f5f9; cursor: not-allowed;">
-                </div>
-                <div class="form-group">
-                    <label>Current Quantity</label>
-                    <input type="text" id="addQtyCurrentQty" disabled style="background: #f1f5f9; cursor: not-allowed;">
-                </div>
-                <div class="form-group">
-                    <label>Quantity to Add *</label>
-                    <input type="number" id="addQtyAmount" placeholder="Enter quantity to add" min="1">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('addQuantityModal')">Cancel</button>
-                <button class="btn btn-primary" style="width: auto;" onclick="confirmAddQuantity()">Add Quantity</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Assign Consumable Modal -->
-    <div id="assignConsumableModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">📤 Assign Consumable Item</div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Item Name</label>
-                    <input type="text" id="assignConsItemName" disabled style="background: #f1f5f9; cursor: not-allowed;">
-                </div>
-                <div class="form-group">
-                    <label>Available Quantity</label>
-                    <input type="text" id="assignConsAvailableQty" disabled style="background: #f1f5f9; cursor: not-allowed;">
-                </div>
-                <div class="form-group">
-                    <label>Select Member *</label>
-                    <select id="assignConsMember">
-                        <option value="">Choose member</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Quantity to Assign *</label>
-                    <input type="number" id="assignConsQuantity" placeholder="Enter quantity" min="1">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('assignConsumableModal')">Cancel</button>
-                <button class="btn btn-primary" style="width: auto;" onclick="confirmAssignConsumable()">Assign</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Assign Asset Modal -->
-    <div id="assignAssetModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">📤 Assign Asset Item</div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Item Name</label>
-                    <input type="text" id="assignAssetItemName" disabled style="background: #f1f5f9; cursor: not-allowed;">
-                </div>
-                <div class="form-group">
-                    <label>Select Member *</label>
-                    <select id="assignAssetMember">
-                        <option value="">Choose member</option>
-                    </select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('assignAssetModal')">Cancel</button>
-                <button class="btn btn-primary" style="width: auto;" onclick="confirmAssignAsset()">Assign</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Item History Modal -->
-    <div id="itemHistoryModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">📜 Item History</div>
-            <div class="modal-body" id="itemHistoryContent">
-                <!-- Dynamically populated -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('itemHistoryModal')">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteConfirmModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">🗑️ Delete Item?</div>
-            <div class="modal-body">
-                <div class="message message-warning">
-                    <div class="message-icon">⚠️</div>
-                    <div>This action cannot be undone.</div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('deleteConfirmModal')">Cancel</button>
-                <button class="btn btn-primary" style="width: auto; background: #ef4444;" onclick="confirmDelete()">Delete</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="addConsumable()">Add</button>
             </div>
         </div>
     </div>
@@ -1707,7 +1304,7 @@
                 </div>
                 <div class="form-group">
                     <label>Mobile</label>
-                    <input type="tel" id="memberMobile" placeholder="Enter mobile number">
+                    <input type="tel" id="memberMobile" placeholder="Enter mobile">
                 </div>
                 <div class="form-group">
                     <label>Designation</label>
@@ -1795,166 +1392,180 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // ================== GITHUB CONFIGURATION ==================
-        const GITHUB_DB_USERNAME = 'riyasma07'; // Replace with your GitHub username
-        const GITHUB_DB_REPO = 'asset-manager-db'; // Your database repo
-        const GITHUB_DB_BRANCH = 'main'; // Branch name
-        const GITHUB_DB_TOKEN = 'ghp_your_token_here'; // Replace with your GitHub Personal Access Token
-        const DATA_JSON_URL = `https://raw.githubusercontent.com/${GITHUB_DB_USERNAME}/${GITHUB_DB_REPO}/${GITHUB_DB_BRANCH}/data.json?v=${Date.now()}`;
+        // ================== CONFIGURATION ==================
+        const GITHUB_USERNAME = 'riyasma07';
+        const GITHUB_DB_REPO = 'asset-manager-db';
+        const GITHUB_DB_BRANCH = 'main';
+        const DATA_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_DB_REPO}/${GITHUB_DB_BRANCH}/data.json?t=${Date.now()}`;
 
         // ================== GLOBAL STATE ==================
         let currentUser = null;
         let items = [];
         let consumables = [];
         let members = [];
-        let allUsers = []; // Store all users (admin + members) for login
-        let currentEditingItemId = null;
-        let currentEditingConsumableId = null;
-        let currentDeleteItemId = null;
-        let currentDeleteItemType = null;
+        let allUsers = [];
 
         // ================== INITIALIZATION ==================
         async function initApp() {
             try {
-                document.getElementById('loadingMessage').textContent = 'Loading data from GitHub...';
+                console.log('Initializing app...');
                 await loadDataFromGithub();
                 
-                if (currentUser) {
-                    hideLoadingScreen();
-                    showMainApp();
-                    renderItems();
-                    renderConsumables();
-                    renderMembers();
-                    updateUserProfile();
-                } else {
-                    hideLoadingScreen();
-                    showAuthScreen();
+                // Check if we have valid admin data
+                if (!currentUser) {
+                    showToast('warning', 'No admin user found. Using demo mode.');
+                    // Demo admin for testing
+                    currentUser = {
+                        id: 1,
+                        name: 'Admin',
+                        email: 'admin@example.com',
+                        password: 'password123',
+                        isAdmin: true
+                    };
                 }
-
-                setupEventListeners();
+                
+                document.getElementById('loadingScreen').style.display = 'none';
+                showAuthScreen();
                 applyTheme();
+                setupEventListeners();
+                
+                console.log('App initialized. Current user:', currentUser ? currentUser.name : 'none');
             } catch (error) {
-                console.error('Initialization error:', error);
-                hideLoadingScreen();
-                showToast('error', 'Failed to load data. Please refresh the page.');
+                console.error('Init error:', error);
+                document.getElementById('loadingScreen').style.display = 'none';
+                showAuthScreen();
+                showToast('warning', 'Demo mode: Use admin@example.com / password123');
             }
         }
 
-        function hideLoadingScreen() {
-            document.getElementById('loadingScreen').style.display = 'none';
+        function setupEventListeners() {
+            document.getElementById('searchItems')?.addEventListener('input', filterItems);
+            document.getElementById('searchConsumables')?.addEventListener('input', filterConsumables);
         }
 
-        function setupEventListeners() {
-            document.getElementById('searchItems').addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
-                const rows = document.querySelectorAll('#itemsTableBody tr');
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(query) ? '' : 'none';
-                });
+        function filterItems() {
+            const query = document.getElementById('searchItems').value.toLowerCase();
+            document.querySelectorAll('#itemsTableBody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
             });
+        }
 
-            document.getElementById('searchConsumables').addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
-                const rows = document.querySelectorAll('#consumablesTableBody tr');
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(query) ? '' : 'none';
-                });
+        function filterConsumables() {
+            const query = document.getElementById('searchConsumables').value.toLowerCase();
+            document.querySelectorAll('#consumablesTableBody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
             });
         }
 
         // ================== GITHUB DATA LOADING ==================
         async function loadDataFromGithub() {
             try {
-                const response = await fetch(DATA_JSON_URL);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch: ${response.status}`);
-                }
+                console.log('Fetching from:', DATA_URL);
+                const response = await fetch(DATA_URL, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
                 const data = await response.json();
-                
-                if (data.user) {
-                    currentUser = data.user; // Store admin user if already logged in before
-                }
+                console.log('Data from GitHub:', data);
 
-                if (data.items) {
-                    items = data.items;
-                }
+                // Safely parse data with null checks
+                if (data && typeof data === 'object') {
+                    currentUser = data.user || null;
+                    items = Array.isArray(data.items) ? data.items : [];
+                    consumables = Array.isArray(data.consumables) ? data.consumables : [];
+                    members = Array.isArray(data.members) ? data.members : [];
 
-                if (data.consumables) {
-                    consumables = data.consumables;
-                }
+                    allUsers = [];
+                    if (data.user) allUsers.push(data.user);
+                    if (Array.isArray(data.members)) allUsers.push(...data.members);
 
-                if (data.members) {
-                    members = data.members;
+                    console.log('Parsed:', { currentUser, items: items.length, consumables: consumables.length, members: members.length });
                 }
-
-                // Prepare all users for login (admin + members)
-                allUsers = [];
-                if (data.user) {
-                    allUsers.push(data.user);
-                }
-                if (data.members) {
-                    allUsers.push(...data.members);
-                }
-
-                console.log('Data loaded successfully from GitHub');
-                return data;
             } catch (error) {
-                console.error('Error loading from GitHub:', error);
-                throw error;
+                console.error('GitHub load error:', error);
+                loadFromLocalStorage();
+            }
+        }
+
+        function loadFromLocalStorage() {
+            const user = localStorage.getItem('currentUser');
+            if (user) {
+                try {
+                    currentUser = JSON.parse(user);
+                } catch (e) {
+                    console.error('LocalStorage parse error:', e);
+                }
             }
         }
 
         async function syncFromGithub() {
+            showToast('info', 'Syncing...');
             try {
-                showToast('info', 'Syncing data from GitHub...');
                 await loadDataFromGithub();
-                await renderItems();
-                await renderConsumables();
-                await renderMembers();
-                showToast('success', 'Data synced successfully!');
+                renderAll();
+                showToast('success', 'Synced!');
             } catch (error) {
-                console.error('Sync error:', error);
-                showToast('error', 'Failed to sync data from GitHub');
+                showToast('error', 'Sync failed');
             }
         }
 
-        // ================== AUTH FUNCTIONS ==================
+        // ================== AUTH ==================
         function handleSignin() {
             const email = document.getElementById('signinEmail').value.trim();
             const password = document.getElementById('signinPassword').value;
 
             if (!email || !password) {
-                showAuthError('Please enter email and password');
+                showAuthError('Enter email and password');
                 return;
             }
 
-            // Find user in all users array
-            const user = allUsers.find(u => u.email === email && u.password === password);
+            console.log('Attempting login with:', email);
+            console.log('Available users:', allUsers);
 
-            if (!user) {
-                showAuthError('Invalid email or password');
+            // Check admin user first
+            if (currentUser && currentUser.email === email && currentUser.password === password) {
+                console.log('Admin login successful');
+                showMainApp();
+                renderAll();
+                updateUserProfile();
+                showToast('success', 'Signed in!');
                 return;
             }
 
-            currentUser = user;
-            saveDataToLocalStorage();
-            hideLoadingScreen();
-            showMainApp();
-            renderItems();
-            renderConsumables();
-            renderMembers();
-            updateUserProfile();
-            showToast('success', 'Signed in successfully!');
+            // Check members
+            const member = members.find(m => m.email === email && m.password === password);
+            if (member) {
+                currentUser = member;
+                console.log('Member login successful:', member.name);
+                showMainApp();
+                renderAll();
+                updateUserProfile();
+                showToast('success', 'Signed in!');
+                return;
+            }
+
+            // Check allUsers array
+            const user = allUsers.find(u => u && u.email === email && u.password === password);
+            if (user) {
+                currentUser = user;
+                console.log('User login successful:', user.name);
+                showMainApp();
+                renderAll();
+                updateUserProfile();
+                showToast('success', 'Signed in!');
+                return;
+            }
+
+            showAuthError('Invalid email or password');
+            console.log('Login failed. Email:', email);
         }
 
         function showAuthError(message) {
-            const errorEl = document.getElementById('authError');
-            const errorTextEl = document.getElementById('authErrorText');
-            errorTextEl.textContent = message;
-            errorEl.classList.remove('hidden');
+            document.getElementById('authErrorText').textContent = message;
+            document.getElementById('authError').classList.remove('hidden');
         }
 
         function handleLogout() {
@@ -1964,10 +1575,10 @@
             document.getElementById('signinEmail').value = '';
             document.getElementById('signinPassword').value = '';
             document.getElementById('authError').classList.add('hidden');
-            showToast('success', 'Logged out successfully!');
+            showToast('success', 'Logged out');
         }
 
-        // ================== UI STATE FUNCTIONS ==================
+        // ================== UI ==================
         function showAuthScreen() {
             document.getElementById('authScreen').classList.remove('hidden');
             document.getElementById('mainApp').classList.add('hidden');
@@ -1978,31 +1589,16 @@
             document.getElementById('mainApp').classList.remove('hidden');
         }
 
-        function switchView(viewName) {
-            // Hide all views
+        function switchView(name) {
             document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
             document.querySelectorAll('.sidebar-menu-item a').forEach(a => a.classList.remove('active'));
-
-            // Show selected view
-            const viewElement = document.getElementById(viewName + 'View');
-            if (viewElement) {
-                viewElement.classList.remove('hidden');
-            }
-
-            // Update menu
-            const menuId = {
-                'items': 'menuViewItems',
-                'consumables': 'menuViewConsumables',
-                'manage': 'menuManage',
-                'members': 'menuMembers',
-                'settings': 'menuSettings'
-            }[viewName];
-
-            if (menuId) {
-                document.getElementById(menuId).classList.add('active');
-            }
-
-            // Update page title
+            
+            const viewEl = document.getElementById(name + 'View');
+            if (viewEl) viewEl.classList.remove('hidden');
+            
+            const menuEl = document.getElementById('menu' + name.charAt(0).toUpperCase() + name.slice(1));
+            if (menuEl) menuEl.classList.add('active');
+            
             const titles = {
                 'items': '📦 Inventory Items',
                 'consumables': '🛠️ Consumable Items',
@@ -2010,36 +1606,28 @@
                 'members': '👥 Members',
                 'settings': '⚙️ Settings'
             };
-
-            document.getElementById('pageTitle').textContent = titles[viewName] || 'Inventory';
-        }
-
-        function toggleUserMenu() {
-            const menu = document.getElementById('userMenu');
-            menu.classList.toggle('hidden');
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.user-profile') && !e.target.closest('#userMenu')) {
-                    menu.classList.add('hidden');
-                }
-            });
+            document.getElementById('pageTitle').textContent = titles[name] || '';
         }
 
         function updateUserProfile() {
             if (currentUser) {
-                document.getElementById('userName').textContent = currentUser.name;
-                document.getElementById('userEmail').textContent = currentUser.email;
-                const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
-                document.getElementById('userAvatar').textContent = initials;
+                document.getElementById('userName').textContent = currentUser.name || 'User';
+                document.getElementById('userEmail').textContent = currentUser.email || '';
+                const name = String(currentUser.name || '?');
+                const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                document.getElementById('userAvatar').textContent = initials || '?';
             }
         }
 
-        // ================== MODAL FUNCTIONS ==================
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
+        // ================== MODALS ==================
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.remove('hidden');
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.add('hidden');
         }
 
         function openAddItemTypeModal() {
@@ -2048,117 +1636,28 @@
 
         function openAddAssetModal() {
             closeModal('itemTypeModal');
-            openModal('addAssetModal');
             document.getElementById('addAssetName').value = '';
             document.getElementById('addAssetSerial').value = '';
             document.getElementById('addAssetCondition').value = '';
+            openModal('addAssetModal');
         }
 
         function openAddConsumableModal() {
             closeModal('itemTypeModal');
-            openModal('addConsumableModal');
             document.getElementById('addConsumableName').value = '';
             document.getElementById('addConsumablePartNumber').value = '';
             document.getElementById('addConsumableQuantity').value = '';
-        }
-
-        function openEditAssetModal(itemId) {
-            const item = items.find(i => i.id === itemId);
-            if (item) {
-                currentEditingItemId = itemId;
-                document.getElementById('editAssetName').value = item.name;
-                document.getElementById('editAssetSerial').value = item.serial;
-                document.getElementById('editAssetCondition').value = item.condition;
-                openModal('editAssetModal');
-            }
-        }
-
-        function openEditConsumableModal(consumableId) {
-            const consumable = consumables.find(c => c.id === consumableId);
-            if (consumable) {
-                currentEditingConsumableId = consumableId;
-                document.getElementById('editConsumableName').value = consumable.name;
-                document.getElementById('editConsumablePartNumber').value = consumable.partNumber;
-                openModal('editConsumableModal');
-            }
-        }
-
-        function openAddQuantityModal(consumableId) {
-            const consumable = consumables.find(c => c.id === consumableId);
-            if (consumable) {
-                currentEditingConsumableId = consumableId;
-                document.getElementById('addQtyItemName').value = consumable.name;
-                document.getElementById('addQtyCurrentQty').value = consumable.quantity;
-                document.getElementById('addQtyAmount').value = '';
-                openModal('addQuantityModal');
-            }
-        }
-
-        function openAssignAssetModal(itemId) {
-            const item = items.find(i => i.id === itemId);
-            if (item) {
-                currentEditingItemId = itemId;
-                document.getElementById('assignAssetItemName').value = item.name;
-                populateMemberDropdown('assignAssetMember');
-                openModal('assignAssetModal');
-            }
-        }
-
-        function openAssignConsumableModal(consumableId) {
-            const consumable = consumables.find(c => c.id === consumableId);
-            if (consumable) {
-                currentEditingConsumableId = consumableId;
-                document.getElementById('assignConsItemName').value = consumable.name;
-                document.getElementById('assignConsAvailableQty').value = consumable.quantity;
-                document.getElementById('assignConsQuantity').value = '';
-                populateMemberDropdown('assignConsMember');
-                openModal('assignConsumableModal');
-            }
-        }
-
-        function openItemHistoryModal(itemId, itemType) {
-            const item = itemType === 'asset' ? items.find(i => i.id === itemId) : consumables.find(c => c.id === itemId);
-            if (item && item.history) {
-                let historyHtml = '';
-                if (item.history.length === 0) {
-                    historyHtml = '<div class="text-muted">No history available</div>';
-                } else {
-                    item.history.forEach(entry => {
-                        const date = new Date(entry.timestamp).toLocaleString();
-                        historyHtml += `
-                            <div class="history-item">
-                                <div class="history-time">${date}</div>
-                                <div class="history-action">${entry.action} <span class="history-person">${entry.member}</span></div>
-                            </div>
-                        `;
-                    });
-                }
-                document.getElementById('itemHistoryContent').innerHTML = historyHtml;
-                openModal('itemHistoryModal');
-            }
-        }
-
-        function openDeleteConfirmModal(itemId, itemType) {
-            currentDeleteItemId = itemId;
-            currentDeleteItemType = itemType;
-            openModal('deleteConfirmModal');
+            openModal('addConsumableModal');
         }
 
         function openAddMemberModal() {
-            document.getElementById('memberName').value = '';
-            document.getElementById('memberEmail').value = '';
-            document.getElementById('memberMobile').value = '';
-            document.getElementById('memberDesignation').value = '';
-            document.getElementById('memberDepartment').value = '';
-            document.getElementById('memberPassword').value = '';
-            document.getElementById('memberConfirmPassword').value = '';
             openModal('addMemberModal');
         }
 
         function openEditProfileModal() {
             if (currentUser) {
-                document.getElementById('editName').value = currentUser.name;
-                document.getElementById('editEmail').value = currentUser.email;
+                document.getElementById('editName').value = currentUser.name || '';
+                document.getElementById('editEmail').value = currentUser.email || '';
                 document.getElementById('editMobile').value = currentUser.mobile || '';
                 document.getElementById('editDesignation').value = currentUser.designation || '';
                 document.getElementById('editDepartment').value = currentUser.department || '';
@@ -2167,253 +1666,80 @@
         }
 
         function openChangePasswordModal() {
-            document.getElementById('currentPassword').value = '';
-            document.getElementById('newPassword').value = '';
-            document.getElementById('confirmNewPassword').value = '';
             openModal('changePasswordModal');
         }
 
-        // ================== ASSET FUNCTIONS ==================
+        // ================== ASSETS ==================
         async function addAsset() {
             const name = document.getElementById('addAssetName').value.trim();
             const serial = document.getElementById('addAssetSerial').value.trim();
             const condition = document.getElementById('addAssetCondition').value;
 
             if (!name || !serial || !condition) {
-                showToast('error', 'Please fill in all required fields');
+                showToast('error', 'Fill all required fields');
                 return;
             }
 
-            const newAsset = {
+            items.push({
                 id: Date.now(),
                 name,
                 serial,
-                condition,
+                condition: String(condition),
                 status: 'Available',
                 holder: '-',
-                history: [{
-                    timestamp: new Date().toISOString(),
-                    action: 'Added to inventory',
-                    member: currentUser.name
-                }],
+                history: [{ timestamp: new Date().toISOString(), action: 'Added', member: currentUser?.name || 'Admin' }],
                 createdAt: new Date().toISOString()
-            };
+            });
 
-            items.push(newAsset);
-            saveDataToLocalStorage();
             closeModal('addAssetModal');
-            await renderItems();
-            showToast('success', 'Asset added successfully!');
+            renderItems();
+            showToast('success', 'Asset added');
         }
 
-        async function updateAsset() {
-            const name = document.getElementById('editAssetName').value.trim();
-            const serial = document.getElementById('editAssetSerial').value.trim();
-            const condition = document.getElementById('editAssetCondition').value;
-
-            if (!name || !serial || !condition) {
-                showToast('error', 'Please fill in all required fields');
-                return;
-            }
-
-            const asset = items.find(i => i.id === currentEditingItemId);
-            if (asset) {
-                asset.name = name;
-                asset.serial = serial;
-                asset.condition = condition;
-                saveDataToLocalStorage();
-                closeModal('editAssetModal');
-                await renderItems();
-                showToast('success', 'Asset updated successfully!');
-            }
-        }
-
-        async function confirmAssignAsset() {
-            const memberId = document.getElementById('assignAssetMember').value;
-
-            if (!memberId) {
-                showToast('error', 'Please select a member');
-                return;
-            }
-
-            const member = members.find(m => m.id == memberId);
-            const asset = items.find(i => i.id === currentEditingItemId);
-
-            if (asset && member) {
-                asset.status = 'Out';
-                asset.holder = member.name;
-                asset.history.push({
-                    timestamp: new Date().toISOString(),
-                    action: 'Assigned to',
-                    member: member.name
-                });
-
-                // Send notification email
-                await sendNotificationEmail(member.email, `Asset Assigned: ${asset.name}`, 
-                    `The asset "${asset.name}" (Serial: ${asset.serial}) has been assigned to you.`);
-
-                saveDataToLocalStorage();
-                closeModal('assignAssetModal');
-                await renderItems();
-                showToast('success', 'Asset assigned successfully!');
-            }
-        }
-
-        async function deleteAsset(itemId) {
-            items = items.filter(i => i.id !== itemId);
-            saveDataToLocalStorage();
-            await renderItems();
-            showToast('success', 'Asset deleted successfully!');
-        }
-
-        // ================== CONSUMABLE FUNCTIONS ==================
+        // ================== CONSUMABLES ==================
         async function addConsumable() {
             const name = document.getElementById('addConsumableName').value.trim();
-            const partNumber = document.getElementById('addConsumablePartNumber').value.trim();
-            const quantity = parseInt(document.getElementById('addConsumableQuantity').value);
+            const part = document.getElementById('addConsumablePartNumber').value.trim();
+            const qty = parseInt(document.getElementById('addConsumableQuantity').value) || 0;
 
-            if (!name || !partNumber || !quantity || quantity < 0) {
-                showToast('error', 'Please fill in all required fields with valid values');
+            if (!name || !part || qty < 0) {
+                showToast('error', 'Fill all required fields');
                 return;
             }
 
-            const newConsumable = {
+            consumables.push({
                 id: Date.now(),
                 name,
-                partNumber,
-                quantity,
-                history: [{
-                    timestamp: new Date().toISOString(),
-                    action: 'Added to inventory',
-                    member: currentUser.name
-                }],
+                partNumber: String(part),
+                quantity: qty,
+                history: [{ timestamp: new Date().toISOString(), action: 'Added', member: currentUser?.name || 'Admin' }],
                 createdAt: new Date().toISOString()
-            };
+            });
 
-            consumables.push(newConsumable);
-            saveDataToLocalStorage();
             closeModal('addConsumableModal');
-            await renderConsumables();
-            showToast('success', 'Consumable added successfully!');
+            renderConsumables();
+            showToast('success', 'Consumable added');
         }
 
-        async function updateConsumable() {
-            const name = document.getElementById('editConsumableName').value.trim();
-            const partNumber = document.getElementById('editConsumablePartNumber').value.trim();
-
-            if (!name || !partNumber) {
-                showToast('error', 'Please fill in all required fields');
-                return;
-            }
-
-            const consumable = consumables.find(c => c.id === currentEditingConsumableId);
-            if (consumable) {
-                consumable.name = name;
-                consumable.partNumber = partNumber;
-                saveDataToLocalStorage();
-                closeModal('editConsumableModal');
-                await renderConsumables();
-                showToast('success', 'Consumable updated successfully!');
-            }
-        }
-
-        async function confirmAddQuantity() {
-            const quantity = parseInt(document.getElementById('addQtyAmount').value);
-
-            if (!quantity || quantity <= 0) {
-                showToast('error', 'Please enter a valid quantity');
-                return;
-            }
-
-            const consumable = consumables.find(c => c.id === currentEditingConsumableId);
-            if (consumable) {
-                consumable.quantity += quantity;
-                consumable.history.push({
-                    timestamp: new Date().toISOString(),
-                    action: `Added ${quantity} units to inventory`,
-                    member: currentUser.name
-                });
-
-                saveDataToLocalStorage();
-                closeModal('addQuantityModal');
-                await renderConsumables();
-                showToast('success', `Added ${quantity} units successfully!`);
-            }
-        }
-
-        async function confirmAssignConsumable() {
-            const memberId = document.getElementById('assignConsMember').value;
-            const quantity = parseInt(document.getElementById('assignConsQuantity').value);
-
-            if (!memberId) {
-                showToast('error', 'Please select a member');
-                return;
-            }
-
-            if (!quantity || quantity <= 0) {
-                showToast('error', 'Please enter a valid quantity');
-                return;
-            }
-
-            const member = members.find(m => m.id == memberId);
-            const consumable = consumables.find(c => c.id === currentEditingConsumableId);
-
-            if (!consumable || consumable.quantity < quantity) {
-                showToast('error', 'Insufficient quantity available');
-                return;
-            }
-
-            if (consumable && member) {
-                consumable.quantity -= quantity;
-                consumable.history.push({
-                    timestamp: new Date().toISOString(),
-                    action: `Assigned ${quantity} units to`,
-                    member: member.name
-                });
-
-                // Send notification email
-                await sendNotificationEmail(member.email, 
-                    `Consumable Item Assigned: ${consumable.name}`, 
-                    `${quantity} units of "${consumable.name}" (Part #: ${consumable.partNumber}) has been given to you.`);
-
-                saveDataToLocalStorage();
-                closeModal('assignConsumableModal');
-                await renderConsumables();
-                showToast('success', 'Consumable assigned successfully!');
-            }
-        }
-
-        async function deleteConsumable(consumableId) {
-            consumables = consumables.filter(c => c.id !== consumableId);
-            saveDataToLocalStorage();
-            await renderConsumables();
-            showToast('success', 'Consumable deleted successfully!');
-        }
-
-        // ================== MEMBER FUNCTIONS ==================
+        // ================== MEMBERS ==================
         async function addMember() {
             const name = document.getElementById('memberName').value.trim();
             const email = document.getElementById('memberEmail').value.trim();
-            const password = document.getElementById('memberPassword').value;
-            const confirmPassword = document.getElementById('memberConfirmPassword').value;
+            const pass = document.getElementById('memberPassword').value;
+            const confirm = document.getElementById('memberConfirmPassword').value;
 
-            if (!name || !email || !password) {
-                showToast('error', 'Please fill in all required fields');
+            if (!name || !email || !pass) {
+                showToast('error', 'Fill required fields');
                 return;
             }
 
-            if (password !== confirmPassword) {
-                showToast('error', 'Passwords do not match');
+            if (pass !== confirm) {
+                showToast('error', 'Passwords don\'t match');
                 return;
             }
 
-            if (password.length < 6) {
-                showToast('error', 'Password must be at least 6 characters');
-                return;
-            }
-
-            if (members.some(m => m.email === email) || (currentUser && currentUser.email === email)) {
-                showToast('error', 'Email already exists');
+            if (pass.length < 6) {
+                showToast('error', 'Min 6 characters');
                 return;
             }
 
@@ -2421,313 +1747,214 @@
                 id: Date.now(),
                 name,
                 email,
-                password,
-                mobile: document.getElementById('memberMobile').value.trim(),
-                designation: document.getElementById('memberDesignation').value.trim(),
-                department: document.getElementById('memberDepartment').value.trim(),
+                password: pass,
+                mobile: document.getElementById('memberMobile').value.trim() || '',
+                designation: document.getElementById('memberDesignation').value.trim() || '',
+                department: document.getElementById('memberDepartment').value.trim() || '',
                 createdAt: new Date().toISOString()
             };
 
             members.push(newMember);
-            allUsers.push(newMember); // Add to login pool
-            saveDataToLocalStorage();
+            allUsers.push(newMember);
             closeModal('addMemberModal');
-            await renderMembers();
-            showToast('success', 'Member added successfully!');
+            renderMembers();
+            showToast('success', 'Member added');
         }
 
-        async function deleteMember(memberId) {
-            members = members.filter(m => m.id !== memberId);
-            allUsers = allUsers.filter(u => u.id !== memberId); // Remove from login pool
-            saveDataToLocalStorage();
-            await renderMembers();
-            showToast('success', 'Member deleted successfully!');
-        }
-
-        // ================== PROFILE FUNCTIONS ==================
+        // ================== PROFILE ==================
         async function saveProfile() {
-            const name = document.getElementById('editName').value.trim();
-            const email = document.getElementById('editEmail').value.trim();
-
-            if (!name || !email) {
-                showToast('error', 'Please fill in required fields');
-                return;
-            }
-
             if (currentUser) {
-                currentUser.name = name;
-                currentUser.email = email;
+                currentUser.name = document.getElementById('editName').value.trim();
+                currentUser.email = document.getElementById('editEmail').value.trim();
                 currentUser.mobile = document.getElementById('editMobile').value.trim();
                 currentUser.designation = document.getElementById('editDesignation').value.trim();
                 currentUser.department = document.getElementById('editDepartment').value.trim();
-
-                saveDataToLocalStorage();
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 closeModal('editProfileModal');
                 updateUserProfile();
-                showToast('success', 'Profile updated successfully!');
+                showToast('success', 'Saved');
             }
         }
 
         async function updatePassword() {
             const current = document.getElementById('currentPassword').value;
             const newPass = document.getElementById('newPassword').value;
-            const confirmPass = document.getElementById('confirmNewPassword').value;
+            const confirm = document.getElementById('confirmNewPassword').value;
 
-            if (!current || !newPass || !confirmPass) {
-                showToast('error', 'Please fill in all fields');
+            if (!current || !newPass || !confirm) {
+                showToast('error', 'Fill all fields');
                 return;
             }
 
             if (currentUser.password !== current) {
-                showToast('error', 'Current password is incorrect');
+                showToast('error', 'Wrong current password');
                 return;
             }
 
-            if (newPass !== confirmPass) {
-                showToast('error', 'New passwords do not match');
+            if (newPass !== confirm) {
+                showToast('error', 'Passwords don\'t match');
                 return;
             }
 
             if (newPass.length < 6) {
-                showToast('error', 'Password must be at least 6 characters');
+                showToast('error', 'Min 6 characters');
                 return;
             }
 
             currentUser.password = newPass;
-            saveDataToLocalStorage();
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
             closeModal('changePasswordModal');
-            showToast('success', 'Password updated successfully!');
+            showToast('success', 'Password updated');
         }
 
-        // ================== RENDER FUNCTIONS ==================
-        async function renderItems() {
-            const tbody = document.getElementById('itemsTableBody');
-            const count = document.getElementById('itemsCountDisplay');
-
-            count.textContent = items.length;
-            document.getElementById('itemsCountBadge').textContent = items.length;
-
-            if (items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="no-items-message">No items found</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = items.map(item => `
-                <tr>
-                    <td>${item.name}</td>
-                    <td>${item.serial}</td>
-                    <td>${item.holder}</td>
-                    <td><span class="status-badge status-${item.status.toLowerCase()}">${item.status === 'Available' ? '✓' : '⬤'} ${item.status}</span></td>
-                    <td><span class="condition-badge condition-${item.condition.toLowerCase().replace(/\s+/g, '')}">${item.condition === 'Working' ? '✓' : item.condition === 'Not Working' ? '✗' : '—'} ${item.condition}</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn action-btn-edit" onclick="openEditAssetModal(${item.id})" title="Edit">✏️</button>
-                            <button class="action-btn action-btn-history" onclick="openItemHistoryModal(${item.id}, 'asset')" title="History">📜</button>
-                            <button class="action-btn action-btn-assign" onclick="openAssignAssetModal(${item.id})" title="Assign">📤</button>
-                            <button class="action-btn action-btn-notify" onclick="openItemHistoryModal(${item.id}, 'asset')" title="History">🔔</button>
-                            <button class="action-btn action-btn-delete" onclick="openDeleteConfirmModal(${item.id}, 'asset')" title="Delete">🗑️</button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+        // ================== RENDER ==================
+        function renderAll() {
+            renderItems();
+            renderConsumables();
+            renderMembers();
         }
 
-        async function renderConsumables() {
-            const tbody = document.getElementById('consumablesTableBody');
-            const count = document.getElementById('consumablesCountDisplay');
-
-            count.textContent = consumables.length;
-            document.getElementById('consumablesCountBadge').textContent = consumables.length;
-
-            if (consumables.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="no-items-message">No consumables found</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = consumables.map(consumable => `
-                <tr>
-                    <td>${consumable.name}</td>
-                    <td>${consumable.partNumber}</td>
-                    <td><strong>${consumable.quantity}</strong></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn action-btn-edit" onclick="openEditConsumableModal(${consumable.id})" title="Edit">✏️</button>
-                            <button class="action-btn action-btn-history" onclick="openItemHistoryModal(${consumable.id}, 'consumable')" title="History">📜</button>
-                            <button class="action-btn action-btn-add-qty" onclick="openAddQuantityModal(${consumable.id})" title="Add Quantity">➕</button>
-                            <button class="action-btn action-btn-assign" onclick="openAssignConsumableModal(${consumable.id})" title="Assign">📤</button>
-                            <button class="action-btn action-btn-notify" onclick="openItemHistoryModal(${consumable.id}, 'consumable')" title="History">🔔</button>
-                            <button class="action-btn action-btn-delete" onclick="openDeleteConfirmModal(${consumable.id}, 'consumable')" title="Delete">🗑️</button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        async function renderMembers() {
-            const grid = document.getElementById('membersGrid');
-
-            if (members.length === 0) {
-                grid.innerHTML = '<div class="no-items-message" style="grid-column: 1 / -1;">No members found</div>';
-                return;
-            }
-
-            grid.innerHTML = members.map(member => `
-                <div class="member-card">
-                    <div class="member-card-header">
-                        <div class="member-avatar">${member.name.split(' ').map(n => n[0]).join('').toUpperCase()}</div>
-                        <div>
-                            <div class="member-name">${member.name}</div>
-                            <div class="member-info">${member.designation || 'Member'}</div>
-                        </div>
-                    </div>
-                    <div class="member-info">
-                        <strong>Email:</strong> ${member.email}<br>
-                        <strong>Mobile:</strong> ${member.mobile || 'N/A'}<br>
-                        <strong>Department:</strong> ${member.department || 'N/A'}
-                    </div>
-                    <div class="member-actions">
-                        <button class="btn btn-sm btn-secondary" style="flex: 1;" onclick="deleteMember(${member.id})">Delete</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // ================== HELPER FUNCTIONS ==================
-        function populateMemberDropdown(dropdownId) {
-            const select = document.getElementById(dropdownId);
-            select.innerHTML = '<option value="">Choose member</option>';
-            members.forEach(member => {
-                select.innerHTML += `<option value="${member.id}">${member.name} (${member.email})</option>`;
-            });
-        }
-
-        async function confirmDelete() {
-            if (currentDeleteItemType === 'asset') {
-                await deleteAsset(currentDeleteItemId);
-            } else if (currentDeleteItemType === 'consumable') {
-                await deleteConsumable(currentDeleteItemId);
-            }
-            closeModal('deleteConfirmModal');
-        }
-
-        async function sendNotificationEmail(email, subject, message) {
+        function renderItems() {
             try {
-                const response = await fetch('http://localhost:3000/api/send-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email,
-                        subject,
-                        message
-                    })
-                });
+                const tbody = document.getElementById('itemsTableBody');
+                if (!tbody) return;
 
-                if (!response.ok) {
-                    const error = await response.json();
-                    console.error('Email send error:', error);
-                    showToast('warning', 'Item saved but notification email could not be sent');
+                document.getElementById('itemsCountDisplay').textContent = items.length;
+                document.getElementById('itemsCountBadge').textContent = items.length;
+
+                if (!items || items.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#94a3b8;">No items</td></tr>';
+                    return;
                 }
+
+                tbody.innerHTML = items.map(item => {
+                    const condition = String(item.condition || 'N/A').toLowerCase().replace(/\s/g, '');
+                    const status = String(item.status || 'Available').toLowerCase();
+                    return `
+                        <tr>
+                            <td>${String(item.name || '')}</td>
+                            <td>${String(item.serial || '')}</td>
+                            <td>${String(item.holder || '')}</td>
+                            <td><span class="status-badge status-${status}">${status === 'available' ? '✓' : '⬤'} ${item.status || ''}</span></td>
+                            <td><span class="condition-badge condition-${condition}">${item.condition || ''}</span></td>
+                            <td><div class="action-buttons" style="opacity:0.5;">📋</div></td>
+                        </tr>
+                    `;
+                }).join('');
             } catch (error) {
-                console.error('Email send failed:', error);
-                showToast('warning', 'Item saved but notification email could not be sent');
+                console.error('renderItems error:', error);
+            }
+        }
+
+        function renderConsumables() {
+            try {
+                const tbody = document.getElementById('consumablesTableBody');
+                if (!tbody) return;
+
+                document.getElementById('consumablesCountDisplay').textContent = consumables.length;
+                document.getElementById('consumablesCountBadge').textContent = consumables.length;
+
+                if (!consumables || consumables.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;">No consumables</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = consumables.map(c => `
+                    <tr>
+                        <td>${String(c.name || '')}</td>
+                        <td>${String(c.partNumber || '')}</td>
+                        <td><strong>${c.quantity || 0}</strong></td>
+                        <td><div class="action-buttons" style="opacity:0.5;">📋</div></td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('renderConsumables error:', error);
+            }
+        }
+
+        function renderMembers() {
+            try {
+                const grid = document.getElementById('membersGrid');
+                if (!grid) return;
+
+                if (!members || members.length === 0) {
+                    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#94a3b8;">No members</div>';
+                    return;
+                }
+
+                grid.innerHTML = members.map(m => {
+                    const initials = String(m.name || '?').split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                    return `
+                        <div class="member-card">
+                            <div class="member-card-header">
+                                <div class="member-avatar">${initials}</div>
+                                <div><div class="member-name">${String(m.name || '')}</div><div class="member-info">${String(m.designation || 'Member')}</div></div>
+                            </div>
+                            <div class="member-info"><strong>Email:</strong> ${String(m.email || 'N/A')}</div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('renderMembers error:', error);
             }
         }
 
         function exportToFile() {
-            const data = {
-                user: currentUser,
-                items,
-                consumables,
-                members,
-                exportedAt: new Date().toISOString()
-            };
-
-            const dataStr = JSON.stringify(data, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `inventory-backup-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const data = { user: currentUser, items, consumables, members, exportedAt: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
             URL.revokeObjectURL(url);
-            showToast('success', 'Inventory exported successfully!');
+            showToast('success', 'Exported');
         }
 
-        // ================== THEME FUNCTIONS ==================
+        // ================== THEME ==================
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
             localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-            applyTheme();
+            document.getElementById('themeIcon').textContent = html.classList.contains('dark') ? '☀️' : '🌙';
         }
 
         function applyTheme() {
-            const html = document.documentElement;
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            if (savedTheme === 'dark') {
-                html.classList.add('dark');
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
                 document.getElementById('themeIcon').textContent = '☀️';
-            } else {
-                html.classList.remove('dark');
-                document.getElementById('themeIcon').textContent = '🌙';
             }
         }
 
-        // ================== STORAGE FUNCTIONS ==================
-        function saveDataToLocalStorage() {
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            localStorage.setItem('items', JSON.stringify(items));
-            localStorage.setItem('consumables', JSON.stringify(consumables));
-            localStorage.setItem('members', JSON.stringify(members));
-        }
-
-        // ================== TOAST FUNCTIONS ==================
+        // ================== TOAST ==================
         function showToast(type, message) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            const icons = {
-                success: '✓',
-                error: '✕',
-                warning: '⚠️',
-                info: 'ℹ️'
-            };
-
+            const icons = { success: '✓', error: '✕', warning: '⚠️', info: 'ℹ️' };
             toast.className = `toast toast-${type}`;
-            toast.innerHTML = `
-                <span class="message-icon">${icons[type]}</span>
-                <span>${message}</span>
-            `;
-
+            toast.innerHTML = `<span class="message-icon">${icons[type] || '•'}</span><span>${message}</span>`;
             container.appendChild(toast);
-
             setTimeout(() => {
-                toast.style.animation = 'toastSlideIn 0.3s ease reverse';
+                toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        // ================== INITIALIZATION ==================
+        // ================== START ==================
         window.addEventListener('DOMContentLoaded', initApp);
 
-        // Close modals on escape key
+        // Close modals on escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                document.querySelectorAll('.modal:not(.hidden)').forEach(modal => {
-                    modal.classList.add('hidden');
-                });
+                document.querySelectorAll('.modal:not(.hidden)').forEach(m => m.classList.add('hidden'));
             }
         });
 
         // Close modals on background click
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.add('hidden');
-                }
+                if (e.target === modal) modal.classList.add('hidden');
             });
         });
     </script>
