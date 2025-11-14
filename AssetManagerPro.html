@@ -12,6 +12,13 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         html {
             font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             scroll-behavior: smooth;
@@ -71,8 +78,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             z-index: 99999;
             display: flex;
             align-items: center;
@@ -555,6 +562,11 @@
             flex-shrink: 0;
         }
 
+        .icon-blue {
+            background: rgba(59, 130, 246, 0.2);
+            color: #58a6ff;
+        }
+
         .icon-red {
             background: rgba(239, 68, 68, 0.2);
             color: #f87171;
@@ -652,7 +664,7 @@
             <form id="registerForm" class="hidden">
                 <div class="setup-alert">
                     <strong>🔧 First Time Setup</strong><br>
-                    <small>You will be the admin</small>
+                    <small>Create your admin account</small>
                 </div>
 
                 <div class="form-group">
@@ -692,7 +704,7 @@
 
                 <button type="submit" class="btn btn-primary">👑 Create Admin Account</button>
 
-                <div class="auth-links">Already registered? <a onclick="switchToLogin()">Sign In</a></div>
+                <div class="auth-links">Already have account? <a onclick="switchToLogin()">Sign In</a></div>
             </form>
 
             <!-- LOGIN FORM -->
@@ -709,7 +721,7 @@
 
                 <button type="submit" class="btn btn-primary">🔓 Sign In</button>
 
-                <div class="auth-links">New user? Ask your admin to add you.</div>
+                <div class="auth-links">New? <a onclick="switchToRegister()">Create Account</a></div>
             </form>
         </div>
     </div>
@@ -727,32 +739,28 @@
 
     <!-- MAIN CONTENT -->
     <main class="hidden" id="mainContent">
-        <div style="width: 100%; padding: 0;">
-            <div class="card">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
-                    <h2 style="font-size: 1.5rem; font-weight: 700;">📦 Inventory Items</h2>
-                    <span class="item-count-badge" id="itemsCount">0</span>
-                </div>
+        <div class="card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 700;">📦 Inventory Items</h2>
+                <span class="item-count-badge" id="itemsCount">0</span>
+            </div>
 
-                <div style="overflow-x: auto;">
-                    <table id="itemsTable">
-                        <thead>
-                            <tr>
-                                <th>Item Name</th>
-                                <th>Serial Number</th>
-                                <th>Holder</th>
-                                <th>Status</th>
-                                <th>Condition</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="itemsBody">
-                            <tr>
-                                <td colspan="6" style="text-align: center;">No items found</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div style="overflow-x: auto;">
+                <table id="itemsTable">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Serial Number</th>
+                            <th>Holder</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsBody">
+                        <tr>
+                            <td colspan="4" style="text-align: center;">No items found</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
@@ -791,7 +799,7 @@
         let currentUser = null;
         let isAdmin = false;
 
-        // ============ DELETE OLD DB AND CREATE NEW ONE ============
+        // ============ DELETE & RECREATE DATABASE ============
         function deleteDatabase() {
             return new Promise((resolve) => {
                 const deleteReq = indexedDB.deleteDatabase(DBNAME);
@@ -799,136 +807,95 @@
                     console.log('✓ Old database deleted');
                     resolve();
                 };
-                deleteReq.onerror = () => {
-                    console.log('Could not delete old database');
-                    resolve();
-                };
+                deleteReq.onerror = () => resolve();
             });
         }
 
-        // ============ FRESH DATABASE INITIALIZATION ============
+        // ============ INITIALIZE DATABASE ============
         async function initDB() {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    // First delete old database
-                    await deleteDatabase();
+            await deleteDatabase();
 
-                    // Now create fresh database with version 1
-                    const req = indexedDB.open(DBNAME, 1);
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DBNAME, 1);
 
-                    req.onerror = () => {
-                        console.error('DB Error:', req.error);
-                        reject(new Error('Failed to open database: ' + req.error));
-                    };
+                req.onerror = () => reject(req.error);
 
-                    req.onsuccess = () => {
-                        db = req.result;
-                        console.log('✓ Fresh database created successfully');
-                        resolve(db);
-                    };
+                req.onsuccess = () => {
+                    db = req.result;
+                    console.log('✓ Database initialized (v1)');
+                    resolve(db);
+                };
 
-                    req.onupgradeneeded = (e) => {
-                        const database = e.target.result;
-                        console.log('Creating object stores...');
-
-                        // Create all required stores
-                        try {
-                            if (!database.objectStoreNames.contains('users')) {
-                                database.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
-                                console.log('✓ Created users store');
-                            }
-                            if (!database.objectStoreNames.contains('items')) {
-                                database.createObjectStore('items', { keyPath: 'id', autoIncrement: true });
-                                console.log('✓ Created items store');
-                            }
-                            if (!database.objectStoreNames.contains('history')) {
-                                database.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
-                                console.log('✓ Created history store');
-                            }
-                        } catch (err) {
-                            console.error('Error creating stores:', err);
-                        }
-                    };
-                } catch (err) {
-                    console.error('Init error:', err);
-                    reject(err);
-                }
+                req.onupgradeneeded = (e) => {
+                    const database = e.target.result;
+                    if (!database.objectStoreNames.contains('users')) {
+                        database.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
+                    }
+                    if (!database.objectStoreNames.contains('items')) {
+                        database.createObjectStore('items', { keyPath: 'id', autoIncrement: true });
+                    }
+                    if (!database.objectStoreNames.contains('history')) {
+                        database.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
+                    }
+                    console.log('✓ Object stores created');
+                };
             });
         }
 
         function getAll(storeName) {
             return new Promise((resolve, reject) => {
-                try {
-                    const tx = db.transaction(storeName, 'readonly');
-                    const store = tx.objectStore(storeName);
-                    const req = store.getAll();
-                    req.onerror = () => reject(req.error);
-                    req.onsuccess = () => resolve(req.result);
-                } catch (e) {
-                    reject(e);
-                }
+                const tx = db.transaction(storeName, 'readonly');
+                const store = tx.objectStore(storeName);
+                const req = store.getAll();
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
             });
         }
 
         function addRecord(storeName, data) {
             return new Promise((resolve, reject) => {
-                try {
-                    const tx = db.transaction(storeName, 'readwrite');
-                    const store = tx.objectStore(storeName);
-                    const req = store.add(data);
-                    req.onerror = () => reject(req.error);
-                    req.onsuccess = () => resolve(req.result);
-                } catch (e) {
-                    reject(e);
-                }
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const req = store.add(data);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
             });
         }
 
-        // ============ LOGIN - FIXED ============
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            try {
-                if (!db) {
-                    alert('Database initializing... Please try again');
-                    return;
-                }
+        function updateRecord(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const req = store.put(data);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
 
-                const formData = new FormData(e.target);
-                const email = formData.get('email').trim().toLowerCase();
-                const password = btoa(formData.get('password'));
+        function getOne(storeName, id) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readonly');
+                const store = tx.objectStore(storeName);
+                const req = store.get(id);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
 
-                console.log('📧 Login attempt:', email);
-
-                const users = await getAll('users');
-                console.log('👥 Users found:', users.length);
-
-                const user = users.find(u => u.email === email && u.password === password);
-
-                if (!user) {
-                    alert('❌ Invalid email or password');
-                    return;
-                }
-
-                currentUser = user;
-                isAdmin = user.isAdmin || false;
-                console.log('✅ Login successful:', user.name);
-                alert(`✅ Welcome, ${user.name}!`);
-                showMainApp();
-            } catch (e) {
-                console.error('❌ Login error:', e);
-                alert('Error: ' + e.message);
-            }
-        });
+        function deleteRecord(storeName, id) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const req = store.delete(id);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
 
         // ============ REGISTRATION ============
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
-                if (!db) {
-                    alert('Database initializing... Please try again');
-                    return;
-                }
-
                 const formData = new FormData(e.target);
                 const email = formData.get('email').trim().toLowerCase();
                 const password = formData.get('password');
@@ -950,7 +917,6 @@
                     return;
                 }
 
-                const isFirstUser = users.length === 0;
                 const user = {
                     name: formData.get('name').trim(),
                     email: email,
@@ -958,20 +924,49 @@
                     mobile: formData.get('mobile').trim() || '',
                     designation: formData.get('designation').trim() || '',
                     department: formData.get('department').trim() || '',
-                    isAdmin: isFirstUser
+                    isAdmin: users.length === 0
                 };
 
                 const userId = await addRecord('users', user);
                 user.id = userId;
                 currentUser = user;
-                isAdmin = isFirstUser;
+                isAdmin = user.isAdmin;
 
-                alert('✅ Admin Account Created!');
+                alert('✅ Account created successfully!');
                 showMainApp();
                 e.target.reset();
             } catch (e) {
-                console.error('❌ Registration error:', e);
-                alert('Error: ' + e.message);
+                alert('❌ Error: ' + e.message);
+            }
+        });
+
+        // ============ LOGIN ============
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const formData = new FormData(e.target);
+                const email = formData.get('email').trim().toLowerCase();
+                const password = btoa(formData.get('password'));
+
+                console.log('🔐 Login:', email);
+
+                const users = await getAll('users');
+                console.log('👥 Users in DB:', users.length);
+
+                const user = users.find(u => u.email === email && u.password === password);
+
+                if (!user) {
+                    alert('❌ Invalid email or password');
+                    return;
+                }
+
+                currentUser = user;
+                isAdmin = user.isAdmin || false;
+                console.log('✅ Login successful:', user.name);
+                alert(`✅ Welcome, ${user.name}!`);
+                showMainApp();
+            } catch (e) {
+                alert('❌ Login Error: ' + e.message);
             }
         });
 
@@ -979,6 +974,11 @@
         function switchToLogin() {
             document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('loginForm').classList.remove('hidden');
+        }
+
+        function switchToRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
         }
 
         function closePanel(id) {
@@ -1006,7 +1006,7 @@
                 const tbody = document.getElementById('itemsBody');
 
                 if (!items.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No items yet</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No items found</td></tr>';
                     return;
                 }
 
@@ -1016,8 +1016,6 @@
                         <td>${item.serial}</td>
                         <td>${item.holder || '-'}</td>
                         <td><span class="badge ${item.holder ? 'badge-orange' : 'badge-green'}">${item.holder ? 'Out' : 'Available'}</span></td>
-                        <td>${item.condition || 'N/A'}</td>
-                        <td>-</td>
                     </tr>
                 `).join('');
             } catch (e) {
@@ -1025,6 +1023,7 @@
             }
         }
 
+        // ============ PANELS ============
         document.getElementById('settingsBtn').addEventListener('click', () => openPanel('settingsPanel'));
         document.getElementById('closeSettings').addEventListener('click', () => closePanel('settingsPanel'));
 
@@ -1039,8 +1038,10 @@
             document.getElementById('authScreen').classList.remove('hidden');
             document.getElementById('mainHeader').classList.add('hidden');
             document.getElementById('mainContent').classList.add('hidden');
+            switchToLogin();
         });
 
+        // ============ THEME ============
         document.getElementById('lightBtn').addEventListener('click', () => {
             document.documentElement.classList.remove('dark');
             localStorage.setItem('theme', 'light');
@@ -1055,7 +1056,7 @@
             document.getElementById('lightBtn').classList.remove('active');
         });
 
-        // ============ STARTUP - CRITICAL FIX ============
+        // ============ STARTUP ============
         (async () => {
             try {
                 const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -1063,13 +1064,24 @@
                     document.documentElement.classList.add('dark');
                 }
 
-                console.log('🚀 Starting application...');
-                console.log('🗑️  Clearing old database...');
+                console.log('🚀 Initializing application...');
                 await initDB();
                 console.log('✅ Application ready!');
+
+                // Check if any users exist
+                const users = await getAll('users');
+                if (users.length === 0) {
+                    // Show registration form for new database
+                    document.getElementById('registerForm').classList.remove('hidden');
+                    document.getElementById('loginForm').classList.add('hidden');
+                } else {
+                    // Show login form if users exist
+                    document.getElementById('loginForm').classList.remove('hidden');
+                    document.getElementById('registerForm').classList.add('hidden');
+                }
             } catch (e) {
-                console.error('❌ Fatal startup error:', e);
-                alert('Fatal Error: ' + e.message + '\n\nPlease refresh the page (Ctrl+F5)');
+                console.error('Fatal error:', e);
+                alert('Fatal Error: ' + e.message + '\n\nPlease refresh (Ctrl+F5)');
             }
         })();
     </script>
