@@ -221,6 +221,58 @@
             background: #1d4ed8;
         }
 
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        html.dark .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .auth-links {
             text-align: center;
             margin-top: 1.5rem;
@@ -305,6 +357,10 @@
             background: #21262d;
         }
 
+        tbody tr.edit-row {
+            background: rgba(37, 99, 235, 0.1);
+        }
+
         th, td {
             padding: 0.75rem;
             text-align: left;
@@ -331,6 +387,11 @@
         .badge-orange {
             background: #fed7aa;
             color: #92400e;
+        }
+
+        .badge-notworking {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         html.dark .badge-green {
@@ -379,6 +440,7 @@
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
+            animation: slideInUp 0.3s ease;
         }
 
         html.dark .modal-content {
@@ -448,7 +510,13 @@
         }
 
         .panel-header {
+            position: sticky;
+            top: 0;
             padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(13, 17, 23, 0.8);
             border-bottom: 1px solid rgba(48, 54, 61, 0.3);
             z-index: 10;
         }
@@ -471,6 +539,7 @@
             border-radius: 0.5rem;
             border: 1px solid rgba(48, 54, 61, 0.6);
             background: rgba(30, 40, 54, 0.4);
+            backdrop-filter: blur(5px);
             cursor: pointer;
             color: white;
             transition: all 0.2s ease;
@@ -483,6 +552,7 @@
 
         .panel-item:hover {
             background: rgba(30, 40, 54, 0.7);
+            border-color: rgba(88, 166, 255, 0.5);
         }
 
         .panel-item-icon {
@@ -493,7 +563,21 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            font-size: 1.25rem;
+        }
+
+        .icon-blue {
+            background: rgba(59, 130, 246, 0.2);
+            color: #58a6ff;
+        }
+
+        .icon-purple {
+            background: rgba(139, 92, 246, 0.2);
+            color: #d084d0;
+        }
+
+        .icon-red {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
         }
 
         .panel-item-content {
@@ -512,6 +596,13 @@
             color: #94a3b8;
         }
 
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         .item-count-badge {
             padding: 0.5rem 1.25rem;
             background: #f3e8ff;
@@ -519,6 +610,43 @@
             font-size: 0.875rem;
             font-weight: bold;
             border-radius: 9999px;
+        }
+
+        .theme-section {
+            border-top: 1px solid rgba(48, 54, 61, 0.3);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .theme-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.75rem;
+        }
+
+        .theme-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .theme-btn {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 2px solid #30363d;
+            background: rgba(30, 40, 54, 0.5);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .theme-btn.active {
+            border-color: #2563eb;
+            background: rgba(37, 99, 235, 0.2);
         }
 
         @media (max-width: 768px) {
@@ -620,7 +748,8 @@
             <p id="userRole" style="color: #64748b; font-size: 0.875rem;">Admin</p>
         </div>
         <div style="display: flex; gap: 1rem; align-items: center;">
-            <button id="settingsBtn" class="btn-icon" style="background: none; border: none; cursor: pointer; font-size: 1.25rem; padding: 0.5rem;">⚙️</button>
+            <button id="openManage" class="btn btn-primary" style="display: none; width: auto;">📋 Menu</button>
+            <button id="settingsBtn" class="btn-icon">⚙️</button>
         </div>
     </header>
 
@@ -642,7 +771,7 @@
                                 <th>Holder</th>
                                 <th>Status</th>
                                 <th>Condition</th>
-                                <th>Actions</th>
+                                <th style="min-width: 200px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="itemsBody">
@@ -659,52 +788,361 @@
     <!-- BACKDROP -->
     <div id="backdrop" class="backdrop"></div>
 
+    <!-- MANAGE PANEL -->
+    <div id="managePanel" class="panel">
+        <div class="panel-header">
+            <h3>📋 Menu</h3>
+            <button id="closeManage" type="button" class="close-btn">✕</button>
+        </div>
+        <div class="panel-body">
+            <button id="viewItemsBtn" type="button" class="panel-item">
+                <div class="panel-item-icon icon-blue">📦</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">View Items</div>
+                    <div class="panel-item-desc">Browse all items</div>
+                </div>
+            </button>
+
+            <button id="addItemBtn" type="button" class="panel-item" style="display: none;">
+                <div class="panel-item-icon icon-blue">➕</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Add Item</div>
+                    <div class="panel-item-desc">Create new</div>
+                </div>
+            </button>
+
+            <button id="viewMembersBtn" type="button" class="panel-item">
+                <div class="panel-item-icon icon-purple">👥</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">View Members</div>
+                    <div class="panel-item-desc">Manage users</div>
+                </div>
+            </button>
+
+            <button id="addMemberBtn" type="button" class="panel-item" style="display: none;">
+                <div class="panel-item-icon icon-purple">➕</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Add Member</div>
+                    <div class="panel-item-desc">Register user</div>
+                </div>
+            </button>
+        </div>
+    </div>
+
     <!-- SETTINGS PANEL -->
     <div id="settingsPanel" class="panel">
         <div class="panel-header">
             <h3>⚙️ Settings</h3>
+            <button id="closeSettings" type="button" class="close-btn">✕</button>
         </div>
         <div class="panel-body">
+            <button id="editProfileBtn" type="button" class="panel-item">
+                <div class="panel-item-icon icon-blue">✏️</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Edit Profile</div>
+                    <div class="panel-item-desc">Update your info</div>
+                </div>
+            </button>
+
+            <button id="changePasswordBtn" type="button" class="panel-item">
+                <div class="panel-item-icon icon-purple">🔐</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Change Password</div>
+                    <div class="panel-item-desc">Update password</div>
+                </div>
+            </button>
+
+            <button id="exportBtn" type="button" class="panel-item" style="display: none;">
+                <div class="panel-item-icon icon-blue">📤</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Export to File</div>
+                    <div class="panel-item-desc">Download backup JSON</div>
+                </div>
+            </button>
+
+            <button id="syncFromGithubBtn" type="button" class="panel-item" style="display: none;">
+                <div class="panel-item-icon icon-blue">☁️</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Sync from GitHub</div>
+                    <div class="panel-item-desc">Load shared data</div>
+                </div>
+            </button>
+
+            <button id="removeAccountBtn" type="button" class="panel-item">
+                <div class="panel-item-icon icon-red">🗑️</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Remove Account</div>
+                    <div class="panel-item-desc">Delete your account</div>
+                </div>
+            </button>
+
             <button id="logoutBtn" type="button" class="panel-item">
-                <div class="panel-item-icon" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">🚪</div>
+                <div class="panel-item-icon icon-red">🚪</div>
                 <div class="panel-item-content">
                     <div class="panel-item-title">Logout</div>
                     <div class="panel-item-desc">Sign out</div>
                 </div>
             </button>
 
-            <div style="border-top: 1px solid rgba(48, 54, 61, 0.3); padding-top: 1rem; margin-top: 1rem;">
-                <label style="display: block; font-size: 0.875rem; font-weight: 600; color: white; margin-bottom: 0.75rem;">🎨 Theme</label>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                    <button id="lightBtn" type="button" style="padding: 0.75rem; border-radius: 0.5rem; border: 2px solid #30363d; background: rgba(30, 40, 54, 0.5); color: white; font-weight: 500; cursor: pointer; font-size: 0.875rem;">☀️ Light</button>
-                    <button id="darkBtn" type="button" style="padding: 0.75rem; border-radius: 0.5rem; border: 2px solid #2563eb; background: rgba(37, 99, 235, 0.2); color: white; font-weight: 500; cursor: pointer; font-size: 0.875rem;">🌙 Dark</button>
+            <div class="theme-section">
+                <label class="theme-label">🎨 Theme</label>
+                <div class="theme-buttons">
+                    <button id="lightBtn" type="button" class="theme-btn">☀️ Light</button>
+                    <button id="darkBtn" type="button" class="theme-btn active">🌙 Dark</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- EDIT PROFILE MODAL -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Edit Profile</h3>
+                <button type="button" class="close-btn" onclick="closeModal('editProfileModal')">✕</button>
+            </div>
+            <form id="editProfileForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="editName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="editEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile</label>
+                        <input type="tel" id="editMobile">
+                    </div>
+                    <div class="form-group">
+                        <label>Designation</label>
+                        <input type="text" id="editDesignation">
+                    </div>
+                    <div class="form-group">
+                        <label>Department</label>
+                        <input type="text" id="editDepartment">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editProfileModal')">Cancel</button>
+                    <button type="submit" class="btn btn-success">✓ Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CHANGE PASSWORD MODAL -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔐 Change Password</h3>
+                <button type="button" class="close-btn" onclick="closeModal('changePasswordModal')">✕</button>
+            </div>
+            <form id="changePasswordForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Current Password *</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label>New Password *</label>
+                        <input type="password" id="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password *</label>
+                        <input type="password" id="confirmNewPassword" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('changePasswordModal')">Cancel</button>
+                    <button type="submit" class="btn btn-success">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD ITEM MODAL -->
+    <div id="addItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Add Item</h3>
+                <button type="button" class="close-btn" onclick="closeModal('addItemModal')">✕</button>
+            </div>
+            <form id="itemForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Item Name *</label>
+                        <input type="text" name="name" placeholder="e.g., Laptop" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Serial Number *</label>
+                        <input type="text" name="serial" placeholder="e.g., SN123456" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Condition *</label>
+                        <select name="condition" required>
+                            <option value="">Select</option>
+                            <option value="working">✓ Working</option>
+                            <option value="not-working">✗ Not Working</option>
+                            <option value="not-applicable">N/A - Not Applicable</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addItemModal')">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ASSIGN ITEM MODAL -->
+    <div id="assignItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📤 Assign Item</h3>
+                <button type="button" class="close-btn" onclick="closeModal('assignItemModal')">✕</button>
+            </div>
+            <form id="assignForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Select Member *</label>
+                        <select id="assignMemberSelect" required>
+                            <option value="">Choose member</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('assignItemModal')">Cancel</button>
+                    <button type="submit" class="btn btn-success">Assign</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- RETURN ITEM MODAL -->
+    <div id="returnItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>↩️ Return Item</h3>
+                <button type="button" class="close-btn" onclick="closeModal('returnItemModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>Return this item to inventory?</p>
+                <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.5rem;" id="returnItemInfo"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('returnItemModal')">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="confirmReturnItem()">Return</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE ITEM MODAL -->
+    <div id="deleteItemModal" class="modal">
+        <div class="modal-content">
+            <div style="text-align: center; padding: 2rem;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🗑️</div>
+                <h3>Delete Item?</h3>
+                <p style="color: #64748b; margin-bottom: 2rem; font-size: 0.95rem;">This action cannot be undone.</p>
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('deleteItemModal')">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDeleteItem()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ITEM HISTORY MODAL -->
+    <div id="itemHistoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📜 Item History</h3>
+                <button type="button" class="close-btn" onclick="closeModal('itemHistoryModal')">✕</button>
+            </div>
+            <div class="modal-body" id="historyList" style="max-height: 60vh; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- ADD MEMBER MODAL -->
+    <div id="addMemberModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Add Member</h3>
+                <button type="button" class="close-btn" onclick="closeModal('addMemberModal')">✕</button>
+            </div>
+            <form id="memberForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" name="name" placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" name="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile</label>
+                        <input type="tel" name="mobile">
+                    </div>
+                    <div class="form-group">
+                        <label>Designation</label>
+                        <input type="text" name="designation">
+                    </div>
+                    <div class="form-group">
+                        <label>Department</label>
+                        <input type="text" name="department">
+                    </div>
+                    <div class="form-group">
+                        <label>Password (Min 6) *</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password *</label>
+                        <input type="password" name="confirmPassword" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addMemberModal')">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MEMBERS MODAL -->
+    <div id="membersModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>👥 Members</h3>
+                <button type="button" class="close-btn" onclick="closeModal('membersModal')">✕</button>
+            </div>
+            <div class="modal-body" id="membersList" style="max-height: 60vh; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- FILE INPUT FOR IMPORT -->
+    <input type="file" id="fileInput" accept="application/json" style="display: none;">
+
     <script>
-        // ===================== DATABASE INITIALIZATION =====================
+        // Database setup
         const DBNAME = 'AssetManagerProDB';
         let db = null;
-        let dbReady = false;
+        let currentUser = null;
+        let isAdmin = false;
+        let editingItemId = null;
+        let returnItemId = null;
+        let deleteItemId = null;
 
-        function initDB() {
+        async function initDB() {
             return new Promise((resolve, reject) => {
                 const req = indexedDB.open(DBNAME, 1);
-                
-                req.onerror = () => {
-                    console.error('DB error:', req.error);
-                    reject(req.error);
-                };
-                
+                req.onerror = () => reject(req.error);
                 req.onsuccess = () => {
                     db = req.result;
-                    dbReady = true;
-                    console.log('✓ DB initialized');
                     resolve(db);
                 };
-                
                 req.onupgradeneeded = (e) => {
                     const database = e.target.result;
                     if (!database.objectStoreNames.contains('users')) {
@@ -713,16 +1151,15 @@
                     if (!database.objectStoreNames.contains('items')) {
                         database.createObjectStore('items', { keyPath: 'id', autoIncrement: true });
                     }
+                    if (!database.objectStoreNames.contains('history')) {
+                        database.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
+                    }
                 };
             });
         }
 
         function getAll(storeName) {
             return new Promise((resolve, reject) => {
-                if (!dbReady || !db) {
-                    reject(new Error('Database not ready'));
-                    return;
-                }
                 const tx = db.transaction(storeName, 'readonly');
                 const store = tx.objectStore(storeName);
                 const req = store.getAll();
@@ -733,10 +1170,6 @@
 
         function addRecord(storeName, data) {
             return new Promise((resolve, reject) => {
-                if (!dbReady || !db) {
-                    reject(new Error('Database not ready'));
-                    return;
-                }
                 const tx = db.transaction(storeName, 'readwrite');
                 const store = tx.objectStore(storeName);
                 const req = store.add(data);
@@ -745,19 +1178,72 @@
             });
         }
 
-        // ===================== GLOBAL STATE =====================
-        let currentUser = null;
-        let isAdmin = false;
+        function updateRecord(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const req = store.put(data);
+                req.onerror = () => reject(req.error);
+                req.onsuccess = () => resolve(req.result);
+            });
+        }
 
-        // ===================== UI FUNCTIONS =====================
+        function getOne(storeName, id) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readonly');
+                const store = tx.objectStore(storeName);
+                const req = store.get(id);
+                req.onerror = () => reject(req.error);
+                req.onsuccess = () => resolve(req.result);
+            });
+        }
+
+        function deleteRecord(storeName, id) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const req = store.delete(id);
+                req.onerror = () => reject(req.error);
+                req.onsuccess = () => resolve(req.result);
+            });
+        }
+
+        function clearStore(storeName) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                tx.objectStore(storeName).clear().onsuccess = resolve;
+                tx.onerror = () => reject(tx.error);
+            });
+        }
+
+        // UI Functions
         function switchToLogin() {
             document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('loginForm').classList.remove('hidden');
         }
 
-        function switchToRegister() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+            if (!document.querySelectorAll('.modal.show').length && !document.querySelectorAll('.panel.open').length) {
+                document.getElementById('backdrop').classList.remove('show');
+            }
+        }
+
+        function closePanel(id) {
+            document.getElementById(id).classList.remove('open');
+            if (!document.querySelectorAll('.modal.show').length && !document.querySelectorAll('.panel.open').length) {
+                document.getElementById('backdrop').classList.remove('show');
+            }
+        }
+
+        function openModal(id) {
+            document.getElementById('backdrop').classList.add('show');
+            document.getElementById(id).classList.add('show');
+        }
+
+        function openPanel(id) {
+            document.getElementById('backdrop').classList.add('show');
+            document.getElementById(id).classList.add('open');
         }
 
         async function showMainApp() {
@@ -765,6 +1251,19 @@
             document.getElementById('mainHeader').classList.remove('hidden');
             document.getElementById('mainContent').classList.remove('hidden');
             document.getElementById('userRole').textContent = isAdmin ? 'Admin' : 'Member';
+
+            if (isAdmin) {
+                document.getElementById('addItemBtn').style.display = 'flex';
+                document.getElementById('addMemberBtn').style.display = 'flex';
+                document.getElementById('exportBtn').style.display = 'flex';
+                document.getElementById('syncFromGithubBtn').style.display = 'flex';
+            } else {
+                document.getElementById('addItemBtn').style.display = 'none';
+                document.getElementById('addMemberBtn').style.display = 'none';
+                document.getElementById('exportBtn').style.display = 'none';
+                document.getElementById('syncFromGithubBtn').style.display = 'none';
+            }
+
             renderItems();
         }
 
@@ -772,37 +1271,235 @@
             try {
                 const items = await getAll('items');
                 document.getElementById('itemsCount').textContent = items.length;
-
                 const tbody = document.getElementById('itemsBody');
+
                 if (!items.length) {
                     tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No items found</td></tr>';
                     return;
                 }
 
-                tbody.innerHTML = items.map(item => `
-                    <tr>
-                        <td>${item.name}</td>
-                        <td>${item.serial}</td>
-                        <td>${item.holder || '-'}</td>
-                        <td><span class="badge badge-${item.holder ? 'orange' : 'green'}">${item.holder ? 'Out' : 'Available'}</span></td>
-                        <td><span class="badge badge-${item.condition === 'working' ? 'green' : 'orange'}">${item.condition === 'working' ? 'Working' : item.condition === 'not-working' ? 'Not Working' : 'N/A'}</span></td>
-                        <td>-</td>
-                    </tr>
-                `).join('');
+                tbody.innerHTML = items.map(item => {
+                    const hasHolder = item.holder && item.holder.trim() !== '';
+                    const statusDisplay = hasHolder ? 'Out' : 'Available';
+                    const statusClass = hasHolder ? 'badge-orange' : 'badge-green';
+                    let condDisplay = item.condition === 'working' ? 'Working' : item.condition === 'not-working' ? 'Not Working' : 'N/A';
+
+                    let actionButtons = '';
+                    if (isAdmin) {
+                        actionButtons = `
+                            <button class="btn-icon" onclick="startEditItem(${item.id})" title="Edit">✏️</button>
+                            <button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>
+                            ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">📤</button>` : ''}
+                            ${item.holder ? `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">↩️</button>` : ''}
+                            <button class="btn-icon" onclick="openDeleteModal(${item.id})" title="Delete">🗑️</button>
+                        `;
+                    } else {
+                        actionButtons = `
+                            <button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>
+                        `;
+                    }
+
+                    return `
+                        <tr id="item-row-${item.id}">
+                            <td id="name-${item.id}">${item.name}</td>
+                            <td id="serial-${item.id}">${item.serial}</td>
+                            <td>${item.holder || '-'}</td>
+                            <td><span class="badge ${statusClass}">${statusDisplay}</span></td>
+                            <td id="cond-${item.id}"><span class="badge ${item.condition === 'working' ? 'badge-green' : item.condition === 'not-working' ? 'badge-notworking' : 'badge-orange'}">${condDisplay}</span></td>
+                            <td><div class="action-buttons" id="actions-${item.id}">${actionButtons}</div></td>
+                        </tr>
+                    `;
+                }).join('');
             } catch (e) {
-                console.error('Render error:', e);
+                alert('Error: ' + e.message);
             }
         }
 
-        // ===================== EVENT LISTENERS =====================
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        function startEditItem(itemId) {
+            editingItemId = itemId;
+            getOne('items', itemId).then(item => {
+                const row = document.getElementById(`item-row-${itemId}`);
+                row.classList.add('edit-row');
+
+                const nameCell = row.cells[0];
+                const serialCell = row.cells[1];
+                const condCell = row.cells[4];
+
+                nameCell.innerHTML = `<input type="text" id="edit-name-${itemId}" value="${item.name}" style="width: 100%;">`;
+                serialCell.innerHTML = `<input type="text" id="edit-serial-${itemId}" value="${item.serial}" style="width: 100%;">`;
+                condCell.innerHTML = `
+                    <select id="edit-cond-${itemId}" style="width: 100%;">
+                        <option value="working" ${item.condition === 'working' ? 'selected' : ''}>Working</option>
+                        <option value="not-working" ${item.condition === 'not-working' ? 'selected' : ''}>Not Working</option>
+                        <option value="not-applicable" ${item.condition === 'not-applicable' ? 'selected' : ''}>N/A</option>
+                    </select>
+                `;
+
+                const actionCell = document.getElementById(`actions-${itemId}`);
+                actionCell.innerHTML = `
+                    <button class="btn btn-sm btn-success" onclick="saveEditItem(${itemId})">Save</button>
+                    <button class="btn btn-sm btn-secondary" onclick="cancelEditItem()">Cancel</button>
+                    <button class="btn btn-sm btn-danger" onclick="openDeleteModal(${itemId})">Delete</button>
+                `;
+            });
+        }
+
+        async function saveEditItem(itemId) {
             try {
-                if (!dbReady) {
-                    alert('Database not ready. Please wait...');
+                const name = document.getElementById(`edit-name-${itemId}`).value.trim();
+                const serial = document.getElementById(`edit-serial-${itemId}`).value.trim();
+                const cond = document.getElementById(`edit-cond-${itemId}`).value;
+
+                if (!name || !serial) {
+                    alert('Name and Serial are required');
                     return;
                 }
 
+                const item = await getOne('items', itemId);
+                item.name = name;
+                item.serial = serial;
+                item.condition = cond;
+                await updateRecord('items', item);
+
+                alert('Item updated!');
+                editingItemId = null;
+                renderItems();
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        function cancelEditItem() {
+            editingItemId = null;
+            renderItems();
+        }
+
+        function openDeleteModal(itemId) {
+            deleteItemId = itemId;
+            openModal('deleteItemModal');
+        }
+
+        async function confirmDeleteItem() {
+            try {
+                await deleteRecord('items', deleteItemId);
+                alert('Item deleted!');
+                closeModal('deleteItemModal');
+                renderItems();
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function openAssignModal(itemId) {
+            try {
+                const members = await getAll('users');
+                const select = document.getElementById('assignMemberSelect');
+                select.innerHTML = `<option value="">Choose member</option>` + members.map(m => `<option value="${m.id}">${m.name} (${m.email})</option>`).join('');
+                select.dataset.itemId = itemId;
+                openModal('assignItemModal');
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        document.getElementById('assignForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const itemId = parseInt(document.getElementById('assignMemberSelect').dataset.itemId);
+                const memberId = parseInt(document.getElementById('assignMemberSelect').value);
+
+                if (!memberId) {
+                    alert('Select a member');
+                    return;
+                }
+
+                const item = await getOne('items', itemId);
+                const member = await getOne('users', memberId);
+                const oldHolder = item.holder || 'Available';
+                item.holder = member.name;
+                await updateRecord('items', item);
+
+                await addRecord('history', {
+                    itemId: itemId,
+                    itemName: item.name,
+                    action: 'assigned',
+                    from: oldHolder,
+                    to: member.name,
+                    date: new Date().toLocaleString(),
+                    user: currentUser.name
+                });
+
+                alert('Item assigned!');
+                closeModal('assignItemModal');
+                renderItems();
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        });
+
+        function openReturnModal(itemId) {
+            returnItemId = itemId;
+            getOne('items', itemId).then(item => {
+                document.getElementById('returnItemInfo').textContent = `Item: ${item.name} | Holder: ${item.holder}`;
+                openModal('returnItemModal');
+            });
+        }
+
+        async function confirmReturnItem() {
+            try {
+                const item = await getOne('items', returnItemId);
+                const oldHolder = item.holder;
+                item.holder = '';
+                await updateRecord('items', item);
+
+                await addRecord('history', {
+                    itemId: returnItemId,
+                    itemName: item.name,
+                    action: 'returned',
+                    from: oldHolder,
+                    to: 'Available',
+                    date: new Date().toLocaleString(),
+                    user: currentUser.name
+                });
+
+                alert('Item returned!');
+                closeModal('returnItemModal');
+                renderItems();
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function openItemHistory(itemId) {
+            try {
+                const allHistory = await getAll('history');
+                const itemHistory = allHistory.filter(h => h.itemId === itemId);
+                const list = document.getElementById('historyList');
+
+                if (!itemHistory.length) {
+                    list.innerHTML = `<p style="text-align: center; color: #94a3b8;">No history for this item</p>`;
+                    openModal('itemHistoryModal');
+                    return;
+                }
+
+                list.innerHTML = itemHistory.reverse().map(h => `
+                    <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem; margin-bottom: 1rem;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">${h.action.toUpperCase()}</div>
+                        <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">${h.from} → ${h.to}</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">${h.date} by ${h.user}</div>
+                    </div>
+                `).join('');
+
+                openModal('itemHistoryModal');
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        // Registration
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
                 const formData = new FormData(e.target);
                 const email = formData.get('email').trim().toLowerCase();
                 const password = formData.get('password');
@@ -845,30 +1542,30 @@
                 e.target.reset();
             } catch (e) {
                 alert('Error: ' + e.message);
-                console.error('Register error:', e);
             }
         });
 
+        // ============ LOGIN FIX ============
+        // This is the FIXED login function that queries IndexedDB directly
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
-                if (!dbReady) {
-                    alert('Database not ready. Please wait...');
-                    return;
-                }
-
                 const formData = new FormData(e.target);
                 const email = formData.get('email').trim().toLowerCase();
                 const password = btoa(formData.get('password'));
 
-                console.log('Attempting login:', email);
+                console.log('Login attempt:', email);
+                
+                // Query all users from IndexedDB
                 const users = await getAll('users');
                 console.log('Users found:', users.length);
 
+                // Find matching user by email AND password
                 const user = users.find(u => u.email === email && u.password === password);
 
                 if (!user) {
                     alert('Invalid email or password');
+                    console.log('No matching user found');
                     return;
                 }
 
@@ -883,45 +1580,253 @@
             }
         });
 
-        document.getElementById('settingsBtn').addEventListener('click', () => {
-            document.getElementById('backdrop').classList.add('show');
-            document.getElementById('settingsPanel').classList.add('open');
+        // Add Item
+        document.getElementById('itemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const formData = new FormData(e.target);
+                const item = {
+                    name: formData.get('name').trim(),
+                    serial: formData.get('serial').trim(),
+                    condition: formData.get('condition'),
+                    holder: '',
+                    createdAt: new Date().toLocaleString(),
+                    createdBy: currentUser.name
+                };
+
+                await addRecord('items', item);
+                alert('Item added!');
+                e.target.reset();
+                closeModal('addItemModal');
+                renderItems();
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
         });
 
-        document.getElementById('backdrop').addEventListener('click', () => {
-            document.getElementById('backdrop').classList.remove('show');
-            document.getElementById('settingsPanel').classList.remove('open');
+        // Add Member
+        document.getElementById('memberForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const formData = new FormData(e.target);
+                const email = formData.get('email').trim().toLowerCase();
+                const password = formData.get('password');
+                const confirmPassword = formData.get('confirmPassword');
+
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    alert('Min 6 characters');
+                    return;
+                }
+
+                const users = await getAll('users');
+                if (users.some(u => u.email === email)) {
+                    alert('Email exists');
+                    return;
+                }
+
+                const user = {
+                    name: formData.get('name').trim(),
+                    email: email,
+                    password: btoa(password),
+                    mobile: formData.get('mobile').trim() || '',
+                    designation: formData.get('designation').trim() || '',
+                    department: formData.get('department').trim() || '',
+                    isAdmin: false,
+                    createdAt: new Date().toLocaleString(),
+                    createdBy: currentUser.name
+                };
+
+                await addRecord('users', user);
+                alert('Member added!');
+                e.target.reset();
+                closeModal('addMemberModal');
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
         });
 
-        document.getElementById('logoutBtn').addEventListener('click', () => {
+        // Edit Profile
+        document.getElementById('editProfileBtn').addEventListener('click', () => {
+            closePanel('settingsPanel');
+            document.getElementById('editName').value = currentUser.name;
+            document.getElementById('editEmail').value = currentUser.email;
+            document.getElementById('editMobile').value = currentUser.mobile || '';
+            document.getElementById('editDesignation').value = currentUser.designation || '';
+            document.getElementById('editDepartment').value = currentUser.department || '';
+            openModal('editProfileModal');
+        });
+
+        document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                currentUser.name = document.getElementById('editName').value.trim();
+                currentUser.email = document.getElementById('editEmail').value.trim();
+                currentUser.mobile = document.getElementById('editMobile').value.trim();
+                currentUser.designation = document.getElementById('editDesignation').value.trim();
+                currentUser.department = document.getElementById('editDepartment').value.trim();
+
+                await updateRecord('users', currentUser);
+                alert('Profile updated!');
+                closeModal('editProfileModal');
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        });
+
+        // Change Password
+        document.getElementById('changePasswordBtn').addEventListener('click', () => {
+            closePanel('settingsPanel');
+            openModal('changePasswordModal');
+        });
+
+        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const currentPassword = btoa(document.getElementById('currentPassword').value);
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmNewPassword').value;
+
+                if (currentPassword !== currentUser.password) {
+                    alert('Wrong password');
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    alert('Passwords do not match');
+                    return;
+                }
+
+                if (newPassword.length < 6) {
+                    alert('Min 6 characters');
+                    return;
+                }
+
+                currentUser.password = btoa(newPassword);
+                await updateRecord('users', currentUser);
+                alert('Password changed!');
+                document.getElementById('changePasswordForm').reset();
+                closeModal('changePasswordModal');
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            closePanel('settingsPanel');
             currentUser = null;
             isAdmin = false;
             document.getElementById('authScreen').classList.remove('hidden');
             document.getElementById('mainHeader').classList.add('hidden');
             document.getElementById('mainContent').classList.add('hidden');
-            document.getElementById('backdrop').classList.remove('show');
-            document.getElementById('settingsPanel').classList.remove('open');
         });
 
+        // Panel & Backdrop
+        document.getElementById('openManage').addEventListener('click', () => openPanel('managePanel'));
+        document.getElementById('closeManage').addEventListener('click', () => closePanel('managePanel'));
+        document.getElementById('settingsBtn').addEventListener('click', () => openPanel('settingsPanel'));
+        document.getElementById('closeSettings').addEventListener('click', () => closePanel('settingsPanel'));
+
+        document.getElementById('backdrop').addEventListener('click', () => {
+            closePanel('managePanel');
+            closePanel('settingsPanel');
+            document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
+        });
+
+        document.getElementById('viewItemsBtn').addEventListener('click', () => {
+            closePanel('managePanel');
+            renderItems();
+        });
+
+        document.getElementById('addItemBtn').addEventListener('click', () => {
+            closePanel('managePanel');
+            openModal('addItemModal');
+        });
+
+        document.getElementById('viewMembersBtn').addEventListener('click', async () => {
+            closePanel('managePanel');
+            try {
+                const users = await getAll('users');
+                const list = document.getElementById('membersList');
+
+                if (!users.length) {
+                    list.innerHTML = '<p style="text-align: center; color: #94a3b8;">No members</p>';
+                    openModal('membersModal');
+                    return;
+                }
+
+                list.innerHTML = users.map(u => `
+                    <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem; margin-bottom: 1rem;">
+                        <div style="font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">${u.name}</div>
+                        <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 0.5rem;">${u.email}</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">${u.designation || 'N/A'} - ${u.department || 'N/A'}</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem;">${u.isAdmin ? 'Admin' : 'Member'}</div>
+                        ${isAdmin && !u.isAdmin ? `<button class="btn btn-sm btn-success" onclick="promoteToAdmin(${u.id})">Promote</button>` : ''}
+                        ${isAdmin && u.id !== currentUser.id ? `<button class="btn btn-sm btn-danger" onclick="removeMember(${u.id})">Remove</button>` : ''}
+                    </div>
+                `).join('');
+
+                openModal('membersModal');
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        });
+
+        document.getElementById('addMemberBtn').addEventListener('click', () => {
+            closePanel('managePanel');
+            openModal('addMemberModal');
+        });
+
+        // Theme
         document.getElementById('lightBtn').addEventListener('click', () => {
             document.documentElement.classList.remove('dark');
             localStorage.setItem('theme', 'light');
+            document.getElementById('lightBtn').classList.add('active');
+            document.getElementById('darkBtn').classList.remove('active');
         });
 
         document.getElementById('darkBtn').addEventListener('click', () => {
             document.documentElement.classList.add('dark');
             localStorage.setItem('theme', 'dark');
+            document.getElementById('darkBtn').classList.add('active');
+            document.getElementById('lightBtn').classList.remove('active');
         });
 
-        // ===================== STARTUP =====================
+        async function promoteToAdmin(userId) {
+            if (!confirm('Promote this member to admin?')) return;
+            try {
+                const user = await getOne('users', userId);
+                user.isAdmin = true;
+                await updateRecord('users', user);
+                alert('Promoted to admin!');
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function removeMember(userId) {
+            if (!confirm('Remove this member?')) return;
+            try {
+                await deleteRecord('users', userId);
+                alert('Member removed!');
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        // Startup
         (async () => {
             try {
-                const theme = localStorage.getItem('theme') || 'dark';
-                if (theme === 'dark') {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                if (savedTheme === 'dark') {
                     document.documentElement.classList.add('dark');
                 }
 
-                console.log('Initializing database...');
                 await initDB();
                 console.log('✓ App ready');
             } catch (e) {
