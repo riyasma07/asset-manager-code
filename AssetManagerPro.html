@@ -65,7 +65,7 @@
       display: none !important;
     }
 
-    /* FIXED: Centering the auth screen */
+    /* FIXED: Centering */
     .auth-screen {
       position: fixed;
       top: 0;
@@ -895,7 +895,7 @@
     </div>
   </div>
 
-  <!-- EDIT PROFILE MODAL -->
+  <!-- MODALS - Edit Profile, Change Password, Add Item, Add Member, etc. -->
   <div id="editProfileModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -933,7 +933,6 @@
     </div>
   </div>
 
-  <!-- CHANGE PASSWORD MODAL -->
   <div id="changePasswordModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -963,7 +962,6 @@
     </div>
   </div>
 
-  <!-- ADD ITEM MODAL -->
   <div id="addItemModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -986,7 +984,7 @@
               <option value="">Select</option>
               <option value="working">✓ Working</option>
               <option value="not-working">✗ Not Working</option>
-              <option value="not-applicable">N/A Not Applicable</option>
+              <option value="not-applicable">N/A - Not Applicable</option>
             </select>
           </div>
         </div>
@@ -998,7 +996,6 @@
     </div>
   </div>
 
-  <!-- ASSIGN ITEM MODAL -->
   <div id="assignItemModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1022,7 +1019,6 @@
     </div>
   </div>
 
-  <!-- RETURN ITEM MODAL -->
   <div id="returnItemModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1040,7 +1036,6 @@
     </div>
   </div>
 
-  <!-- DELETE ITEM MODAL -->
   <div id="deleteItemModal" class="modal">
     <div class="modal-content">
       <div style="text-align: center; padding: 2rem;">
@@ -1055,7 +1050,6 @@
     </div>
   </div>
 
-  <!-- ITEM HISTORY MODAL -->
   <div id="itemHistoryModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1066,11 +1060,10 @@
     </div>
   </div>
 
-  <!-- ADD MEMBER MODAL -->
   <div id="addMemberModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>👤 Add Member</h3>
+        <h3>➕ Add Member</h3>
         <button type="button" class="close-btn" onclick="closeModal('addMemberModal')">✕</button>
       </div>
       <form id="memberForm">
@@ -1112,7 +1105,6 @@
     </div>
   </div>
 
-  <!-- MEMBERS MODAL -->
   <div id="membersModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1123,11 +1115,8 @@
     </div>
   </div>
 
-  <!-- FILE INPUT FOR IMPORT -->
-  <input type="file" id="fileInput" accept="application/json" style="display: none;">
-
   <script>
-    // YOUR EXACT ORIGINAL DATABASE & AUTHENTICATION CODE
+    // ========== DATABASE SETUP ==========
     const DBNAME = 'AssetManagerProDB';
     let db = null;
     let currentUser = null;
@@ -1136,13 +1125,17 @@
     let returnItemId = null;
     let deleteItemId = null;
 
+    // GitHub Config - UPDATE THESE
+    const GITHUBRAWURL = 'https://raw.githubusercontent.com/riyasma07/asset-manager-db/main/data.json';
+
+    // Initialize IndexedDB
     async function initDB() {
       return new Promise((resolve, reject) => {
         const req = indexedDB.open(DBNAME, 2);
         req.onerror = () => reject(req.error);
         req.onsuccess = () => {
           db = req.result;
-          console.log('✓ Database ready');
+          console.log('✓ Database initialized');
           resolve(db);
         };
         req.onupgradeneeded = (e) => {
@@ -1210,7 +1203,50 @@
       });
     }
 
-    // UI FUNCTIONS
+    // ========== AUTO SYNC FROM GITHUB ==========
+    async function autoSyncFromGithub() {
+      try {
+        console.log('🔄 Syncing from GitHub...');
+        const res = await fetch(GITHUBRAWURL);
+        if (!res.ok) {
+          console.warn('GitHub file not found (first time setup?)');
+          return;
+        }
+
+        const data = await res.json();
+        if (data.schema !== 'asset-manager-pro') {
+          console.warn('Invalid data schema');
+          return;
+        }
+
+        // Clear stores
+        const clearUsersTx = db.transaction('users', 'readwrite');
+        clearUsersTx.objectStore('users').clear();
+
+        const clearItemsTx = db.transaction('items', 'readwrite');
+        clearItemsTx.objectStore('items').clear();
+
+        const clearHistoryTx = db.transaction('history', 'readwrite');
+        clearHistoryTx.objectStore('history').clear();
+
+        // Add data from GitHub
+        for (const u of data.users) {
+          await addRecord('users', u);
+        }
+        for (const it of data.items) {
+          await addRecord('items', it);
+        }
+        for (const h of data.history) {
+          await addRecord('history', h);
+        }
+
+        console.log('✓ Auto-synced from GitHub!');
+      } catch (e) {
+        console.warn('Sync failed:', e.message);
+      }
+    }
+
+    // ========== UI FUNCTIONS ==========
     function switchToLogin() {
       document.getElementById('registerForm').classList.add('hidden');
       document.getElementById('loginForm').classList.remove('hidden');
@@ -1247,6 +1283,7 @@
       document.getElementById('userRole').textContent = isAdmin ? 'Admin' : 'Member';
 
       if (isAdmin) {
+        document.getElementById('openManage').style.display = 'flex';
         document.getElementById('addItemBtn').style.display = 'flex';
         document.getElementById('addMemberBtn').style.display = 'flex';
         document.getElementById('exportBtn').style.display = 'flex';
@@ -1326,7 +1363,6 @@
         actionCell.innerHTML = `
           <button class="btn btn-sm btn-success" onclick="saveEditItem(${itemId})">Save</button>
           <button class="btn btn-sm btn-secondary" onclick="cancelEditItem()">Cancel</button>
-          <button class="btn btn-sm btn-danger" onclick="openDeleteModal(${itemId})">Delete</button>
         `;
       });
     }
@@ -1483,7 +1519,7 @@
       }
     }
 
-    // REGISTRATION
+    // ========== REGISTRATION ==========
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
@@ -1532,7 +1568,7 @@
       }
     });
 
-    // LOGIN - YOUR EXACT ORIGINAL CODE
+    // ========== LOGIN ==========
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
@@ -1561,7 +1597,7 @@
       }
     });
 
-    // ADD ITEM
+    // ========== ADD ITEM ==========
     document.getElementById('itemForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
@@ -1570,9 +1606,7 @@
           name: formData.get('name').trim(),
           serial: formData.get('serial').trim(),
           condition: formData.get('condition'),
-          holder: '',
-          createdAt: new Date().toLocaleString(),
-          createdBy: currentUser.name
+          holder: ''
         };
 
         await addRecord('items', item);
@@ -1585,7 +1619,7 @@
       }
     });
 
-    // ADD MEMBER
+    // ========== ADD MEMBER ==========
     document.getElementById('memberForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
@@ -1617,9 +1651,7 @@
           mobile: formData.get('mobile').trim() || '',
           designation: formData.get('designation').trim() || '',
           department: formData.get('department').trim() || '',
-          isAdmin: false,
-          createdAt: new Date().toLocaleString(),
-          createdBy: currentUser.name
+          isAdmin: false
         };
 
         await addRecord('users', user);
@@ -1631,7 +1663,7 @@
       }
     });
 
-    // EDIT PROFILE
+    // ========== EDIT PROFILE ==========
     document.getElementById('editProfileBtn').addEventListener('click', () => {
       closePanel('settingsPanel');
       document.getElementById('editName').value = currentUser.name;
@@ -1659,7 +1691,7 @@
       }
     });
 
-    // CHANGE PASSWORD
+    // ========== CHANGE PASSWORD ==========
     document.getElementById('changePasswordBtn').addEventListener('click', () => {
       closePanel('settingsPanel');
       openModal('changePasswordModal');
@@ -1697,7 +1729,15 @@
       }
     });
 
-    // LOGOUT
+    // ========== SYNC FROM GITHUB BUTTON ==========
+    document.getElementById('syncFromGithubBtn').addEventListener('click', async () => {
+      closePanel('settingsPanel');
+      await autoSyncFromGithub();
+      alert('Sync complete! Refresh to see updates.');
+      location.reload();
+    });
+
+    // ========== LOGOUT ==========
     document.getElementById('logoutBtn').addEventListener('click', () => {
       closePanel('settingsPanel');
       currentUser = null;
@@ -1707,7 +1747,7 @@
       document.getElementById('mainContent').classList.add('hidden');
     });
 
-    // PANEL & BACKDROP
+    // ========== PANELS ==========
     document.getElementById('openManage').addEventListener('click', () => openPanel('managePanel'));
     document.getElementById('closeManage').addEventListener('click', () => closePanel('managePanel'));
     document.getElementById('settingsBtn').addEventListener('click', () => openPanel('settingsPanel'));
@@ -1747,9 +1787,7 @@
             <div style="font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">${u.name}</div>
             <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 0.5rem;">${u.email}</div>
             <div style="font-size: 0.75rem; color: #94a3b8;">${u.designation || 'N/A'} - ${u.department || 'N/A'}</div>
-            <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem;">${u.isAdmin ? 'Admin' : 'Member'}</div>
-            ${isAdmin && !u.isAdmin ? `<button class="btn btn-sm btn-success" onclick="promoteToAdmin(${u.id})">Promote</button>` : ''}
-            ${isAdmin && u.id !== currentUser.id ? `<button class="btn btn-sm btn-danger" onclick="removeMember(${u.id})">Remove</button>` : ''}
+            <div style="font-size: 0.75rem; color: #94a3b8;">${u.isAdmin ? 'Admin' : 'Member'}</div>
           </div>
         `).join('');
 
@@ -1764,7 +1802,7 @@
       openModal('addMemberModal');
     });
 
-    // THEME
+    // ========== THEME ==========
     document.getElementById('lightBtn').addEventListener('click', () => {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
@@ -1779,29 +1817,7 @@
       document.getElementById('lightBtn').classList.remove('active');
     });
 
-    async function promoteToAdmin(userId) {
-      if (!confirm('Promote this member to admin?')) return;
-      try {
-        const user = await getOne('users', userId);
-        user.isAdmin = true;
-        await updateRecord('users', user);
-        alert('Promoted to admin!');
-      } catch (e) {
-        alert('Error: ' + e.message);
-      }
-    }
-
-    async function removeMember(userId) {
-      if (!confirm('Remove this member?')) return;
-      try {
-        await deleteRecord('users', userId);
-        alert('Member removed!');
-      } catch (e) {
-        alert('Error: ' + e.message);
-      }
-    }
-
-    // STARTUP
+    // ========== STARTUP - WITH AUTO SYNC ==========
     (async () => {
       try {
         const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -1810,9 +1826,14 @@
         }
 
         await initDB();
+        console.log('✓ Database ready');
+
+        // AUTO SYNC FROM GITHUB AT STARTUP
+        await autoSyncFromGithub();
         console.log('✓ App ready');
       } catch (e) {
-        alert('Database error: ' + e.message);
+        console.error('Startup error:', e.message);
+        alert('Error: ' + e.message);
       }
     })();
   </script>
