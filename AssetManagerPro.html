@@ -1,1509 +1,2735 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asset Manager Pro - Professional Inventory System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; scroll-behavior: smooth; }
-    html:not(.dark) { background-color: #f8fafc; color: #0f172a; }
-    html.dark { background-color: #0d1117; color: #e6edf3; }
-    body { min-height: 100vh; display: flex; flex-direction: column; transition: background-color 0.2s ease, color 0.2s ease; overflow-x: hidden; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Manager Pro - Professional Inventory System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    html.dark ::-webkit-scrollbar-thumb { background: #30363d; }
-    html.dark ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+        html {
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            scroll-behavior: smooth;
+        }
 
-    .hidden { display: none !important; }
+        html:not(.dark) {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
 
-    #authScreen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 99999; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); padding: 2rem 1rem; overflow-y: auto; }
-    #authScreen.hidden { display: none !important; }
+        html.dark {
+            background-color: #0d1117;
+            color: #e6edf3;
+        }
 
-    .auth-card { background: white; border-radius: 1rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); padding: 2.5rem; max-width: 480px; width: 100%; animation: slideInUp 0.4s ease; max-height: 90vh; overflow-y: auto; }
-    html.dark .auth-card { background: #161b22; }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            overflow-x: hidden;
+        }
 
-    @keyframes slideInUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
 
-    .auth-title { text-align: center; margin-bottom: 2rem; }
-    .logo-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); border-radius: 1rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
-    .auth-title h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .auth-title p { color: #64748b; font-size: 0.875rem; }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-    .setup-alert { background: #dbeafe; color: #0c4a6e; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; border: 1px solid #7dd3fc; font-size: 0.875rem; }
-    html.dark .setup-alert { background: #0c3d5f; color: #7dd3fc; }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
 
-    .form-group { margin-bottom: 1.25rem; }
-    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.875rem; }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
 
-    input, select, textarea { width: 100%; padding: 0.75rem 0.875rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: white; color: #0f172a; font-family: 'Inter', sans-serif; font-size: 0.875rem; transition: all 0.2s ease; }
-    html.dark input, html.dark select, html.dark textarea { background: #0d1117; border-color: #30363d; color: #c9d1d9; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        html.dark ::-webkit-scrollbar-thumb {
+            background: #30363d;
+        }
 
-    .btn { cursor: pointer; border: none; transition: all 0.2s ease; font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 0.5rem; }
-    .btn-primary { background: #2563eb; color: white; width: 100%; margin-top: 1rem; }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-success { background: #10b981; color: white; }
-    .btn-success:hover { background: #059669; }
-    .btn-danger { background: #ef4444; color: white; }
-    .btn-danger:hover { background: #dc2626; }
-    .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
-    .btn-secondary { background: #6b7280; color: white; }
-    .btn-secondary:hover { background: #4b5563; }
-    .btn-icon { background: none; border: none; padding: 0.5rem; border-radius: 0.375rem; cursor: pointer; font-size: 1.2rem; display: inline-flex; align-items: center; justify-content: center; }
-    .btn-icon:hover { background: rgba(0, 0, 0, 0.1); }
-    html.dark .btn-icon:hover { background: rgba(255, 255, 255, 0.1); }
+        html.dark ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
 
-    .auth-links { text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: #64748b; }
-    .auth-links a { color: #2563eb; cursor: pointer; font-weight: 500; text-decoration: none; }
+        .hidden {
+            display: none !important;
+        }
 
-    header { background: white; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 40; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
-    html.dark header { background: #161b22; border-bottom-color: #30363d; }
+        .auth-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
 
-    main { flex: 1; width: 100%; z-index: 10; overflow-y: auto; padding: 2rem; }
+        .auth-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+        }
 
-    .card { background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 2rem; overflow-x: auto; }
-    html.dark .card { background: #161b22; border-color: #30363d; }
+        html.dark .auth-container {
+            background: #161b22;
+            color: #e6edf3;
+        }
 
-    table { width: 100%; font-size: 0.875rem; border-collapse: collapse; }
-    thead tr { border-bottom: 2px solid #e2e8f0; }
-    html.dark thead tr { border-bottom-color: #30363d; }
-    tbody tr { border-bottom: 1px solid #e2e8f0; transition: background-color 0.2s ease; }
-    tbody tr:hover { background: #f8fafc; }
-    html.dark tbody tr:hover { background: #21262d; }
-    tbody tr.edit-row { background: rgba(37, 99, 235, 0.1); }
-    th, td { padding: 0.75rem; text-align: left; }
-    th { font-weight: 600; color: #64748b; }
+        .auth-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    .badge { display: inline-block; padding: 0.375rem 0.75rem; font-size: 0.75rem; border-radius: 0.25rem; font-weight: 600; }
-    .badge-green { background: #dcfce7; color: #166534; }
-    .badge-orange { background: #fed7aa; color: #92400e; }
-	.badge-notworking { background: #fee2e2; color: #991b1b; }
-    html.dark .badge-green { background: #0d3f1a; color: #3fb950; }
-    html.dark .badge-orange { background: #3d2817; color: #d29922; }
+        .auth-subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
 
-    .backdrop { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 40; }
-    .backdrop.show { display: block; }
+        html.dark .auth-subtitle {
+            color: #8b949e;
+        }
 
-    .modal { display: none; position: fixed; inset: 0; z-index: 50; align-items: center; justify-content: center; padding: 1rem; overflow-y: auto; }
-    .modal.show { display: flex; }
-    .modal-content { background: white; border-radius: 0.75rem; box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15); max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; animation: slideInUp 0.3s ease; }
-    html.dark .modal-content { background: #161b22; }
-    .modal-header { border-bottom: 1px solid #e2e8f0; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; }
-    html.dark .modal-header { border-bottom-color: #30363d; }
-    .modal-header h3 { font-size: 1.25rem; font-weight: 700; }
-    .modal-body { padding: 2rem; }
-    .modal-footer { border-top: 1px solid #e2e8f0; padding: 1.5rem; display: flex; gap: 0.75rem; justify-content: flex-end; }
-    html.dark .modal-footer { border-top-color: #30363d; }
-    .close-btn { background: none; border: none; cursor: pointer; color: #64748b; font-size: 1.5rem; padding: 0; }
+        .form-group {
+            margin-bottom: 16px;
+        }
 
-    .panel { position: fixed; right: 0; top: 0; height: 100%; width: 100%; max-width: 320px; z-index: 50; background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px); border-left: 1px solid rgba(48, 54, 61, 0.4); overflow-y: auto; transform: translateX(100%); transition: transform 0.3s; }
-    .panel.open { transform: translateX(0); }
-    .panel-header { position: sticky; top: 0; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; background: rgba(13, 17, 23, 0.8); border-bottom: 1px solid rgba(48, 54, 61, 0.3); z-index: 10; }
-    .panel-header h3 { font-size: 1.125rem; font-weight: bold; color: white; }
-    .panel-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
-    .panel-item { padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(48, 54, 61, 0.6); background: rgba(30, 40, 54, 0.4); backdrop-filter: blur(5px); cursor: pointer; color: white; transition: all 0.2s ease; text-align: left; display: flex; align-items: center; gap: 0.75rem; width: 100%; }
-    .panel-item:hover { background: rgba(30, 40, 54, 0.7); border-color: rgba(88, 166, 255, 0.5); }
-    .panel-item-icon { width: 40px; height: 40px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .icon-blue { background: rgba(59, 130, 246, 0.2); color: #58a6ff; }
-    .icon-purple { background: rgba(139, 92, 246, 0.2); color: #d084d0; }
-    .icon-red { background: rgba(239, 68, 68, 0.2); color: #f87171; }
-    .panel-item-content { flex: 1; }
-    .panel-item-title { font-weight: 600; color: white; font-size: 0.9375rem; margin-bottom: 0.25rem; }
-    .panel-item-desc { font-size: 0.75rem; color: #94a3b8; }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #334155;
+        }
 
-    .action-buttons { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        html.dark .form-group label {
+            color: #c9d1d9;
+        }
 
-    .item-count-badge { padding: 0.5rem 1.25rem; background: #f3e8ff; color: #6b21a8; font-size: 0.875rem; font-weight: bold; border-radius: 9999px; }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s ease;
+        }
 
-    .theme-section { border-top: 1px solid rgba(48, 54, 61, 0.3); padding-top: 1rem; margin-top: 1rem; }
-    .theme-label { display: block; font-size: 0.875rem; font-weight: 600; color: white; margin-bottom: 0.75rem; }
-    .theme-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-    .theme-btn { padding: 0.75rem; border-radius: 0.5rem; border: 2px solid #30363d; background: rgba(30, 40, 54, 0.5); color: white; font-weight: 500; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease; }
-    .theme-btn.active { border-color: #2563eb; background: rgba(37, 99, 235, 0.2); }
+        html.dark .form-group input,
+        html.dark .form-group select {
+            background: #0d1117;
+            border-color: #30363d;
+            color: #e6edf3;
+        }
 
-    @media (max-width: 768px) {
-      .auth-card { padding: 2rem; margin: 1rem; }
-      main { padding: 1rem; }
-      header { padding: 0.75rem 1rem; }
-    }
-  </style>
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        html.dark .btn-secondary {
+            background: #30363d;
+            color: #c9d1d9;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        html.dark .btn-secondary:hover {
+            background: #484f58;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .btn-icon {
+            padding: 8px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-muted {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        html.dark .text-muted {
+            color: #8b949e;
+        }
+
+        .text-link {
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .text-link:hover {
+            text-decoration: underline;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+            overflow-y: auto;
+        }
+
+        html.dark .sidebar {
+            background: #161b22;
+            border-right-color: #30363d;
+        }
+
+        .sidebar-header {
+            padding: 0 20px;
+            margin-bottom: 24px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-subtitle {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        html.dark .sidebar-subtitle {
+            color: #8b949e;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            flex: 1;
+        }
+
+        .sidebar-menu-item {
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            font-size: 14px;
+        }
+
+        html.dark .sidebar-menu-item a {
+            color: #8b949e;
+        }
+
+        .sidebar-menu-item a:hover {
+            background: #f1f5f9;
+            color: #334155;
+            border-left-color: #667eea;
+        }
+
+        html.dark .sidebar-menu-item a:hover {
+            background: #21262d;
+            color: #c9d1d9;
+            border-left-color: #667eea;
+        }
+
+        .sidebar-menu-item a.active {
+            background: #f1f5f9;
+            color: #667eea;
+            border-left-color: #667eea;
+            font-weight: 600;
+        }
+
+        html.dark .sidebar-menu-item a.active {
+            background: #21262d;
+            color: #58a6ff;
+            border-left-color: #58a6ff;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            padding: 16px 20px 8px;
+            margin-top: 12px;
+        }
+
+        html.dark .sidebar-section-title {
+            color: #6e7681;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid #e2e8f0;
+            padding: 16px 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        html.dark .sidebar-footer {
+            border-top-color: #30363d;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        html.dark .header {
+            background: #161b22;
+            border-bottom-color: #30363d;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .user-profile:hover {
+            background: #f1f5f9;
+        }
+
+        html.dark .user-profile:hover {
+            background: #21262d;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .user-email {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        html.dark .user-email {
+            color: #8b949e;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .items-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .items-count {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .items-count-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 12px;
+        }
+
+        .search-input {
+            padding: 10px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 250px;
+            font-family: inherit;
+        }
+
+        html.dark .search-input {
+            background: #0d1117;
+            border-color: #30363d;
+            color: #e6edf3;
+        }
+
+        .search-input::placeholder {
+            color: #94a3b8;
+        }
+
+        html.dark .search-input::placeholder {
+            color: #6e7681;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        html.dark .table-container {
+            background: #161b22;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        html.dark thead {
+            background: #0d1117;
+            border-bottom-color: #30363d;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+        }
+
+        html.dark th {
+            color: #8b949e;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        html.dark td {
+            border-bottom-color: #30363d;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        html.dark tbody tr:hover {
+            background: #0d1117;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        html.dark .status-available {
+            background: #0d3c1d;
+            color: #3fb950;
+        }
+
+        .status-out {
+            background: #fed7aa;
+            color: #92400e;
+        }
+
+        html.dark .status-out {
+            background: #3d2817;
+            color: #d29922;
+        }
+
+        .condition-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .condition-working {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        html.dark .condition-working {
+            background: #0d3c1d;
+            color: #3fb950;
+        }
+
+        .condition-notworking {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        html.dark .condition-notworking {
+            background: #3d1010;
+            color: #f85149;
+        }
+
+        .condition-na {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        html.dark .condition-na {
+            background: #30363d;
+            color: #8b949e;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn-edit {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .action-btn-edit:hover {
+            background: #fde68a;
+        }
+
+        html.dark .action-btn-edit {
+            background: #3d2817;
+            color: #d29922;
+        }
+
+        html.dark .action-btn-edit:hover {
+            background: #54410e;
+        }
+
+        .action-btn-history {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .action-btn-history:hover {
+            background: #bfdbfe;
+        }
+
+        html.dark .action-btn-history {
+            background: #0d2a47;
+            color: #58a6ff;
+        }
+
+        html.dark .action-btn-history:hover {
+            background: #1f47a3;
+        }
+
+        .action-btn-assign {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .action-btn-assign:hover {
+            background: #a7f3d0;
+        }
+
+        html.dark .action-btn-assign {
+            background: #0d3c1d;
+            color: #3fb950;
+        }
+
+        html.dark .action-btn-assign:hover {
+            background: #166a45;
+        }
+
+        .action-btn-notify {
+            background: #f3e8ff;
+            color: #6b21a8;
+        }
+
+        .action-btn-notify:hover {
+            background: #e9d5ff;
+        }
+
+        html.dark .action-btn-notify {
+            background: #3d1f47;
+            color: #d291f7;
+        }
+
+        html.dark .action-btn-notify:hover {
+            background: #5a2e6b;
+        }
+
+        .action-btn-delete {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-btn-delete:hover {
+            background: #fecaca;
+        }
+
+        html.dark .action-btn-delete {
+            background: #3d1010;
+            color: #f85149;
+        }
+
+        html.dark .action-btn-delete:hover {
+            background: #5a1515;
+        }
+
+        .action-btn-add-qty {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .action-btn-add-qty:hover {
+            background: #c7d2fe;
+        }
+
+        html.dark .action-btn-add-qty {
+            background: #262e56;
+            color: #818cf8;
+        }
+
+        html.dark .action-btn-add-qty:hover {
+            background: #3a4266;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #64748b;
+        }
+
+        html.dark .empty-state {
+            color: #8b949e;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        html.dark .modal-content {
+            background: #161b22;
+            color: #e6edf3;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-body {
+            margin-bottom: 24px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .message {
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .message-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        html.dark .message-success {
+            background: #0d3c1d;
+            color: #3fb950;
+            border-color: #238636;
+        }
+
+        .message-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        html.dark .message-error {
+            background: #3d1010;
+            color: #f85149;
+            border-color: #da3633;
+        }
+
+        .message-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        html.dark .message-warning {
+            background: #3d2817;
+            color: #d29922;
+            border-color: #8b6914;
+        }
+
+        .message-icon {
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            padding: 16px 20px;
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: toastSlideIn 0.3s ease;
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .toast-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        html.dark .toast-success {
+            background: #0d3c1d;
+            color: #3fb950;
+            border-color: #238636;
+        }
+
+        .toast-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        html.dark .toast-error {
+            background: #3d1010;
+            color: #f85149;
+            border-color: #da3633;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            min-width: 180px;
+            z-index: 100;
+            margin-top: 8px;
+        }
+
+        html.dark .dropdown-menu {
+            background: #161b22;
+            border-color: #30363d;
+        }
+
+        .dropdown-menu a,
+        .dropdown-menu button {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.2s ease;
+            font-family: inherit;
+        }
+
+        html.dark .dropdown-menu a,
+        html.dark .dropdown-menu button {
+            color: #c9d1d9;
+            border-bottom-color: #21262d;
+        }
+
+        .dropdown-menu a:last-child,
+        .dropdown-menu button:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-menu a:hover,
+        .dropdown-menu button:hover {
+            background: #f1f5f9;
+        }
+
+        html.dark .dropdown-menu a:hover,
+        html.dark .dropdown-menu button:hover {
+            background: #21262d;
+        }
+
+        .dropdown-menu a.danger,
+        .dropdown-menu button.danger {
+            color: #dc2626;
+        }
+
+        html.dark .dropdown-menu a.danger,
+        html.dark .dropdown-menu button.danger {
+            color: #f85149;
+        }
+
+        .history-item {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
+        }
+
+        html.dark .history-item {
+            border-bottom-color: #30363d;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-time {
+            color: #94a3b8;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        html.dark .history-time {
+            color: #6e7681;
+        }
+
+        .history-action {
+            color: #334155;
+        }
+
+        html.dark .history-action {
+            color: #c9d1d9;
+        }
+
+        .history-person {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .no-items-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 32px;
+            color: #94a3b8;
+        }
+
+        html.dark .no-items-message {
+            color: #6e7681;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .member-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s ease;
+        }
+
+        html.dark .member-card {
+            background: #161b22;
+            border-color: #30363d;
+        }
+
+        .member-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .member-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .member-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .member-info {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        html.dark .member-info {
+            color: #8b949e;
+        }
+
+        .member-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        html.dark .loading-screen {
+            background: #0d1117;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        html.dark .spinner {
+            border-color: #30363d;
+            border-top-color: #58a6ff;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+                padding: 12px 0;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            td, th {
+                padding: 12px 8px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<!-- AUTH SCREEN -->
-<div id="authScreen">
-  <div class="auth-card">
-    <div class="auth-title">
-      <div class="logo-icon">📦</div>
-      <h1>Asset Manager Pro</h1>
-      <p>Professional Inventory System</p>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="spinner"></div>
+        <div id="loadingMessage" style="color: #64748b; font-weight: 600;">Loading inventory...</div>
     </div>
 
-    <!-- REGISTRATION FORM -->
-    <form id="registerForm" class="hidden">
-      <div class="setup-alert"><strong>🔧 First Time Setup</strong><br><small>You will be the admin</small></div>
-      <div class="form-group"><label>Full Name *</label><input type="text" name="name" placeholder="Enter your name" required></div>
-      <div class="form-group"><label>Email *</label><input type="email" name="email" placeholder="Enter your email" required></div>
-      <div class="form-group"><label>Mobile</label><input type="tel" name="mobile" placeholder="Enter mobile"></div>
-      <div class="form-group"><label>Designation</label><input type="text" name="designation" placeholder="e.g., Manager"></div>
-      <div class="form-group"><label>Department</label><input type="text" name="department" placeholder="e.g., IT"></div>
-      <div class="form-group"><label>Password * (Min 6)</label><input type="password" name="password" required></div>
-      <div class="form-group"><label>Confirm Password *</label><input type="password" name="confirmPassword" required></div>
-      <button type="submit" class="btn btn-primary">👑 Create Admin Account</button>
-      <div class="auth-links">Already registered? <a onclick="switchToLogin()">Sign In</a></div>
-    </form>
-
-    <!-- LOGIN FORM -->
-    <form id="loginForm">
-      <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="Enter email" required></div>
-      <div class="form-group"><label>Password</label><input type="password" name="password" placeholder="Enter password" required></div>
-      <button type="submit" class="btn btn-primary">🔓 Sign In</button>
-      <div class="auth-links">New user? Ask your admin to add you.</div>
-    </form>
-  </div>
-</div>
-
-<!-- HEADER -->
-<header class="hidden" id="mainHeader">
-  <div style="display: flex; align-items: center; gap: 1rem;">
-    <h1 style="font-size: 1.25rem; font-weight: 700;">Asset Manager Pro</h1>
-    <p id="userRole" style="color: #64748b; font-size: 0.875rem;">Admin</p>
-  </div>
-  <div style="display: flex; gap: 1rem; align-items: center;">
-    <button id="openManage" class="btn btn-primary" style="display: none; width: auto;">📋 Manage</button>
-    <button id="settingsBtn" class="btn-icon">⚙️</button>
-  </div>
-</header>
-
-<!-- MAIN CONTENT -->
-<main class="hidden" id="mainContent">
-  <div style="width: 100%; padding: 0;">
-    <div class="card">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 700;">📦 Inventory Items</h2>
-        <span class="item-count-badge" id="itemsCount">0</span>
-      </div>
-      <div style="overflow-x: auto;">
-        <table id="itemsTable">
-          <thead>
-            <tr>
-              <th>Item Name</th>
-              <th>Serial Number</th>
-              <th>Holder</th>
-              <th>Status</th>
-              <th>Condition</th>
-              <th style="min-width: 200px;">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="itemsBody">
-            <tr><td colspan="6" style="text-align: center;">No items found</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</main>
-
-<!-- BACKDROP -->
-<div id="backdrop" class="backdrop"></div>
-
-<!-- MANAGE PANEL -->
-<div id="managePanel" class="panel">
-  <div class="panel-header"><h3>📋 Menu</h3><button id="closeManage" type="button" class="close-btn">×</button></div>
-  <div class="panel-body">
-    <button id="viewItemsBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-blue">📦</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">View Items</div>
-        <div class="panel-item-desc">Browse all items</div>
-      </div>
-    </button>
-    <button id="addItemBtn" type="button" class="panel-item" style="display: none;">
-      <div class="panel-item-icon icon-blue">➕</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Add Item</div>
-        <div class="panel-item-desc">Create new</div>
-      </div>
-    </button>
-    <button id="viewMembersBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-purple">👥</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">View Members</div>
-        <div class="panel-item-desc">Manage users</div>
-      </div>
-    </button>
-    <button id="addMemberBtn" type="button" class="panel-item" style="display: none;">
-      <div class="panel-item-icon icon-purple">👤</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Add Member</div>
-        <div class="panel-item-desc">Register user</div>
-      </div>
-    </button>
-  </div>
-</div>
-
-<!-- SETTINGS PANEL (ADMIN ONLY OPTIONS) -->
-<div id="settingsPanel" class="panel">
-  <div class="panel-header"><h3>⚙️ Settings</h3><button id="closeSettings" type="button" class="close-btn">×</button></div>
-  <div class="panel-body">
-    <button id="editProfileBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-blue">✏️</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Edit Profile</div>
-        <div class="panel-item-desc">Update your info</div>
-      </div>
-    </button>
-    <button id="changePasswordBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-purple">🔐</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Change Password</div>
-        <div class="panel-item-desc">Update password</div>
-      </div>
-    </button>
-
-    <!-- ADMIN ONLY: Export and Sync buttons -->
-    <button id="exportBtn" type="button" class="panel-item" style="display: none;">
-      <div class="panel-item-icon icon-blue">💾</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Export to File</div>
-        <div class="panel-item-desc">Download backup JSON</div>
-      </div>
-    </button>
-    <button id="syncFromGithubBtn" type="button" class="panel-item" style="display: none;">
-      <div class="panel-item-icon icon-blue">☁️</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Sync from GitHub</div>
-        <div class="panel-item-desc">Load shared data</div>
-      </div>
-    </button>
-
-    <button id="removeAccountBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-red">🗑️</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Remove Account</div>
-        <div class="panel-item-desc">Delete your account</div>
-      </div>
-    </button>
-    <button id="logoutBtn" type="button" class="panel-item">
-      <div class="panel-item-icon icon-red">🚪</div>
-      <div class="panel-item-content">
-        <div class="panel-item-title">Logout</div>
-        <div class="panel-item-desc">Sign out</div>
-      </div>
-    </button>
-
-    <div class="theme-section">
-      <label class="theme-label">🎨 Theme</label>
-      <div class="theme-buttons">
-        <button id="lightBtn" type="button" class="theme-btn">☀️ Light</button>
-        <button id="darkBtn" type="button" class="theme-btn active">🌙 Dark</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODALS -->
-<div id="editProfileModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>✏️ Edit Profile</h3><button type="button" class="close-btn" onclick="closeModal('editProfileModal')">×</button></div>
-    <form id="editProfileForm">
-      <div class="modal-body">
-        <div class="form-group"><label>Full Name</label><input type="text" id="editName" required></div>
-        <div class="form-group"><label>Email</label><input type="email" id="editEmail" required></div>
-        <div class="form-group"><label>Mobile</label><input type="tel" id="editMobile"></div>
-        <div class="form-group"><label>Designation</label><input type="text" id="editDesignation"></div>
-        <div class="form-group"><label>Department</label><input type="text" id="editDepartment"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('editProfileModal')">Cancel</button>
-        <button type="submit" class="btn btn-success">✓ Save</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div id="changePasswordModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>🔐 Change Password</h3><button type="button" class="close-btn" onclick="closeModal('changePasswordModal')">×</button></div>
-    <form id="changePasswordForm">
-      <div class="modal-body">
-        <div class="form-group"><label>Current Password *</label><input type="password" id="currentPassword" required></div>
-        <div class="form-group"><label>New Password *</label><input type="password" id="newPassword" required></div>
-        <div class="form-group"><label>Confirm Password *</label><input type="password" id="confirmNewPassword" required></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('changePasswordModal')">Cancel</button>
-        <button type="submit" class="btn btn-success">Update</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div id="addItemModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>➕ Add Item</h3><button type="button" class="close-btn" onclick="closeModal('addItemModal')">×</button></div>
-    <form id="itemForm">
-      <div class="modal-body">
-        <div class="form-group"><label>Item Name *</label><input type="text" name="name" placeholder="e.g., Laptop" required></div>
-        <div class="form-group"><label>Serial Number *</label><input type="text" name="serial" placeholder="e.g., SN123456" required></div>
-        <div class="form-group">
-          <label>Condition *</label>
-          <select name="condition" required>
-            <option value="">Select</option>
-            <option value="working">✓ Working</option>
-            <option value="not-working">✗ Not Working</option>
-            <option value="not-applicable">N/A Not Applicable</option>
-          </select>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('addItemModal')">Cancel</button>
-        <button type="submit" class="btn btn-success">Add</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div id="assignItemModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>📤 Assign Item</h3><button type="button" class="close-btn" onclick="closeModal('assignItemModal')">×</button></div>
-    <form id="assignForm">
-      <div class="modal-body">
-        <div class="form-group"><label>Select Member *</label><select id="assignMemberSelect" required><option value="">Choose member</option></select></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('assignItemModal')">Cancel</button>
-        <button type="submit" class="btn btn-success">Assign</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div id="returnItemModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>📥 Return Item</h3><button type="button" class="close-btn" onclick="closeModal('returnItemModal')">×</button></div>
-    <div class="modal-body">
-      <p>Return this item to inventory?</p>
-      <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.5rem;" id="returnItemInfo"></p>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" onclick="closeModal('returnItemModal')">Cancel</button>
-      <button type="button" class="btn btn-success" onclick="confirmReturnItem()">Return</button>
-    </div>
-  </div>
-</div>
-
-<div id="deleteItemModal" class="modal">
-  <div class="modal-content">
-    <div style="text-align: center; padding: 2rem;">
-      <div style="font-size: 3rem; margin-bottom: 1rem;">🗑️</div>
-      <h3>Delete Item?</h3>
-      <p style="color: #64748b; margin-bottom: 2rem; font-size: 0.95rem;">This action cannot be undone.</p>
-      <div style="display: flex; gap: 1rem; justify-content: center;">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('deleteItemModal')">Cancel</button>
-        <button type="button" class="btn btn-danger" onclick="confirmDeleteItem()">Delete</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="itemHistoryModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>📜 Item History</h3><button type="button" class="close-btn" onclick="closeModal('itemHistoryModal')">×</button></div>
-    <div class="modal-body" id="historyList" style="max-height: 60vh; overflow-y: auto;"></div>
-  </div>
-</div>
-
-<div id="addMemberModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>👤 Add Member</h3><button type="button" class="close-btn" onclick="closeModal('addMemberModal')">×</button></div>
-    <form id="memberForm">
-      <div class="modal-body">
-        <div class="form-group"><label>Full Name *</label><input type="text" name="name" placeholder="Name" required></div>
-        <div class="form-group"><label>Email *</label><input type="email" name="email" placeholder="Email" required></div>
-        <div class="form-group"><label>Mobile</label><input type="tel" name="mobile"></div>
-        <div class="form-group"><label>Designation</label><input type="text" name="designation"></div>
-        <div class="form-group"><label>Department</label><input type="text" name="department"></div>
-        <div class="form-group"><label>Password * (Min 6)</label><input type="password" name="password" required></div>
-        <div class="form-group"><label>Confirm Password *</label><input type="password" name="confirmPassword" required></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('addMemberModal')">Cancel</button>
-        <button type="submit" class="btn btn-success">Add</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div id="membersModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>👥 Members</h3><button type="button" class="close-btn" onclick="closeModal('membersModal')">×</button></div>
-    <div class="modal-body" id="membersList" style="max-height: 60vh; overflow-y: auto;"></div>
-  </div>
-</div>
-
-<!-- FILE INPUT -->
-<input type="file" id="fileInput" accept="application/json" style="display: none;">
-
-<script>
-let allEmails = [];
-window.allItems = [];
-window.allMembers = [];
-window.currentNotifyItemId = null;
-
-window.addEventListener('load', function() {
-    setTimeout(function() {
-        try {
-            const items = localStorage.getItem('items');
-            const members = localStorage.getItem('members');
+    <!-- Auth Screen -->
+    <div id="authScreen" class="auth-screen hidden">
+        <div class="auth-container">
+            <div class="auth-title">🔓 Sign In</div>
+            <div class="auth-subtitle">Welcome back to Asset Manager</div>
             
-            if (items) window.allItems = JSON.parse(items);
-            if (members) window.allMembers = JSON.parse(members);
-            
-            console.log('✓ Notification system ready');
-            console.log('  Items cached:', window.allItems.length);
-            console.log('  Members cached:', window.allMembers.length);
-        } catch (e) {
-            console.error('Notification init error:', e);
-        }
-    }, 500);
-});
-
-// ==================== GITHUB CONFIG (REPLACE THESE 4 VALUES) ====================
-const GITHUB_RAW_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/asset-manager-db/main/data.json";
-const GITHUB_USERNAME = "YOUR_USERNAME";
-const GITHUB_REPO = "asset-manager-db";
-const GITHUB_TOKEN = "ghp_YOUR_TOKEN_HERE";
-
-// ==================== AUTO-UPLOAD FUNCTION (AUTO-REPLACE FILE) ====================
-async function autoUploadToGithub() {
-  try {
-    const users = await getAll('users');
-    const items = await getAll('items');
-    const history = await getAll('history');
-    
-    const data = {
-      __schema__: 'asset-manager-pro',
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      users, items, history
-    };
-    
-    const content = JSON.stringify(data, null, 2);
-    const encodedContent = btoa(content);
-    
-    const getRes = await fetch(
-      `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/data.json`,
-      {
-        headers: {
-          'Authorization': `Bearer ${GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      }
-    );
-    
-    if (!getRes.ok) {
-      console.warn('Cannot get file SHA');
-      return false;
-    }
-    
-    const fileData = await getRes.json();
-    const sha = fileData.sha;
-    
-    const uploadRes = await fetch(
-      `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/data.json`,
-      {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: 'Auto-sync',
-          content: encodedContent,
-          sha: sha
-        })
-      }
-    );
-    
-    if (uploadRes.ok) {
-      console.log('✅ Auto-synced to GitHub!');
-      return true;
-    }
-  } catch (e) {
-    console.warn('Auto-sync error:', e.message);
-  }
-  return false;
-}
-
-// ==================== DATABASE ====================
-const DB_NAME = 'AssetManagerPro_DB';
-let db = null;
-let currentUser = null;
-let isAdmin = false;
-let editingItemId = null;
-let returnItemId = null;
-let deleteItemId = null;
-
-async function initDB() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 1);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => { db = req.result; resolve(db); };
-    req.onupgradeneeded = (e) => {
-      const _db = e.target.result;
-      if (!_db.objectStoreNames.contains('users')) _db.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
-      if (!_db.objectStoreNames.contains('items')) _db.createObjectStore('items', { keyPath: 'id', autoIncrement: true });
-      if (!_db.objectStoreNames.contains('history')) _db.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
-    };
-  });
-}
-
-function getAll(storeName) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readonly');
-    const store = tx.objectStore(storeName);
-    const req = store.getAll();
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result || []);
-  });
-}
-
-function addRecord(storeName, data) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    const req = store.add(data);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-  });
-}
-
-function updateRecord(storeName, data) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    const req = store.put(data);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-  });
-}
-
-function getOne(storeName, id) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readonly');
-    const store = tx.objectStore(storeName);
-    const req = store.get(id);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-  });
-}
-
-function deleteRecord(storeName, id) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    const req = store.delete(id);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-  });
-}
-
-function clearStore(storeName) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readwrite');
-    tx.objectStore(storeName).clear().onsuccess = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-
-// ========== AUTO SYNC FROM GITHUB ==========
-async function autoSyncFromGithub() {
-  try {
-    console.log('🔄 Syncing from GitHub...');
-    const res = await fetch(GITHUB_RAW_URL);
-    
-    if (!res.ok) {
-      console.warn('⚠️ GitHub file not found (first time setup?)');
-      return;
-    }
-
-    const data = await res.json();
-
-    if (data.__schema__ !== 'asset-manager-pro') {
-      console.warn('Invalid data schema');
-      return;
-    }
-
-    await clearStore('users');
-    await clearStore('items');
-    await clearStore('history');
-
-    for (const u of (data.users || [])) await addRecord('users', u);
-    for (const it of (data.items || [])) await addRecord('items', it);
-    for (const h of (data.history || [])) await addRecord('history', h);
-
-    console.log('✅ Auto-synced from GitHub!');
-  } catch (e) {
-    console.warn('Sync failed:', e.message);
-  }
-}
-
-// ========== EXPORT/IMPORT ==========
-async function exportToJsonFile() {
-  try {
-    const users = await getAll('users');
-    const items = await getAll('items');
-    const history = await getAll('history');
-    
-    const data = {
-      __schema__: 'asset-manager-pro',
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      users, items, history
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `asset-manager-backup-${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    alert('✅ Exported! Upload this to GitHub to sync with friends');
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
-}
-
-async function importFromJsonFile(file) {
-  try {
-    const text = await file.text();
-    const data = JSON.parse(text);
-    
-    if (data.__schema__ !== 'asset-manager-pro') {
-      alert('❌ Invalid backup file');
-      return;
-    }
-    
-    if (!confirm('⚠️ Import will REPLACE all local data. Continue?')) return;
-    
-    await clearStore('users');
-    await clearStore('items');
-    await clearStore('history');
-    
-    for (const u of (data.users || [])) await addRecord('users', u);
-    for (const it of (data.items || [])) await addRecord('items', it);
-    for (const h of (data.history || [])) await addRecord('history', h);
-    
-    alert('✅ Import complete!');
-    await checkUserStatus();
-    if (currentUser) renderItems();
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
-}
-
-document.getElementById('fileInput').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (file) await importFromJsonFile(file);
-});
-
-async function checkUserStatus() {
-  const users = await getAll('users');
-  if (users.length === 0 && !currentUser) {
-    document.getElementById('registerForm').classList.remove('hidden');
-    document.getElementById('loginForm').classList.add('hidden');
-  } else if (currentUser) {
-    showMainApp();
-  } else {
-    document.getElementById('registerForm').classList.add('hidden');
-    document.getElementById('loginForm').classList.remove('hidden');
-  }
-}
-
-function switchToLogin() {
-  document.getElementById('registerForm').classList.add('hidden');
-  document.getElementById('loginForm').classList.remove('hidden');
-}
-
-function closeModal(id) {
-  document.getElementById(id).classList.remove('show');
-  if (!document.querySelectorAll('.modal.show').length && !document.querySelectorAll('.panel.open').length) {
-    document.getElementById('backdrop').classList.remove('show');
-  }
-}
-
-function closePanel(id) {
-  document.getElementById(id).classList.remove('open');
-  if (!document.querySelectorAll('.modal.show').length && !document.querySelectorAll('.panel.open').length) {
-    document.getElementById('backdrop').classList.remove('show');
-  }
-}
-
-function openModal(id) {
-  document.getElementById('backdrop').classList.add('show');
-  document.getElementById(id).classList.add('show');
-}
-
-function openPanel(id) {
-  document.getElementById('backdrop').classList.add('show');
-  document.getElementById(id).classList.add('open');
-}
-
-async function showMainApp() {
-  document.getElementById('authScreen').classList.add('hidden');
-  document.getElementById('mainHeader').classList.remove('hidden');
-  document.getElementById('mainContent').classList.remove('hidden');
-  document.getElementById('userRole').textContent = isAdmin ? '👑 Admin' : '👤 Member';
-  
-  if (isAdmin) {
-    document.getElementById('openManage').style.display = 'flex';
-    document.getElementById('addItemBtn').style.display = 'flex';
-    document.getElementById('addMemberBtn').style.display = 'flex';
-    document.getElementById('exportBtn').style.display = 'flex';
-    document.getElementById('syncFromGithubBtn').style.display = 'flex';
-  } else {
-    document.getElementById('openManage').style.display = 'flex';
-    document.getElementById('addItemBtn').style.display = 'none';
-    document.getElementById('addMemberBtn').style.display = 'none';
-    document.getElementById('exportBtn').style.display = 'none';
-    document.getElementById('syncFromGithubBtn').style.display = 'none';
-  }
-  
-  const users = await getAll('users');
-  const adminCount = users.filter(u => u.isAdmin).length;
-  if (isAdmin && adminCount === 1) {
-    document.getElementById('removeAccountBtn').style.display = 'none';
-  } else {
-    document.getElementById('removeAccountBtn').style.display = 'flex';
-  }
-  
-  renderItems();
-}
-
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const formData = new FormData(e.target);
-    const email = formData.get('email').trim().toLowerCase();
-    const password = formData.get('password');
-    const confirmPassword = formData.get('confirmPassword');
-    
-    if (password !== confirmPassword) { alert('Passwords do not match'); return; }
-    if (password.length < 6) { alert('Min 6 characters'); return; }
-    
-    const users = await getAll('users');
-    if (users.some(u => u.email === email)) { alert('Email already registered'); return; }
-    
-    const isFirstUser = users.length === 0;
-    
-    const user = {
-      name: formData.get('name').trim(),
-      email: email,
-      password: btoa(password),
-      mobile: formData.get('mobile').trim() || '',
-      designation: formData.get('designation').trim() || '',
-      department: formData.get('department').trim() || '',
-      isAdmin: isFirstUser
-    };
-    
-    const userId = await addRecord('users', user);
-    user.id = userId;
-    currentUser = user;
-    isAdmin = isFirstUser;
-    
-    alert('✅ Admin Account Created!');
-    await autoUploadToGithub();
-    showMainApp();
-    e.target.reset();
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
-});
-
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const formData = new FormData(e.target);
-    const email = formData.get('email').trim().toLowerCase();
-    const password = btoa(formData.get('password'));
-    
-    const users = await getAll('users');
-    const user = users.find(u => u.email === email && u.password === password);
-    
-    if (!user) { alert('Invalid email or password'); return; }
-    
-    currentUser = user;
-    isAdmin = user.isAdmin || false;
-    showMainApp();
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
-});
-
-async function renderItems() {
-  try {
-    const items = await getAll('items');
-    document.getElementById('itemsCount').textContent = items.length;
-    const tbody = document.getElementById('itemsBody');
-    
-    if (!items.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No items found</td></tr>';
-      return;
-    }
-    
-    tbody.innerHTML = items.map(item => {
-      const hasHolder = item.holder && item.holder.trim() !== '';
-      const statusDisplay = hasHolder ? '📤 Out' : '✓ Available';
-      const statusClass = hasHolder ? 'badge-orange' : 'badge-green';
-      
-      let condDisplay = item.condition === 'working' ? '✓ Working' : item.condition === 'not-working' ? '✗ Not Working' : 'N/A';
-      
-      let actionButtons = '';
-      
-      if (isAdmin) {
-        actionButtons = `
-          <button class="btn-icon" onclick="startEditItem(${item.id})" title="Edit">✏️</button>
-          <button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>
-          ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">📤</button>` : `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">📥</button>`}
-		  ${item.holder ? `<button class="btn-icon" onclick="openNotifyModal(${item.id})" title="Send Notification">🔔</button>` : ''}
-
-        `;
-      } else {
-        actionButtons = `<button class="btn-icon" onclick="openItemHistory(${item.id})" title="History">📜</button>`;
-      }
-      
-      return `
-        <tr id="item-row-${item.id}">
-          <td id="name-${item.id}">${item.name}</td>
-          <td id="serial-${item.id}">${item.serial}</td>
-          <td>${item.holder || '-'}</td>
-          <td><span class="badge ${statusClass}">${statusDisplay}</span></td>
-          <td id="cond-${item.id}"><span class="badge ${item.condition === 'working' ? 'badge-green' : item.condition === 'not-working' ? 'badge-notworking' : 'badge-orange'}">${condDisplay}</span></td>
-          <td><div class="action-buttons" id="actions-${item.id}">${actionButtons}</div></td>
-        </tr>
-      `;
-    }).join('');
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-function startEditItem(itemId) {
-  editingItemId = itemId;
-  getOne('items', itemId).then(item => {
-    const row = document.getElementById(`item-row-${itemId}`);
-    row.classList.add('edit-row');
-    
-    const nameCell = row.cells[0];
-    const serialCell = row.cells[1];
-    const condCell = row.cells[4];
-    
-    const currentCond = item.condition;
-    
-    nameCell.innerHTML = `<input type="text" id="edit-name-${itemId}" value="${item.name}" style="width: 100%;" />`;
-    serialCell.innerHTML = `<input type="text" id="edit-serial-${itemId}" value="${item.serial}" style="width: 100%;" />`;
-    condCell.innerHTML = `<select id="edit-cond-${itemId}" style="width: 100%;">
-      <option value="working" ${currentCond === 'working' ? 'selected' : ''}>✓ Working</option>
-      <option value="not-working" ${currentCond === 'not-working' ? 'selected' : ''}>✗ Not Working</option>
-      <option value="not-applicable" ${currentCond === 'not-applicable' ? 'selected' : ''}>N/A Not Applicable</option>
-    </select>`;
-    
-    const actionCell = document.getElementById(`actions-${itemId}`);
-    actionCell.innerHTML = `
-      <button class="btn-sm btn-success" onclick="saveEditItem(${itemId})">✓ Save</button>
-      <button class="btn-sm btn-secondary" onclick="cancelEditItem()">Cancel</button>
-      <button class="btn-sm btn-danger" onclick="openDeleteModal(${itemId})">🗑️</button>
-    `;
-  });
-}
-
-async function saveEditItem(itemId) {
-  try {
-    const name = document.getElementById(`edit-name-${itemId}`).value.trim();
-    const serial = document.getElementById(`edit-serial-${itemId}`).value.trim();
-    const cond = document.getElementById(`edit-cond-${itemId}`).value;
-    
-    if (!name || !serial) { alert('Name and Serial are required'); return; }
-    
-    const item = await getOne('items', itemId);
-    item.name = name;
-    item.serial = serial;
-    item.condition = cond;
-    
-    await updateRecord('items', item);
-    alert('✅ Item updated!');
-    editingItemId = null;
-    renderItems();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-function cancelEditItem() {
-  editingItemId = null;
-  renderItems();
-}
-
-function openDeleteModal(itemId) {
-  deleteItemId = itemId;
-  openModal('deleteItemModal');
-}
-
-async function confirmDeleteItem() {
-  try {
-    await deleteRecord('items', deleteItemId);
-    alert('✅ Item deleted!');
-    closeModal('deleteItemModal');
-    renderItems();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-async function openAssignModal(itemId) {
-  try {
-    const members = await getAll('users');
-    const select = document.getElementById('assignMemberSelect');
-    select.innerHTML = '<option value="">Choose member</option>' + 
-      members.map(m => `<option value="${m.id}">${m.name} (${m.email})</option>`).join('');
-    select.dataset.itemId = itemId;
-    openModal('assignItemModal');
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-document.getElementById('assignForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const itemId = parseInt(document.getElementById('assignMemberSelect').dataset.itemId);
-    const memberId = parseInt(document.getElementById('assignMemberSelect').value);
-    
-    if (!memberId) { alert('Select a member'); return; }
-    
-    const item = await getOne('items', itemId);
-    const member = await getOne('users', memberId);
-    
-    const oldHolder = item.holder;
-    item.holder = member.name;
-    
-    await updateRecord('items', item);
-    await addRecord('history', {
-      itemId: itemId,
-      itemName: item.name,
-      action: 'assigned',
-      from: oldHolder || 'Available',
-      to: member.name,
-      date: new Date().toLocaleString(),
-      user: currentUser.name
-    });
-    
-    alert('✅ Item assigned!');
-	const sendNotify = confirm(`Send notification to ${member.name}?`);
-	if (sendNotify) {
-		// [Add code for queueing/sending the notification here.]
-	}
-    closeModal('assignItemModal');
-    renderItems();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-});
-
-function openReturnModal(itemId) {
-  returnItemId = itemId;
-  getOne('items', itemId).then(item => {
-    document.getElementById('returnItemInfo').textContent = `Item: ${item.name} | Holder: ${item.holder}`;
-    openModal('returnItemModal');
-  });
-}
-
-async function confirmReturnItem() {
-  try {
-    const item = await getOne('items', returnItemId);
-    const oldHolder = item.holder;
-    item.holder = '';
-    
-    await updateRecord('items', item);
-    await addRecord('history', {
-      itemId: returnItemId,
-      itemName: item.name,
-      action: 'returned',
-      from: oldHolder,
-      to: 'Available',
-      date: new Date().toLocaleString(),
-      user: currentUser.name
-    });
-    
-    alert('✅ Item returned!');
-    closeModal('returnItemModal');
-    renderItems();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-async function openItemHistory(itemId) {
-  try {
-    const allHistory = await getAll('history');
-    const itemHistory = allHistory.filter(h => h.itemId === itemId);
-    const list = document.getElementById('historyList');
-    
-    if (!itemHistory.length) {
-      list.innerHTML = '<p style="text-align: center; color: #94a3b8;">No history for this item</p>';
-      openModal('itemHistoryModal');
-      return;
-    }
-    
-    list.innerHTML = itemHistory.reverse().map(h => {
-      const actionEmoji = h.action === 'assigned' ? '📤' : '📥';
-      return `
-        <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem; margin-bottom: 1rem;">
-          <div style="font-weight: 600; margin-bottom: 0.5rem;">${actionEmoji} ${h.action.toUpperCase()}</div>
-          <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">${h.from} → ${h.to}</div>
-          <div style="font-size: 0.75rem; color: #94a3b8;">${h.date} by ${h.user}</div>
-        </div>
-      `;
-    }).join('');
-    
-    openModal('itemHistoryModal');
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-document.getElementById('itemForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const formData = new FormData(e.target);
-    const item = {
-      name: formData.get('name').trim(),
-      serial: formData.get('serial').trim(),
-      condition: formData.get('condition'),
-      holder: ''
-    };
-    
-    await addRecord('items', item);
-    alert('✅ Item added!');
-    e.target.reset();
-    closeModal('addItemModal');
-    renderItems();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-});
-
-document.getElementById('memberForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const formData = new FormData(e.target);
-    const email = formData.get('email').trim().toLowerCase();
-    const password = formData.get('password');
-    const confirmPassword = formData.get('confirmPassword');
-    
-    if (password !== confirmPassword) { alert('Passwords do not match'); return; }
-    if (password.length < 6) { alert('Min 6 characters'); return; }
-    
-    const users = await getAll('users');
-    if (users.some(u => u.email === email)) { alert('Email exists'); return; }
-    
-    const user = {
-      name: formData.get('name').trim(),
-      email: email,
-      password: btoa(password),
-      mobile: formData.get('mobile').trim() || '',
-      designation: formData.get('designation').trim() || '',
-      department: formData.get('department').trim() || '',
-      isAdmin: false
-    };
-    
-    await addRecord('users', user);
-	await autoUploadToGithub();
-    alert('✅ Member added!');
-	const sendEmail = confirm(`Send welcome email to ${formData.get("email")}?`);
-	if (sendEmail) {
-    queueNotification({
-        recipient: formData.get("email"),
-        subject: "Welcome to Asset Manager",
-        body: `Hi ${formData.get("name")},\n\nYour account has been created...`,
-        timestamp: new Date().toISOString()
-    });
-	}
-	console.log('Queued emails:', allEmails);
-    e.target.reset();
-    closeModal('addMemberModal');
-  } catch (e) { alert('Error: ' + e.message); }
-});
-
-async function renderMembers() {
-  try {
-    const users = await getAll('users');
-    const list = document.getElementById('membersList');
-    
-    if (!users.length) {
-      list.innerHTML = '<p style="text-align: center; color: #94a3b8;">No members</p>';
-      return;
-    }
-    
-    list.innerHTML = users.map(u => {
-      const isCurrentUser = u.id === currentUser.id;
-      let actions = '';
-      
-      if (isAdmin && !isCurrentUser) {
-        actions = `
-          <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
-            ${!u.isAdmin ? `<button class="btn btn-sm btn-success" onclick="promoteToAdmin(${u.id})">👑 Promote</button>` : ''}
-            <button class="btn btn-sm btn-danger" onclick="removeMember(${u.id})">🗑️ Remove</button>
-          </div>
-        `;
-      } else if (isCurrentUser) {
-        const adminCount = users.filter(x => x.isAdmin).length;
-        if (!isAdmin || adminCount > 1) {
-          actions = `
-            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-              <button class="btn btn-sm btn-danger" onclick="removeSelf()">Remove Self</button>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="signinEmail" placeholder="you@example.com">
             </div>
-          `;
-        }
-      }
-      
-      return `
-        <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem; margin-bottom: 1rem;">
-          <div style="font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">👤 ${u.name}</div>
-          <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 0.5rem;">📧 ${u.email}</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem;">${u.designation || 'N/A'} | ${u.department || 'N/A'}</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem;">${u.isAdmin ? '👑 Admin' : '👤 Member'}</div>
-          ${actions}
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signinPassword" placeholder="••••••">
+            </div>
+
+            <button class="btn btn-primary" onclick="handleSignin()">🔓 Sign In</button>
+
+            <div id="authError" class="message message-error hidden" style="margin-top: 16px;">
+                <div class="message-icon">✕</div>
+                <div id="authErrorText">Invalid email or password</div>
+            </div>
         </div>
-      `;
-    }).join('');
-    
-    openModal('membersModal');
-  } catch (e) { alert('Error: ' + e.message); }
-}
+    </div>
 
-async function promoteToAdmin(userId) {
-  if (!confirm('Promote this member to admin?')) return;
-  try {
-    const user = await getOne('users', userId);
-    user.isAdmin = true;
-    await updateRecord('users', user);
-    alert('✅ Promoted to admin!');
-    renderMembers();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-}
+    <!-- Main Application -->
+    <div id="mainApp" class="hidden">
+        <div class="main-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">📦 Inventory</div>
+                    <div class="sidebar-subtitle">Management System</div>
+                </div>
 
-async function removeMember(userId) {
-  if (!confirm('Remove this member?')) return;
-  try {
-    await deleteRecord('users', userId);
-    alert('✅ Member removed!');
-    renderMembers();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-}
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item">
+                        <a onclick="switchView('items')" class="active" id="menuViewItems">
+                            <span>📦</span> View Items
+                            <span style="font-size: 11px; color: #94a3b8; margin-left: auto;" id="itemsCountBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a onclick="switchView('consumables')" id="menuViewConsumables">
+                            <span>🛠️</span> View Consumables
+                            <span style="font-size: 11px; color: #94a3b8; margin-left: auto;" id="consumablesCountBadge">0</span>
+                        </a>
+                    </li>
+                </ul>
 
-async function removeSelf() {
-  if (!confirm('Remove your account?')) return;
-  try {
-    await deleteRecord('users', currentUser.id);
-    alert('✅ Account removed!');
-    currentUser = null;
-    isAdmin = false;
-    document.getElementById('authScreen').classList.remove('hidden');
-    document.getElementById('mainHeader').classList.add('hidden');
-    document.getElementById('mainContent').classList.add('hidden');
-    closeModal('membersModal');
-    await checkUserStatus();
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-}
+                <div class="sidebar-section-title">Management</div>
 
-document.getElementById('editProfileBtn').addEventListener('click', () => {
-  closePanel('settingsPanel');
-  document.getElementById('editName').value = currentUser.name;
-  document.getElementById('editEmail').value = currentUser.email;
-  document.getElementById('editMobile').value = currentUser.mobile || '';
-  document.getElementById('editDesignation').value = currentUser.designation || '';
-  document.getElementById('editDepartment').value = currentUser.department || '';
-  openModal('editProfileModal');
-});
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item">
+                        <a onclick="switchView('manage')" id="menuManage">
+                            <span>⚙️</span> Manage
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a onclick="switchView('members')" id="menuMembers">
+                            <span>👥</span> Members
+                        </a>
+                    </li>
+                </ul>
 
-document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    currentUser.name = document.getElementById('editName').value;
-    currentUser.email = document.getElementById('editEmail').value;
-    currentUser.mobile = document.getElementById('editMobile').value;
-    currentUser.designation = document.getElementById('editDesignation').value;
-    currentUser.department = document.getElementById('editDepartment').value;
-    
-    await updateRecord('users', currentUser);
-    alert('✅ Profile updated!');
-    closeModal('editProfileModal');
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-});
+                <div class="sidebar-section-title">Account</div>
 
-document.getElementById('changePasswordBtn').addEventListener('click', () => {
-  closePanel('settingsPanel');
-  openModal('changePasswordModal');
-});
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item">
+                        <a onclick="switchView('settings')" id="menuSettings">
+                            <span>⚙️</span> Settings
+                        </a>
+                    </li>
+                </ul>
 
-document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const currentPassword = btoa(document.getElementById('currentPassword').value);
-    const newPassword = document.getElementById('newPassword').value;
-    const confirmPassword = document.getElementById('confirmNewPassword').value;
-    
-    if (currentPassword !== currentUser.password) { alert('Wrong password'); return; }
-    if (newPassword !== confirmPassword) { alert('Passwords do not match'); return; }
-    if (newPassword.length < 6) { alert('Min 6 characters'); return; }
-    
-    currentUser.password = btoa(newPassword);
-    await updateRecord('users', currentUser);
-    alert('✅ Password changed!');
-    document.getElementById('changePasswordForm').reset();
-    closeModal('changePasswordModal');
-    await autoUploadToGithub();
-  } catch (e) { alert('Error: ' + e.message); }
-});
+                <div class="sidebar-footer">
+                    <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="toggleTheme()">
+                        <span id="themeIcon">🌙</span> Theme
+                    </button>
+                    <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="handleLogout()">
+                        Logout
+                    </button>
+                </div>
+            </div>
 
-document.getElementById('exportBtn').addEventListener('click', () => {
-  closePanel('settingsPanel');
-  exportToJsonFile();
-});
+            <!-- Main Content -->
+            <div class="content">
+                <div class="header">
+                    <div class="header-left">
+                        <div class="header-title" id="pageTitle">📦 Inventory Items</div>
+                    </div>
+                    <div class="header-right">
+                        <div class="user-profile" onclick="toggleUserMenu()">
+                            <div class="user-avatar" id="userAvatar">A</div>
+                            <div class="user-info">
+                                <div class="user-name" id="userName">Admin</div>
+                                <div class="user-email" id="userEmail">admin@example.com</div>
+                            </div>
+                        </div>
+                        <div id="userMenu" class="dropdown-menu hidden">
+                            <button onclick="switchView('settings')">⚙️ Settings</button>
+                            <button onclick="handleLogout()" class="danger">Logout</button>
+                        </div>
+                    </div>
+                </div>
 
-document.getElementById('syncFromGithubBtn').addEventListener('click', async () => {
-  closePanel('settingsPanel');
-  await autoSyncFromGithub();
-  alert('✅ Sync complete! Refresh to see updates.');
-  location.reload();
-});
+                <div class="content-area">
+                    <!-- Items View -->
+                    <div id="itemsView" class="view active">
+                        <div class="items-header">
+                            <div class="items-count">
+                                <span class="items-count-number" id="itemsCountDisplay">0</span>
+                                <span>Items</span>
+                            </div>
+                            <div class="search-bar">
+                                <input type="text" class="search-input" id="searchItems" placeholder="Search items...">
+                            </div>
+                        </div>
 
-document.getElementById('removeAccountBtn').addEventListener('click', () => {
-  closePanel('settingsPanel');
-  removeSelf();
-});
+                        <div class="table-container">
+                            <table id="itemsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Item Name</th>
+                                        <th>Serial Number</th>
+                                        <th>Holder</th>
+                                        <th>Status</th>
+                                        <th>Condition</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itemsTableBody">
+                                    <tr>
+                                        <td colspan="6" class="no-items-message">No items found</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-  closePanel('settingsPanel');
-  currentUser = null;
-  isAdmin = false;
-  document.getElementById('authScreen').classList.remove('hidden');
-  document.getElementById('mainHeader').classList.add('hidden');
-  document.getElementById('mainContent').classList.add('hidden');
-  await checkUserStatus();
-});
+                    <!-- Consumables View -->
+                    <div id="consumablesView" class="view hidden">
+                        <div class="items-header">
+                            <div class="items-count">
+                                <span class="items-count-number" id="consumablesCountDisplay">0</span>
+                                <span>Consumables</span>
+                            </div>
+                            <div class="search-bar">
+                                <input type="text" class="search-input" id="searchConsumables" placeholder="Search consumables...">
+                            </div>
+                        </div>
 
-document.getElementById('openManage').addEventListener('click', () => openPanel('managePanel'));
-document.getElementById('closeManage').addEventListener('click', () => closePanel('managePanel'));
-document.getElementById('settingsBtn').addEventListener('click', () => openPanel('settingsPanel'));
-document.getElementById('closeSettings').addEventListener('click', () => closePanel('settingsPanel'));
+                        <div class="table-container">
+                            <table id="consumablesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Item Name</th>
+                                        <th>Part Number</th>
+                                        <th>Quantity</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="consumablesTableBody">
+                                    <tr>
+                                        <td colspan="4" class="no-items-message">No consumables found</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
-document.getElementById('backdrop').addEventListener('click', () => {
-  closePanel('managePanel');
-  closePanel('settingsPanel');
-  document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
-  document.getElementById('backdrop').classList.remove('show');
-});
+                    <!-- Manage View -->
+                    <div id="manageView" class="view hidden">
+                        <div class="items-count" style="margin-bottom: 24px;">
+                            📋 Manage Inventory
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.2s ease;" class="manage-card" onclick="openAddItemTypeModal()">
+                                <div style="font-size: 32px; margin-bottom: 12px;">➕</div>
+                                <div style="font-weight: 600; font-size: 16px;">Add Item</div>
+                                <div style="color: #64748b; font-size: 13px;">Create new asset or consumable</div>
+                            </div>
+                        </div>
 
-document.getElementById('viewItemsBtn').addEventListener('click', () => { closePanel('managePanel'); renderItems(); });
-document.getElementById('addItemBtn').addEventListener('click', () => { closePanel('managePanel'); openModal('addItemModal'); });
-document.getElementById('viewMembersBtn').addEventListener('click', () => { closePanel('managePanel'); renderMembers(); });
-document.getElementById('addMemberBtn').addEventListener('click', () => { closePanel('managePanel'); openModal('addMemberModal'); });
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 32px;">
+                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.2s ease;" class="manage-card" onclick="switchView('members')">
+                                <div style="font-size: 32px; margin-bottom: 12px;">👥</div>
+                                <div style="font-weight: 600; font-size: 16px;">Manage Members</div>
+                                <div style="color: #64748b; font-size: 13px;">Add/edit users</div>
+                            </div>
+                        </div>
+                    </div>
 
-function setTheme(theme) {
-  localStorage.setItem('theme', theme);
-  document.documentElement.classList.toggle('dark', theme === 'dark');
-  document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
-  document.getElementById(theme === 'dark' ? 'darkBtn' : 'lightBtn').classList.add('active');
-}
+                    <!-- Members View -->
+                    <div id="membersView" class="view hidden">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <div class="items-count">👥 Members</div>
+                            <button class="btn btn-primary" style="width: auto;" onclick="openAddMemberModal()">➕ Add Member</button>
+                        </div>
 
-document.getElementById('lightBtn').addEventListener('click', () => setTheme('light'));
-document.getElementById('darkBtn').addEventListener('click', () => setTheme('dark'));
+                        <div class="members-grid" id="membersGrid">
+                            <div class="no-items-message" style="grid-column: 1 / -1;">No members found</div>
+                        </div>
+                    </div>
 
-async function openNotifyModal(itemId) {
-    window.currentNotifyItemId = itemId;
-    console.log('Opening notification for item:', itemId);
-    
-    try {
-        // Get data from localStorage cache, NOT IndexedDB
-        const items = JSON.parse(localStorage.getItem('items') || '[]');
-        const members = JSON.parse(localStorage.getItem('members') || '[]');
-        
-        console.log('Available items:', items.length, 'members:', members.length);
-        
-        // Find the item
-        const item = items.find(i => {
-            return String(i.id) === String(itemId);
+                    <!-- Settings View -->
+                    <div id="settingsView" class="view hidden">
+                        <div class="items-count" style="margin-bottom: 24px;">⚙️ Settings</div>
+
+                        <div style="display: grid; gap: 16px;">
+                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer;" onclick="openEditProfileModal()">
+                                <div style="font-weight: 600; margin-bottom: 8px;">✏️ Edit Profile</div>
+                                <div style="color: #64748b; font-size: 13px;">Update your information</div>
+                            </div>
+
+                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer;" onclick="openChangePasswordModal()">
+                                <div style="font-weight: 600; margin-bottom: 8px;">🔐 Change Password</div>
+                                <div style="color: #64748b; font-size: 13px;">Update your password</div>
+                            </div>
+
+                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer;" onclick="exportToFile()">
+                                <div style="font-weight: 600; margin-bottom: 8px;">📤 Export to File</div>
+                                <div style="color: #64748b; font-size: 13px;">Download backup JSON</div>
+                            </div>
+
+                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer;" onclick="syncFromGithub()">
+                                <div style="font-weight: 600; margin-bottom: 8px;">☁️ Sync from GitHub</div>
+                                <div style="color: #64748b; font-size: 13px;">Reload data from repository</div>
+                            </div>
+
+                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer;" onclick="handleLogout()">
+                                <div style="font-weight: 600; margin-bottom: 8px;">🗑️ Logout</div>
+                                <div style="color: #64748b; font-size: 13px;">Sign out of your account</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals (truncated for space - include all modals from previous code) -->
+
+    <!-- Item Type Selection Modal -->
+    <div id="itemTypeModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">➕ Add Item</div>
+            <div class="modal-body">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div style="background: white; border: 2px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer; text-align: center; transition: all 0.2s ease;" onclick="openAddAssetModal()" onmouseover="this.style.borderColor='#667eea'" onmouseout="this.style.borderColor='#e2e8f0'">
+                        <div style="font-size: 36px; margin-bottom: 12px;">📦</div>
+                        <div style="font-weight: 600;">Asset Item</div>
+                        <div style="color: #64748b; font-size: 12px; margin-top: 8px;">Manage assets with tracking</div>
+                    </div>
+                    <div style="background: white; border: 2px solid #e2e8f0; border-radius: 8px; padding: 20px; cursor: pointer; text-align: center; transition: all 0.2s ease;" onclick="openAddConsumableModal()" onmouseover="this.style.borderColor='#667eea'" onmouseout="this.style.borderColor='#e2e8f0'">
+                        <div style="font-size: 36px; margin-bottom: 12px;">🛠️</div>
+                        <div style="font-weight: 600;">Consumable Item</div>
+                        <div style="color: #64748b; font-size: 12px; margin-top: 8px;">Track consumables with quantity</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('itemTypeModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Asset Modal -->
+    <div id="addAssetModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">➕ Add Asset Item</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Item Name *</label>
+                    <input type="text" id="addAssetName" placeholder="Enter item name">
+                </div>
+                <div class="form-group">
+                    <label>Serial Number *</label>
+                    <input type="text" id="addAssetSerial" placeholder="Enter serial number">
+                </div>
+                <div class="form-group">
+                    <label>Condition *</label>
+                    <select id="addAssetCondition">
+                        <option value="">Select condition</option>
+                        <option value="Working">✓ Working</option>
+                        <option value="Not Working">✗ Not Working</option>
+                        <option value="N/A">N/A Not Applicable</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addAssetModal')">Cancel</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="addAsset()">Add Asset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Consumable Modal -->
+    <div id="addConsumableModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">➕ Add Consumable Item</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Item Name *</label>
+                    <input type="text" id="addConsumableName" placeholder="Enter item name">
+                </div>
+                <div class="form-group">
+                    <label>Part Number *</label>
+                    <input type="text" id="addConsumablePartNumber" placeholder="Enter part number">
+                </div>
+                <div class="form-group">
+                    <label>Quantity *</label>
+                    <input type="number" id="addConsumableQuantity" placeholder="Enter quantity" min="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addConsumableModal')">Cancel</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="addConsumable()">Add Consumable</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Asset Modal -->
+    <div id="editAssetModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">✏️ Edit Asset Item</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Item Name *</label>
+                    <input type="text" id="editAssetName" placeholder="Enter item name">
+                </div>
+                <div class="form-group">
+                    <label>Serial Number *</label>
+                    <input type="text" id="editAssetSerial" placeholder="Enter serial number">
+                </div>
+                <div class="form-group">
+                    <label>Condition *</label>
+                    <select id="editAssetCondition">
+                        <option value="">Select condition</option>
+                        <option value="Working">✓ Working</option>
+                        <option value="Not Working">✗ Not Working</option>
+                        <option value="N/A">N/A Not Applicable</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('editAssetModal')">Cancel</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="updateAsset()">Update Asset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Consumable Modal -->
+    <div id="editConsumableModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">✏️ Edit Consumable Item</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Item Name *</label>
+                    <input type="text" id="editConsumableName" placeholder="Enter item name">
+                </div>
+                <div class="form-group">
+                    <label>Part Number *</label>
+                    <input type="text" id="editConsumablePartNumber" placeholder="Enter part number">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('editConsumableModal')">Cancel</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="updateConsumable()">Update Consumable</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Quantity Modal -->
+    <div id="addQuantityModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">➕ Add Quantity</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Item Name</label>
+                    <input type="text" id="addQtyItemName" disabled style="background: #f1f5f9; cursor: not-allowed;">
+                </div>
+                <div class="form-group">
+                    <label>Current Quantity</label>
+                    <input type="text" id="addQtyCurrentQty" disabled style="background: #f1f5f9; cursor: not-allowed;">
+                </div>
+                <div class="form-group">
+                    <label>Quantity to Add *</label>
+                    <input type="number" id="addQtyAmount" placeholder="Enter quantity to add" min="1">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addQuantityModal')">Cancel</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="confirmAddQuantity()">Add Quantity</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Consumable Modal -->
+    <div id="assignConsumableModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">📤 Assign Consumable Item</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Item Name</label>
+                    <input type="text" id="assignConsItemName" disabled style="background: #f1f5f9; cursor: not-allowed;">
+                </div>
+                <div class="form-group">
+                    <label>Available Quantity</label>
+                    <input type="text" id="assignConsAvailableQty" disabled style="background: #f1f5f9; cursor: not-allowed;">
+                </div>
+                <div class="form-group">
+                    <label>Select Member *</label>
+                    <select id="assignConsMember">
+                        <option value="">Choose member</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity to Assign *</label>
+                    <input type="number" id="assignConsQuantity" placeholder="Enter quantity" min="1">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('assignConsumableModal')">Cancel</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="confirmAssignConsumable()">Assign</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Asset Modal -->
+    <div id="assignAssetModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">📤 Assign Asset Item</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Item Name</label>
+                    <input type="text" id="assignAssetItemName" disabled style="background: #f1f5f9; cursor: not-allowed;">
+                </div>
+                <div class="form-group">
+                    <label>Select Member *</label>
+                    <select id="assignAssetMember">
+                        <option value="">Choose member</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('assignAssetModal')">Cancel</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="confirmAssignAsset()">Assign</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item History Modal -->
+    <div id="itemHistoryModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">📜 Item History</div>
+            <div class="modal-body" id="itemHistoryContent">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('itemHistoryModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">🗑️ Delete Item?</div>
+            <div class="modal-body">
+                <div class="message message-warning">
+                    <div class="message-icon">⚠️</div>
+                    <div>This action cannot be undone.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('deleteConfirmModal')">Cancel</button>
+                <button class="btn btn-primary" style="width: auto; background: #ef4444;" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div id="addMemberModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">👤 Add Member</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="memberName" placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="memberEmail" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label>Mobile</label>
+                    <input type="tel" id="memberMobile" placeholder="Enter mobile number">
+                </div>
+                <div class="form-group">
+                    <label>Designation</label>
+                    <input type="text" id="memberDesignation" placeholder="Enter designation">
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <input type="text" id="memberDepartment" placeholder="Enter department">
+                </div>
+                <div class="form-group">
+                    <label>Password * (Min 6)</label>
+                    <input type="password" id="memberPassword" placeholder="••••••">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password *</label>
+                    <input type="password" id="memberConfirmPassword" placeholder="••••••">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addMemberModal')">Cancel</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="addMember()">Add Member</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">✏️ Edit Profile</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="editName">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="editEmail">
+                </div>
+                <div class="form-group">
+                    <label>Mobile</label>
+                    <input type="tel" id="editMobile">
+                </div>
+                <div class="form-group">
+                    <label>Designation</label>
+                    <input type="text" id="editDesignation">
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <input type="text" id="editDepartment">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('editProfileModal')">Cancel</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="saveProfile()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">🔐 Change Password</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Current Password *</label>
+                    <input type="password" id="currentPassword" placeholder="••••••">
+                </div>
+                <div class="form-group">
+                    <label>New Password *</label>
+                    <input type="password" id="newPassword" placeholder="••••••">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password *</label>
+                    <input type="password" id="confirmNewPassword" placeholder="••••••">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('changePasswordModal')">Cancel</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="updatePassword()">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ================== GITHUB CONFIGURATION ==================
+        const GITHUB_DB_USERNAME = 'riyasma07'; // Replace with your GitHub username
+        const GITHUB_DB_REPO = 'asset-manager-db'; // Your database repo
+        const GITHUB_DB_BRANCH = 'main'; // Branch name
+        const GITHUB_DB_TOKEN = 'ghp_your_token_here'; // Replace with your GitHub Personal Access Token
+        const DATA_JSON_URL = `https://raw.githubusercontent.com/${GITHUB_DB_USERNAME}/${GITHUB_DB_REPO}/${GITHUB_DB_BRANCH}/data.json?v=${Date.now()}`;
+
+        // ================== GLOBAL STATE ==================
+        let currentUser = null;
+        let items = [];
+        let consumables = [];
+        let members = [];
+        let allUsers = []; // Store all users (admin + members) for login
+        let currentEditingItemId = null;
+        let currentEditingConsumableId = null;
+        let currentDeleteItemId = null;
+        let currentDeleteItemType = null;
+
+        // ================== INITIALIZATION ==================
+        async function initApp() {
+            try {
+                document.getElementById('loadingMessage').textContent = 'Loading data from GitHub...';
+                await loadDataFromGithub();
+                
+                if (currentUser) {
+                    hideLoadingScreen();
+                    showMainApp();
+                    renderItems();
+                    renderConsumables();
+                    renderMembers();
+                    updateUserProfile();
+                } else {
+                    hideLoadingScreen();
+                    showAuthScreen();
+                }
+
+                setupEventListeners();
+                applyTheme();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                hideLoadingScreen();
+                showToast('error', 'Failed to load data. Please refresh the page.');
+            }
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'none';
+        }
+
+        function setupEventListeners() {
+            document.getElementById('searchItems').addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('#itemsTableBody tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(query) ? '' : 'none';
+                });
+            });
+
+            document.getElementById('searchConsumables').addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('#consumablesTableBody tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(query) ? '' : 'none';
+                });
+            });
+        }
+
+        // ================== GITHUB DATA LOADING ==================
+        async function loadDataFromGithub() {
+            try {
+                const response = await fetch(DATA_JSON_URL);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.user) {
+                    currentUser = data.user; // Store admin user if already logged in before
+                }
+
+                if (data.items) {
+                    items = data.items;
+                }
+
+                if (data.consumables) {
+                    consumables = data.consumables;
+                }
+
+                if (data.members) {
+                    members = data.members;
+                }
+
+                // Prepare all users for login (admin + members)
+                allUsers = [];
+                if (data.user) {
+                    allUsers.push(data.user);
+                }
+                if (data.members) {
+                    allUsers.push(...data.members);
+                }
+
+                console.log('Data loaded successfully from GitHub');
+                return data;
+            } catch (error) {
+                console.error('Error loading from GitHub:', error);
+                throw error;
+            }
+        }
+
+        async function syncFromGithub() {
+            try {
+                showToast('info', 'Syncing data from GitHub...');
+                await loadDataFromGithub();
+                await renderItems();
+                await renderConsumables();
+                await renderMembers();
+                showToast('success', 'Data synced successfully!');
+            } catch (error) {
+                console.error('Sync error:', error);
+                showToast('error', 'Failed to sync data from GitHub');
+            }
+        }
+
+        // ================== AUTH FUNCTIONS ==================
+        function handleSignin() {
+            const email = document.getElementById('signinEmail').value.trim();
+            const password = document.getElementById('signinPassword').value;
+
+            if (!email || !password) {
+                showAuthError('Please enter email and password');
+                return;
+            }
+
+            // Find user in all users array
+            const user = allUsers.find(u => u.email === email && u.password === password);
+
+            if (!user) {
+                showAuthError('Invalid email or password');
+                return;
+            }
+
+            currentUser = user;
+            saveDataToLocalStorage();
+            hideLoadingScreen();
+            showMainApp();
+            renderItems();
+            renderConsumables();
+            renderMembers();
+            updateUserProfile();
+            showToast('success', 'Signed in successfully!');
+        }
+
+        function showAuthError(message) {
+            const errorEl = document.getElementById('authError');
+            const errorTextEl = document.getElementById('authErrorText');
+            errorTextEl.textContent = message;
+            errorEl.classList.remove('hidden');
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            showAuthScreen();
+            document.getElementById('signinEmail').value = '';
+            document.getElementById('signinPassword').value = '';
+            document.getElementById('authError').classList.add('hidden');
+            showToast('success', 'Logged out successfully!');
+        }
+
+        // ================== UI STATE FUNCTIONS ==================
+        function showAuthScreen() {
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        function showMainApp() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+        }
+
+        function switchView(viewName) {
+            // Hide all views
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-menu-item a').forEach(a => a.classList.remove('active'));
+
+            // Show selected view
+            const viewElement = document.getElementById(viewName + 'View');
+            if (viewElement) {
+                viewElement.classList.remove('hidden');
+            }
+
+            // Update menu
+            const menuId = {
+                'items': 'menuViewItems',
+                'consumables': 'menuViewConsumables',
+                'manage': 'menuManage',
+                'members': 'menuMembers',
+                'settings': 'menuSettings'
+            }[viewName];
+
+            if (menuId) {
+                document.getElementById(menuId).classList.add('active');
+            }
+
+            // Update page title
+            const titles = {
+                'items': '📦 Inventory Items',
+                'consumables': '🛠️ Consumable Items',
+                'manage': '⚙️ Manage Inventory',
+                'members': '👥 Members',
+                'settings': '⚙️ Settings'
+            };
+
+            document.getElementById('pageTitle').textContent = titles[viewName] || 'Inventory';
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('hidden');
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.user-profile') && !e.target.closest('#userMenu')) {
+                    menu.classList.add('hidden');
+                }
+            });
+        }
+
+        function updateUserProfile() {
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userEmail').textContent = currentUser.email;
+                const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.getElementById('userAvatar').textContent = initials;
+            }
+        }
+
+        // ================== MODAL FUNCTIONS ==================
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function openAddItemTypeModal() {
+            openModal('itemTypeModal');
+        }
+
+        function openAddAssetModal() {
+            closeModal('itemTypeModal');
+            openModal('addAssetModal');
+            document.getElementById('addAssetName').value = '';
+            document.getElementById('addAssetSerial').value = '';
+            document.getElementById('addAssetCondition').value = '';
+        }
+
+        function openAddConsumableModal() {
+            closeModal('itemTypeModal');
+            openModal('addConsumableModal');
+            document.getElementById('addConsumableName').value = '';
+            document.getElementById('addConsumablePartNumber').value = '';
+            document.getElementById('addConsumableQuantity').value = '';
+        }
+
+        function openEditAssetModal(itemId) {
+            const item = items.find(i => i.id === itemId);
+            if (item) {
+                currentEditingItemId = itemId;
+                document.getElementById('editAssetName').value = item.name;
+                document.getElementById('editAssetSerial').value = item.serial;
+                document.getElementById('editAssetCondition').value = item.condition;
+                openModal('editAssetModal');
+            }
+        }
+
+        function openEditConsumableModal(consumableId) {
+            const consumable = consumables.find(c => c.id === consumableId);
+            if (consumable) {
+                currentEditingConsumableId = consumableId;
+                document.getElementById('editConsumableName').value = consumable.name;
+                document.getElementById('editConsumablePartNumber').value = consumable.partNumber;
+                openModal('editConsumableModal');
+            }
+        }
+
+        function openAddQuantityModal(consumableId) {
+            const consumable = consumables.find(c => c.id === consumableId);
+            if (consumable) {
+                currentEditingConsumableId = consumableId;
+                document.getElementById('addQtyItemName').value = consumable.name;
+                document.getElementById('addQtyCurrentQty').value = consumable.quantity;
+                document.getElementById('addQtyAmount').value = '';
+                openModal('addQuantityModal');
+            }
+        }
+
+        function openAssignAssetModal(itemId) {
+            const item = items.find(i => i.id === itemId);
+            if (item) {
+                currentEditingItemId = itemId;
+                document.getElementById('assignAssetItemName').value = item.name;
+                populateMemberDropdown('assignAssetMember');
+                openModal('assignAssetModal');
+            }
+        }
+
+        function openAssignConsumableModal(consumableId) {
+            const consumable = consumables.find(c => c.id === consumableId);
+            if (consumable) {
+                currentEditingConsumableId = consumableId;
+                document.getElementById('assignConsItemName').value = consumable.name;
+                document.getElementById('assignConsAvailableQty').value = consumable.quantity;
+                document.getElementById('assignConsQuantity').value = '';
+                populateMemberDropdown('assignConsMember');
+                openModal('assignConsumableModal');
+            }
+        }
+
+        function openItemHistoryModal(itemId, itemType) {
+            const item = itemType === 'asset' ? items.find(i => i.id === itemId) : consumables.find(c => c.id === itemId);
+            if (item && item.history) {
+                let historyHtml = '';
+                if (item.history.length === 0) {
+                    historyHtml = '<div class="text-muted">No history available</div>';
+                } else {
+                    item.history.forEach(entry => {
+                        const date = new Date(entry.timestamp).toLocaleString();
+                        historyHtml += `
+                            <div class="history-item">
+                                <div class="history-time">${date}</div>
+                                <div class="history-action">${entry.action} <span class="history-person">${entry.member}</span></div>
+                            </div>
+                        `;
+                    });
+                }
+                document.getElementById('itemHistoryContent').innerHTML = historyHtml;
+                openModal('itemHistoryModal');
+            }
+        }
+
+        function openDeleteConfirmModal(itemId, itemType) {
+            currentDeleteItemId = itemId;
+            currentDeleteItemType = itemType;
+            openModal('deleteConfirmModal');
+        }
+
+        function openAddMemberModal() {
+            document.getElementById('memberName').value = '';
+            document.getElementById('memberEmail').value = '';
+            document.getElementById('memberMobile').value = '';
+            document.getElementById('memberDesignation').value = '';
+            document.getElementById('memberDepartment').value = '';
+            document.getElementById('memberPassword').value = '';
+            document.getElementById('memberConfirmPassword').value = '';
+            openModal('addMemberModal');
+        }
+
+        function openEditProfileModal() {
+            if (currentUser) {
+                document.getElementById('editName').value = currentUser.name;
+                document.getElementById('editEmail').value = currentUser.email;
+                document.getElementById('editMobile').value = currentUser.mobile || '';
+                document.getElementById('editDesignation').value = currentUser.designation || '';
+                document.getElementById('editDepartment').value = currentUser.department || '';
+            }
+            openModal('editProfileModal');
+        }
+
+        function openChangePasswordModal() {
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+            openModal('changePasswordModal');
+        }
+
+        // ================== ASSET FUNCTIONS ==================
+        async function addAsset() {
+            const name = document.getElementById('addAssetName').value.trim();
+            const serial = document.getElementById('addAssetSerial').value.trim();
+            const condition = document.getElementById('addAssetCondition').value;
+
+            if (!name || !serial || !condition) {
+                showToast('error', 'Please fill in all required fields');
+                return;
+            }
+
+            const newAsset = {
+                id: Date.now(),
+                name,
+                serial,
+                condition,
+                status: 'Available',
+                holder: '-',
+                history: [{
+                    timestamp: new Date().toISOString(),
+                    action: 'Added to inventory',
+                    member: currentUser.name
+                }],
+                createdAt: new Date().toISOString()
+            };
+
+            items.push(newAsset);
+            saveDataToLocalStorage();
+            closeModal('addAssetModal');
+            await renderItems();
+            showToast('success', 'Asset added successfully!');
+        }
+
+        async function updateAsset() {
+            const name = document.getElementById('editAssetName').value.trim();
+            const serial = document.getElementById('editAssetSerial').value.trim();
+            const condition = document.getElementById('editAssetCondition').value;
+
+            if (!name || !serial || !condition) {
+                showToast('error', 'Please fill in all required fields');
+                return;
+            }
+
+            const asset = items.find(i => i.id === currentEditingItemId);
+            if (asset) {
+                asset.name = name;
+                asset.serial = serial;
+                asset.condition = condition;
+                saveDataToLocalStorage();
+                closeModal('editAssetModal');
+                await renderItems();
+                showToast('success', 'Asset updated successfully!');
+            }
+        }
+
+        async function confirmAssignAsset() {
+            const memberId = document.getElementById('assignAssetMember').value;
+
+            if (!memberId) {
+                showToast('error', 'Please select a member');
+                return;
+            }
+
+            const member = members.find(m => m.id == memberId);
+            const asset = items.find(i => i.id === currentEditingItemId);
+
+            if (asset && member) {
+                asset.status = 'Out';
+                asset.holder = member.name;
+                asset.history.push({
+                    timestamp: new Date().toISOString(),
+                    action: 'Assigned to',
+                    member: member.name
+                });
+
+                // Send notification email
+                await sendNotificationEmail(member.email, `Asset Assigned: ${asset.name}`, 
+                    `The asset "${asset.name}" (Serial: ${asset.serial}) has been assigned to you.`);
+
+                saveDataToLocalStorage();
+                closeModal('assignAssetModal');
+                await renderItems();
+                showToast('success', 'Asset assigned successfully!');
+            }
+        }
+
+        async function deleteAsset(itemId) {
+            items = items.filter(i => i.id !== itemId);
+            saveDataToLocalStorage();
+            await renderItems();
+            showToast('success', 'Asset deleted successfully!');
+        }
+
+        // ================== CONSUMABLE FUNCTIONS ==================
+        async function addConsumable() {
+            const name = document.getElementById('addConsumableName').value.trim();
+            const partNumber = document.getElementById('addConsumablePartNumber').value.trim();
+            const quantity = parseInt(document.getElementById('addConsumableQuantity').value);
+
+            if (!name || !partNumber || !quantity || quantity < 0) {
+                showToast('error', 'Please fill in all required fields with valid values');
+                return;
+            }
+
+            const newConsumable = {
+                id: Date.now(),
+                name,
+                partNumber,
+                quantity,
+                history: [{
+                    timestamp: new Date().toISOString(),
+                    action: 'Added to inventory',
+                    member: currentUser.name
+                }],
+                createdAt: new Date().toISOString()
+            };
+
+            consumables.push(newConsumable);
+            saveDataToLocalStorage();
+            closeModal('addConsumableModal');
+            await renderConsumables();
+            showToast('success', 'Consumable added successfully!');
+        }
+
+        async function updateConsumable() {
+            const name = document.getElementById('editConsumableName').value.trim();
+            const partNumber = document.getElementById('editConsumablePartNumber').value.trim();
+
+            if (!name || !partNumber) {
+                showToast('error', 'Please fill in all required fields');
+                return;
+            }
+
+            const consumable = consumables.find(c => c.id === currentEditingConsumableId);
+            if (consumable) {
+                consumable.name = name;
+                consumable.partNumber = partNumber;
+                saveDataToLocalStorage();
+                closeModal('editConsumableModal');
+                await renderConsumables();
+                showToast('success', 'Consumable updated successfully!');
+            }
+        }
+
+        async function confirmAddQuantity() {
+            const quantity = parseInt(document.getElementById('addQtyAmount').value);
+
+            if (!quantity || quantity <= 0) {
+                showToast('error', 'Please enter a valid quantity');
+                return;
+            }
+
+            const consumable = consumables.find(c => c.id === currentEditingConsumableId);
+            if (consumable) {
+                consumable.quantity += quantity;
+                consumable.history.push({
+                    timestamp: new Date().toISOString(),
+                    action: `Added ${quantity} units to inventory`,
+                    member: currentUser.name
+                });
+
+                saveDataToLocalStorage();
+                closeModal('addQuantityModal');
+                await renderConsumables();
+                showToast('success', `Added ${quantity} units successfully!`);
+            }
+        }
+
+        async function confirmAssignConsumable() {
+            const memberId = document.getElementById('assignConsMember').value;
+            const quantity = parseInt(document.getElementById('assignConsQuantity').value);
+
+            if (!memberId) {
+                showToast('error', 'Please select a member');
+                return;
+            }
+
+            if (!quantity || quantity <= 0) {
+                showToast('error', 'Please enter a valid quantity');
+                return;
+            }
+
+            const member = members.find(m => m.id == memberId);
+            const consumable = consumables.find(c => c.id === currentEditingConsumableId);
+
+            if (!consumable || consumable.quantity < quantity) {
+                showToast('error', 'Insufficient quantity available');
+                return;
+            }
+
+            if (consumable && member) {
+                consumable.quantity -= quantity;
+                consumable.history.push({
+                    timestamp: new Date().toISOString(),
+                    action: `Assigned ${quantity} units to`,
+                    member: member.name
+                });
+
+                // Send notification email
+                await sendNotificationEmail(member.email, 
+                    `Consumable Item Assigned: ${consumable.name}`, 
+                    `${quantity} units of "${consumable.name}" (Part #: ${consumable.partNumber}) has been given to you.`);
+
+                saveDataToLocalStorage();
+                closeModal('assignConsumableModal');
+                await renderConsumables();
+                showToast('success', 'Consumable assigned successfully!');
+            }
+        }
+
+        async function deleteConsumable(consumableId) {
+            consumables = consumables.filter(c => c.id !== consumableId);
+            saveDataToLocalStorage();
+            await renderConsumables();
+            showToast('success', 'Consumable deleted successfully!');
+        }
+
+        // ================== MEMBER FUNCTIONS ==================
+        async function addMember() {
+            const name = document.getElementById('memberName').value.trim();
+            const email = document.getElementById('memberEmail').value.trim();
+            const password = document.getElementById('memberPassword').value;
+            const confirmPassword = document.getElementById('memberConfirmPassword').value;
+
+            if (!name || !email || !password) {
+                showToast('error', 'Please fill in all required fields');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showToast('error', 'Passwords do not match');
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast('error', 'Password must be at least 6 characters');
+                return;
+            }
+
+            if (members.some(m => m.email === email) || (currentUser && currentUser.email === email)) {
+                showToast('error', 'Email already exists');
+                return;
+            }
+
+            const newMember = {
+                id: Date.now(),
+                name,
+                email,
+                password,
+                mobile: document.getElementById('memberMobile').value.trim(),
+                designation: document.getElementById('memberDesignation').value.trim(),
+                department: document.getElementById('memberDepartment').value.trim(),
+                createdAt: new Date().toISOString()
+            };
+
+            members.push(newMember);
+            allUsers.push(newMember); // Add to login pool
+            saveDataToLocalStorage();
+            closeModal('addMemberModal');
+            await renderMembers();
+            showToast('success', 'Member added successfully!');
+        }
+
+        async function deleteMember(memberId) {
+            members = members.filter(m => m.id !== memberId);
+            allUsers = allUsers.filter(u => u.id !== memberId); // Remove from login pool
+            saveDataToLocalStorage();
+            await renderMembers();
+            showToast('success', 'Member deleted successfully!');
+        }
+
+        // ================== PROFILE FUNCTIONS ==================
+        async function saveProfile() {
+            const name = document.getElementById('editName').value.trim();
+            const email = document.getElementById('editEmail').value.trim();
+
+            if (!name || !email) {
+                showToast('error', 'Please fill in required fields');
+                return;
+            }
+
+            if (currentUser) {
+                currentUser.name = name;
+                currentUser.email = email;
+                currentUser.mobile = document.getElementById('editMobile').value.trim();
+                currentUser.designation = document.getElementById('editDesignation').value.trim();
+                currentUser.department = document.getElementById('editDepartment').value.trim();
+
+                saveDataToLocalStorage();
+                closeModal('editProfileModal');
+                updateUserProfile();
+                showToast('success', 'Profile updated successfully!');
+            }
+        }
+
+        async function updatePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmNewPassword').value;
+
+            if (!current || !newPass || !confirmPass) {
+                showToast('error', 'Please fill in all fields');
+                return;
+            }
+
+            if (currentUser.password !== current) {
+                showToast('error', 'Current password is incorrect');
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                showToast('error', 'New passwords do not match');
+                return;
+            }
+
+            if (newPass.length < 6) {
+                showToast('error', 'Password must be at least 6 characters');
+                return;
+            }
+
+            currentUser.password = newPass;
+            saveDataToLocalStorage();
+            closeModal('changePasswordModal');
+            showToast('success', 'Password updated successfully!');
+        }
+
+        // ================== RENDER FUNCTIONS ==================
+        async function renderItems() {
+            const tbody = document.getElementById('itemsTableBody');
+            const count = document.getElementById('itemsCountDisplay');
+
+            count.textContent = items.length;
+            document.getElementById('itemsCountBadge').textContent = items.length;
+
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="no-items-message">No items found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = items.map(item => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.serial}</td>
+                    <td>${item.holder}</td>
+                    <td><span class="status-badge status-${item.status.toLowerCase()}">${item.status === 'Available' ? '✓' : '⬤'} ${item.status}</span></td>
+                    <td><span class="condition-badge condition-${item.condition.toLowerCase().replace(/\s+/g, '')}">${item.condition === 'Working' ? '✓' : item.condition === 'Not Working' ? '✗' : '—'} ${item.condition}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn action-btn-edit" onclick="openEditAssetModal(${item.id})" title="Edit">✏️</button>
+                            <button class="action-btn action-btn-history" onclick="openItemHistoryModal(${item.id}, 'asset')" title="History">📜</button>
+                            <button class="action-btn action-btn-assign" onclick="openAssignAssetModal(${item.id})" title="Assign">📤</button>
+                            <button class="action-btn action-btn-notify" onclick="openItemHistoryModal(${item.id}, 'asset')" title="History">🔔</button>
+                            <button class="action-btn action-btn-delete" onclick="openDeleteConfirmModal(${item.id}, 'asset')" title="Delete">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function renderConsumables() {
+            const tbody = document.getElementById('consumablesTableBody');
+            const count = document.getElementById('consumablesCountDisplay');
+
+            count.textContent = consumables.length;
+            document.getElementById('consumablesCountBadge').textContent = consumables.length;
+
+            if (consumables.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="no-items-message">No consumables found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = consumables.map(consumable => `
+                <tr>
+                    <td>${consumable.name}</td>
+                    <td>${consumable.partNumber}</td>
+                    <td><strong>${consumable.quantity}</strong></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn action-btn-edit" onclick="openEditConsumableModal(${consumable.id})" title="Edit">✏️</button>
+                            <button class="action-btn action-btn-history" onclick="openItemHistoryModal(${consumable.id}, 'consumable')" title="History">📜</button>
+                            <button class="action-btn action-btn-add-qty" onclick="openAddQuantityModal(${consumable.id})" title="Add Quantity">➕</button>
+                            <button class="action-btn action-btn-assign" onclick="openAssignConsumableModal(${consumable.id})" title="Assign">📤</button>
+                            <button class="action-btn action-btn-notify" onclick="openItemHistoryModal(${consumable.id}, 'consumable')" title="History">🔔</button>
+                            <button class="action-btn action-btn-delete" onclick="openDeleteConfirmModal(${consumable.id}, 'consumable')" title="Delete">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function renderMembers() {
+            const grid = document.getElementById('membersGrid');
+
+            if (members.length === 0) {
+                grid.innerHTML = '<div class="no-items-message" style="grid-column: 1 / -1;">No members found</div>';
+                return;
+            }
+
+            grid.innerHTML = members.map(member => `
+                <div class="member-card">
+                    <div class="member-card-header">
+                        <div class="member-avatar">${member.name.split(' ').map(n => n[0]).join('').toUpperCase()}</div>
+                        <div>
+                            <div class="member-name">${member.name}</div>
+                            <div class="member-info">${member.designation || 'Member'}</div>
+                        </div>
+                    </div>
+                    <div class="member-info">
+                        <strong>Email:</strong> ${member.email}<br>
+                        <strong>Mobile:</strong> ${member.mobile || 'N/A'}<br>
+                        <strong>Department:</strong> ${member.department || 'N/A'}
+                    </div>
+                    <div class="member-actions">
+                        <button class="btn btn-sm btn-secondary" style="flex: 1;" onclick="deleteMember(${member.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ================== HELPER FUNCTIONS ==================
+        function populateMemberDropdown(dropdownId) {
+            const select = document.getElementById(dropdownId);
+            select.innerHTML = '<option value="">Choose member</option>';
+            members.forEach(member => {
+                select.innerHTML += `<option value="${member.id}">${member.name} (${member.email})</option>`;
+            });
+        }
+
+        async function confirmDelete() {
+            if (currentDeleteItemType === 'asset') {
+                await deleteAsset(currentDeleteItemId);
+            } else if (currentDeleteItemType === 'consumable') {
+                await deleteConsumable(currentDeleteItemId);
+            }
+            closeModal('deleteConfirmModal');
+        }
+
+        async function sendNotificationEmail(email, subject, message) {
+            try {
+                const response = await fetch('http://localhost:3000/api/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        subject,
+                        message
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    console.error('Email send error:', error);
+                    showToast('warning', 'Item saved but notification email could not be sent');
+                }
+            } catch (error) {
+                console.error('Email send failed:', error);
+                showToast('warning', 'Item saved but notification email could not be sent');
+            }
+        }
+
+        function exportToFile() {
+            const data = {
+                user: currentUser,
+                items,
+                consumables,
+                members,
+                exportedAt: new Date().toISOString()
+            };
+
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `inventory-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('success', 'Inventory exported successfully!');
+        }
+
+        // ================== THEME FUNCTIONS ==================
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            applyTheme();
+        }
+
+        function applyTheme() {
+            const html = document.documentElement;
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                html.classList.add('dark');
+                document.getElementById('themeIcon').textContent = '☀️';
+            } else {
+                html.classList.remove('dark');
+                document.getElementById('themeIcon').textContent = '🌙';
+            }
+        }
+
+        // ================== STORAGE FUNCTIONS ==================
+        function saveDataToLocalStorage() {
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.setItem('items', JSON.stringify(items));
+            localStorage.setItem('consumables', JSON.stringify(consumables));
+            localStorage.setItem('members', JSON.stringify(members));
+        }
+
+        // ================== TOAST FUNCTIONS ==================
+        function showToast(type, message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <span class="message-icon">${icons[type]}</span>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'toastSlideIn 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ================== INITIALIZATION ==================
+        window.addEventListener('DOMContentLoaded', initApp);
+
+        // Close modals on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal:not(.hidden)').forEach(modal => {
+                    modal.classList.add('hidden');
+                });
+            }
         });
-        
-        if (!item) {
-            console.error('Item not found:', itemId);
-            alert('❌ Item not found');
-            return;
-        }
-        
-        if (!item.holder) {
-            alert('❌ No member assigned to this item');
-            return;
-        }
-        
-        // Find the member
-        const member = members.find(m => {
-            return String(m.id) === String(item.holder);
+
+        // Close modals on background click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
         });
-        
-        if (!member) {
-            console.error('Member not found:', item.holder);
-            alert('❌ Member not found');
-            return;
-        }
-        
-        if (!member.email) {
-            alert('❌ Member email not found');
-            return;
-        }
-        
-        // Update modal content
-        const recipientInfo = document.getElementById('notifyRecipientInfo');
-        if (recipientInfo) {
-            recipientInfo.innerHTML = `<strong>📧 To:</strong> ${member.name} (${member.email})`;
-        }
-        
-        const subjectField = document.getElementById('notifySubject');
-        if (subjectField) {
-            subjectField.value = `Update on: ${item.name}`;
-        }
-        
-        const messageField = document.getElementById('notifyMessage');
-        if (messageField) {
-            messageField.value = `Hi ${member.name},\n\nRegarding the item "${item.name}" (Serial: ${item.serial}) assigned to you.\n\nPlease reply with confirmation.\n\nBest regards`;
-        }
-        
-        // Show modal
-        const modal = document.getElementById('notificationModal');
-        if (modal) {
-            modal.classList.add('active');
-            console.log('✓ Modal opened successfully');
-        }
-        
-    } catch (err) {
-        console.error('Error in openNotifyModal:', err.message, err.stack);
-        alert('❌ Error: ' + err.message);
-    }
-}
-
-async function sendNotificationEmail() {
-    const subject = document.getElementById('notifySubject').value.trim();
-    const message = document.getElementById('notifyMessage').value.trim();
-    
-    if (!subject || !message) {
-        alert('❌ Please fill in subject and message');
-        return;
-    }
-    
-    try {
-        // Get fresh data from localStorage
-        const items = JSON.parse(localStorage.getItem('items') || '[]');
-        const members = JSON.parse(localStorage.getItem('members') || '[]');
-        
-        const item = items.find(i => String(i.id) === String(window.currentNotifyItemId));
-        if (!item) {
-            alert('❌ Item not found');
-            return;
-        }
-        
-        const member = members.find(m => String(m.id) === String(item.holder));
-        if (!member || !member.email) {
-            alert('❌ Member not found');
-            return;
-        }
-        
-        // Show loading state
-        const sendBtn = event.target;
-        const originalText = sendBtn.innerText;
-        sendBtn.disabled = true;
-        sendBtn.innerText = '📤 Sending...';
-        
-        console.log('Sending email to:', member.email);
-        console.log('Subject:', subject);
-        
-        // Make the API call
-        const response = await fetch('http://localhost:3000/api/send-email', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                to: member.email,
-                subject: subject,
-                body: message,
-                from: (window.currentUser && window.currentUser.email) || 'admin@assetmanager.com'
-            })
-        });
-        
-        console.log('Backend response status:', response.status);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        console.log('Backend response:', data);
-        
-        sendBtn.disabled = false;
-        sendBtn.innerText = originalText;
-        
-        if (data.success || data.message === 'Email sent successfully') {
-            alert('✅ Email sent successfully to ' + member.email);
-            document.getElementById('notificationModal').classList.remove('active');
-            document.getElementById('notifySubject').value = '';
-            document.getElementById('notifyMessage').value = '';
-        } else {
-            alert('❌ Email send failed: ' + (data.message || 'Unknown error'));
-        }
-        
-    } catch (err) {
-        const sendBtn = event.target;
-        sendBtn.disabled = false;
-        sendBtn.innerText = '📤 Send';
-        
-        console.error('Email send error:', err);
-        console.error('Error details:', err.message);
-        
-        alert('❌ Error sending email:\n\n' + err.message + '\n\nMake sure:\n1. Backend is running: npm start\n2. Backend is on port 3000\n3. Email service is configured');
-    }
-}
-
-function queueNotification(notification) {
-    allEmails.push({
-        ...notification,
-        status: 'pending',
-        id: Date.now()
-    });
-    // Optionally persist to storage or save to server here
-}
-
-
-
-// ============= STARTUP WITH AUTO SYNC =============
-(async () => {
-  try {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    setTheme(savedTheme);
-    await initDB();
-    
-    console.log('🔄 Starting auto-sync...');
-    await autoSyncFromGithub();
-    
-    await checkUserStatus();
-  } catch (e) {
-    console.error('Startup error:', e.message);
-  }
-})();
-</script>
-
+    </script>
 </body>
 </html>
