@@ -1720,6 +1720,7 @@ async function autoSyncFromGithub() {
                 alert('Promoted!');
                 viewMembers();
                 updateRemoveAccountBtn();
+				autoSyncDatabaseToGithub();
             } catch (e) {
                 alert('Error: ' + e.message);
             }
@@ -1741,6 +1742,7 @@ async function autoSyncFromGithub() {
                 alert('Member removed!');
                 viewMembers();
                 updateRemoveAccountBtn();
+				autoSyncDatabaseToGithub();
             } catch (e) {
                 alert('Error: ' + e.message);
             }
@@ -1891,6 +1893,7 @@ async function autoSyncFromGithub() {
                 await deleteRecord('users', currentUser.id);
                 alert('Account removed!');
                 logout();
+				autoSyncDatabaseToGithub();
             } catch (e) {
                 alert('Error: ' + e.message);
             }
