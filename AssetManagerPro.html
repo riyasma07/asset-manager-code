@@ -2046,20 +2046,17 @@ document.addEventListener('DOMContentLoaded', async function() {
         await loadDatabaseFromGithub();
         
         // Step 2: Refresh UI with loaded data
-        console.log('Refreshing UI...');
-        displayItems();
-        displayConsumables();
-        loadCurrentUser();
-        
+        console.log('Rendering items...');
+        await renderItems();
+
         console.log('✅ App ready!');
     } catch (error) {
         console.error('Startup error:', error);
         // Fallback: still display UI with local data
-        displayItems();
-        displayConsumables();
-        loadCurrentUser();
+        await renderItems();
     }
 });
+
 
 // Optional: Auto-sync every 5 minutes
 setInterval(() => {
