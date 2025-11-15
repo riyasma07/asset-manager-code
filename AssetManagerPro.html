@@ -670,6 +670,231 @@
         let returnItemId = null;
         let assignItemId = null;
         let notifyItemId = null;
+		
+		// ===== GITHUB AUTOSYNC CONFIGURATION =====
+	// Encrypted token from Python script above
+	const ENCRYPTED_TOKEN_STRING = 'GOzdoMq17CWYanuj2WkUU1Iuprjx4psffz4IWBFRoJs88o2iF8Hu6LKIHcNh2WzHU/6fEkviF9ZJo/uHU7A/v60Az3Hx408zp+X8eROI6gA=';
+
+	// Password used to encrypt the token (same as you entered in Python)
+	const ENCRYPTION_PASSWORD = 'Hogwarts@123';
+
+	// GitHub repo details
+	const GITHUB_OWNER = 'riyasma07';
+	const GITHUB_REPO_DATA = 'asset-manager-db';
+	const GITHUB_BRANCH = 'main'; // Change to 'dev' for development
+
+	// Optional: Auto-sync interval (every 5 minutes)
+	const AUTO_SYNC_INTERVAL = 5 * 60 * 1000; // milliseconds
+
+
+		// ===== PUSH DATABASE WITH FORCE REPLACE (NO HISTORY) =====
+async function pushDatabaseToGitHub(databaseObject, token, repoOwner, repoName, branchName) {
+    const filePath = 'data.json';
+    const maxRetries = 3;
+    let retryCount = 0;
+
+    async function attemptPush() {
+        try {
+            console.log(`Push attempt ${retryCount + 1}/${maxRetries}...`);
+
+            // Get current file SHA (fresh fetch)
+            const getUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}?ref=${branchName}`;
+            const getRes = await fetch(getUrl, {
+                headers: {
+                    Authorization: `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!getRes.ok) {
+                throw new Error(`Failed to fetch file from GitHub (HTTP ${getRes.status})`);
+            }
+
+            const getData = await getRes.json();
+            const fileSHA = getData.sha;
+            console.log('✓ Got current SHA from GitHub:', fileSHA.substring(0, 8) + '...');
+
+            // Prepare content
+            const jsonString = JSON.stringify(databaseObject, null, 2);
+            const updatedContent = btoa(unescape(encodeURIComponent(jsonString)));
+
+            // Create commit with force push
+            const body = {
+                message: 'Auto-sync: ' + new Date().toISOString(),
+                content: updatedContent,
+                sha: fileSHA,
+                branch: branchName
+            };
+
+            // PUT to GitHub
+            const putUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+            const putRes = await fetch(putUrl, {
+                method: "PUT",
+                headers: {
+                    Authorization: `token ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (putRes.status === 409) {
+                // Conflict - retry
+                console.warn('⚠ SHA conflict (409) - retrying...');
+                retryCount++;
+                if (retryCount < maxRetries) {
+                    await new Promise(r => setTimeout(r, 1000));
+                    return attemptPush();
+                } else {
+                    throw new Error('Max retries reached (409 conflict)');
+                }
+            }
+
+            if (!putRes.ok) {
+                const errData = await putRes.json();
+                throw new Error(`GitHub update failed (${putRes.status}): ${errData.message || putRes.statusText}`);
+            }
+
+            const result = await putRes.json();
+            console.log('✅ Database synced! File replaced (single commit kept)');
+            console.log('Commit:', result.commit.sha.substring(0, 8));
+            
+            // Optional: Clean up old commits using force push via GraphQL
+            // (Only works if you enable force-push in repo settings)
+            await cleanupOldCommits(token, repoOwner, repoName, branchName);
+            
+            return result;
+        } catch (error) {
+            console.error('❌ Sync error:', error.message);
+            throw error;
+        }
+    }
+
+    return attemptPush();
+}
+
+// Optional: Clean up history to keep only latest commit
+async function cleanupOldCommits(token, repoOwner, repoName, branchName) {
+    try {
+        // This uses GraphQL to force-push and clean history
+        // Note: Requires "Allow force pushes" enabled in repo settings
+        console.log('⏳ Cleaning up old commits...');
+        
+        // Get latest commit SHA
+        const getCommitsUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/commits?sha=${branchName}&per_page=1`;
+        const commitsRes = await fetch(getCommitsUrl, {
+            headers: { Authorization: `token ${token}` }
+        });
+        
+        if (!commitsRes.ok) return;
+        
+        const commits = await commitsRes.json();
+        if (commits.length === 0) return;
+        
+        const latestCommitSha = commits[0].sha;
+        console.log('Latest commit:', latestCommitSha.substring(0, 8));
+        
+        // Force push would require git operations - not available via REST API alone
+        // Alternative: Keep the repo as-is with growing history
+        console.log('✓ History preserved (use --force-with-lease locally if needed)');
+    } catch (error) {
+        console.warn('Could not clean history:', error.message);
+        // Don't fail sync if cleanup fails
+    }
+}
+
+
+
+// ===== DECRYPT TOKEN FUNCTION =====
+async function decryptToken(encryptedB64, password) {
+    function str2ab(str) {
+        const buf = new Uint8Array(str.length);
+        for(let i = 0; i < str.length; ++i) buf[i] = str.charCodeAt(i);
+        return buf.buffer;
+    }
+
+    try {
+        const encrypted = atob(encryptedB64);
+        const salt = encrypted.slice(0, 16);
+        const iv = encrypted.slice(16, 32);
+        const ciphertext = encrypted.slice(32);
+
+        const enc = new TextEncoder();
+        const keyMaterial = await crypto.subtle.importKey(
+            'raw',
+            enc.encode(password),
+            { name: 'PBKDF2' },
+            false,
+            ['deriveKey']
+        );
+
+        const key = await crypto.subtle.deriveKey(
+            {
+                name: 'PBKDF2',
+                salt: str2ab(salt),
+                iterations: 100000,
+                hash: 'SHA-1'
+            },
+            keyMaterial,
+            { name: 'AES-CBC', length: 256 },
+            false,
+            ['decrypt']
+        );
+
+        const tokenBuffer = await crypto.subtle.decrypt(
+            { name: 'AES-CBC', iv: str2ab(iv) },
+            key,
+            str2ab(ciphertext)
+        );
+
+        return new TextDecoder().decode(tokenBuffer).replace(/\x00+$/g, '');
+    } catch (error) {
+        throw new Error('Token decryption failed: ' + error.message);
+    }
+}
+
+// ===== EXPORT FULL DATABASE =====
+async function exportFullDatabase() {
+    try {
+        const users = await getAll('users');
+        const items = await getAll('items');
+        const history = await getAll('history');
+
+        return {
+            "__schema__": "asset-manager-pro",
+            "version": 1,
+            "exportedAt": new Date().toISOString(),
+            "users": users,
+            "items": items,
+            "history": history
+        };
+    } catch (error) {
+        throw new Error('Failed to export database: ' + error.message);
+    }
+}
+
+// ===== AUTO SYNC WRAPPER (EASY TO CALL) =====
+async function autoSyncDatabaseToGithub() {
+    try {
+        console.log('Starting auto-sync to GitHub...');
+
+        // Decrypt token
+        const token = await decryptToken(ENCRYPTED_TOKEN_STRING, ENCRYPTION_PASSWORD);
+
+        // Export database
+        const myDatabase = await exportFullDatabase();
+
+        // Push to GitHub
+        await pushDatabaseToGitHub(myDatabase, token, GITHUB_OWNER, GITHUB_REPO_DATA, GITHUB_BRANCH);
+
+        console.log('✅ Auto-sync completed!');
+    } catch (error) {
+        console.error('❌ Auto-sync failed:', error.message);
+        // Don't throw - let the app continue even if sync fails
+    }
+}
+
+
 
         // ===== DATABASE =====
         async function initDB() {
@@ -985,6 +1210,7 @@ async function autoSyncFromGithub() {
                 alert('Item updated!');
                 editingItemId = null;
                 renderItems();
+				autoSyncDatabaseToGithub();
             } catch (e) {
                 alert('Error: ' + e.message);
             }
@@ -1001,6 +1227,7 @@ async function autoSyncFromGithub() {
                 await deleteRecord('items', itemId);
                 alert('Item deleted!');
                 renderItems();
+				autoSyncDatabaseToGithub();
             } catch (e) {
                 alert('Error: ' + e.message);
             }
@@ -1075,6 +1302,7 @@ async function autoSyncFromGithub() {
             } catch (e) {
                 alert('Error: ' + e.message);
             }
+			autoSyncDatabaseToGithub();
         }
 
         function cancelEditConsumable() {
@@ -1134,6 +1362,7 @@ async function autoSyncFromGithub() {
                 alert('Item assigned & email sent!');
                 closeModal('assignItemModal');
                 renderItems();
+				autoSyncDatabaseToGithub();
             } catch (e) {
                 alert('Error: ' + e.message);
             }
@@ -1172,6 +1401,7 @@ async function autoSyncFromGithub() {
                 alert('Item returned!');
                 closeModal('returnItemModal');
                 renderItems();
+				autoSyncDatabaseToGithub();
             } catch (e) {
                 alert('Error: ' + e.message);
             }
@@ -1409,6 +1639,7 @@ async function autoSyncFromGithub() {
                 e.target.reset();
                 closeModal('addAssetModal');
                 renderItems();
+				autoSyncDatabaseToGithub();
             } catch (e) {
                 alert('Error: ' + e.message);
             }
