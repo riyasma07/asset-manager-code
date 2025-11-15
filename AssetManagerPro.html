@@ -752,29 +752,60 @@
             });
         }
 
-        // ===== GITHUB SYNC =====
-        async function autoSyncFromGithub() {
-            try {
-                const res = await fetch(GITHUBRAWURL);
-                if (!res.ok) return;
-                const data = await res.json();
-                if (data.__schema__ !== 'asset-manager-pro') return;
+        // ===== INTELLIGENT AUTO-SYNC (MERGES DATA - PRESERVES NEW LOCAL ITEMS) =====
+async function autoSyncFromGithub() {
+    try {
+        const res = await fetch(GITHUBRAWURL);
+        if (!res.ok) return;
+        const githubData = await res.json();
+        if (githubData.__schema__ !== 'asset-manager-pro') return;
 
-                await clearStore('users');
-                await clearStore('items');
-                await clearStore('consumables');
-                await clearStore('history');
+        // Get current local data
+        const localUsers = await getAll('users');
+        const localItems = await getAll('items');
+        const localConsumables = await getAll('consumables');
+        const localHistory = await getAll('history');
 
-                for (const u of data.users) await addRecord('users', u);
-                for (const i of data.items || []) await addRecord('items', i);
-                for (const c of data.consumables || []) await addRecord('consumables', c);
-                for (const h of data.history || []) await addRecord('history', h);
-
-                console.log('✓ Synced from GitHub');
-            } catch (e) {
-                console.warn('Sync failed:', e.message);
+        // MERGE ITEMS: Only add items from GitHub if they don't exist locally (by ID)
+        for (const item of (githubData.items || [])) {
+            const exists = localItems.some(li => li.id === item.id);
+            if (!exists) {
+                await addRecord('items', item);
             }
         }
+
+        // MERGE CONSUMABLES: Only add consumables from GitHub if they don't exist locally (by ID)
+        for (const cons of (githubData.consumables || [])) {
+            const exists = localConsumables.some(lc => lc.id === cons.id);
+            if (!exists) {
+                await addRecord('consumables', cons);
+            }
+        }
+
+        // MERGE USERS: Update existing users, add new ones
+        for (const user of (githubData.users || [])) {
+            const exists = localUsers.find(lu => lu.id === user.id);
+            if (exists) {
+                await updateRecord('users', user);
+            } else {
+                await addRecord('users', user);
+            }
+        }
+
+        // MERGE HISTORY: Only add history entries that don't exist locally
+        for (const hist of (githubData.history || [])) {
+            const exists = localHistory.some(h => h.id === hist.id);
+            if (!exists) {
+                await addRecord('history', hist);
+            }
+        }
+
+        console.log('✓ Synced from GitHub (preserved local data)');
+    } catch (e) {
+        console.warn('Sync failed:', e.message);
+    }
+}
+
 
         // ===== EMAIL =====
         async function sendEmail(recipient, subject, body) {
