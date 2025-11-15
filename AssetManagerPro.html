@@ -894,7 +894,77 @@ async function autoSyncDatabaseToGithub() {
     }
 }
 
+// ===== LOAD DATABASE FROM GITHUB ON PAGE STARTUP =====
+async function loadDatabaseFromGithub() {
+    try {
+        console.log('Loading database from GitHub...');
+        
+        const dataUrl = `https://raw.githubusercontent.com/riyasma07/asset-manager-db/main/data.json`;
+        
+        const response = await fetch(dataUrl);
+        if (!response.ok) {
+            throw new Error(`Failed to load from GitHub (HTTP ${response.status})`);
+        }
+        
+        const githubData = await response.json();
+        console.log('GitHub data loaded:', githubData);
+        
+        // Clear local IndexedDB and repopulate with GitHub data
+        await clearAllData(); // Clear existing data
+        
+        // Load GitHub data into IndexedDB
+        if (githubData.users && githubData.users.length > 0) {
+            for (let user of githubData.users) {
+                await addRecord('users', user);
+            }
+        }
+        
+        if (githubData.items && githubData.items.length > 0) {
+            for (let item of githubData.items) {
+                await addRecord('items', item);
+            }
+        }
+        
+        if (githubData.history && githubData.history.length > 0) {
+            for (let record of githubData.history) {
+                await addRecord('history', record);
+            }
+        }
+        
+        console.log('✅ Database loaded from GitHub and synced to local storage');
+        return githubData;
+    } catch (error) {
+        console.error('❌ Failed to load from GitHub:', error.message);
+        // Fall back to local data
+        return null;
+    }
+}
 
+// Helper function to clear all local data
+async function clearAllData() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('AssetManager');
+        
+        request.onsuccess = (event) => {
+            const db = event.target.result;
+            const stores = ['users', 'items', 'history']; // Adjust to your store names
+            
+            stores.forEach(storeName => {
+                try {
+                    const tx = db.transaction(storeName, 'readwrite');
+                    const store = tx.objectStore(storeName);
+                    store.clear();
+                } catch (e) {
+                    console.warn(`Could not clear ${storeName}:`, e);
+                }
+            });
+            
+            resolve();
+        };
+        
+        request.onerror = () => reject('Failed to open DB');
+    });
+}
 
         // ===== DATABASE =====
         async function initDB() {
@@ -1965,6 +2035,38 @@ async function autoSyncFromGithub() {
                 console.error('Startup error:', e);
             }
         })();
+		
+// ===== PAGE LOAD INITIALIZATION =====
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('App starting...');
+    
+    try {
+        // Step 1: Load latest data from GitHub
+        console.log('Loading database from GitHub...');
+        await loadDatabaseFromGithub();
+        
+        // Step 2: Refresh UI with loaded data
+        console.log('Refreshing UI...');
+        displayItems();
+        displayConsumables();
+        loadCurrentUser();
+        
+        console.log('✅ App ready!');
+    } catch (error) {
+        console.error('Startup error:', error);
+        // Fallback: still display UI with local data
+        displayItems();
+        displayConsumables();
+        loadCurrentUser();
+    }
+});
+
+// Optional: Auto-sync every 5 minutes
+setInterval(() => {
+    autoSyncDatabaseToGithub();
+}, 5 * 60 * 1000);
+
+
     </script>
 </body>
 </html>
