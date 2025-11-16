@@ -214,23 +214,27 @@ async function exportFullDatabase() {
 // ===== AUTO SYNC WRAPPER (EASY TO CALL) =====
 async function autoSyncDatabaseToGithub() {
     try {
-        console.log('Starting auto-sync to GitHub...');
-
-        // Decrypt token
-        const token = await decryptToken(ENCRYPTED_TOKEN_STRING, ENCRYPTION_PASSWORD);
-
-        // Export database
-        const myDatabase = await exportFullDatabase();
-
-        // Push to GitHub
-        await pushDatabaseToGitHub(myDatabase, token, GITHUB_OWNER, GITHUB_REPO_DATA, GITHUB_BRANCH);
-
-        console.log('✅ Auto-sync completed!');
-    } catch (error) {
-        console.error('❌ Auto-sync failed:', error.message);
-        // Don't throw - let the app continue even if sync fails
+        const localDataStr = JSON.stringify(db, null, 2);
+        const remoteFile = await getGitHubFile(githubConfig, 'contents/data.json');
+        
+        // Compare: only push if content actually changed
+        if (remoteFile.content !== btoa(localDataStr)) {
+            await updateGitHubFile(
+                githubConfig,
+                'contents/data.json',
+                localDataStr,
+                remoteFile.sha,
+                `Auto-sync: Data updated`
+            );
+            console.log('✓ Database synced to GitHub');
+        } else {
+            console.log('No changes - skipping sync');
+        }
+    } catch (e) {
+        console.warn('Auto-sync skipped:', e.message);
     }
 }
+
 
 // ===== LOAD DATABASE FROM GITHUB ON PAGE STARTUP =====
 async function loadDatabaseFromGithub() {
