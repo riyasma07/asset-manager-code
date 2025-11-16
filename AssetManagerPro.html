@@ -1706,6 +1706,7 @@ async function autoSyncFromGithub() {
                     date: new Date().toLocaleString(),
                     user: currentUser.name
                 });
+				
 				autoSyncDatabaseToGithub();
 				showConfirmEmailModal(item.id, member.id, member.name);
 				
