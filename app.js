@@ -1533,11 +1533,11 @@ async function autoSyncFromGithub() {
             if (result && result.success) {
                 showSuccessModal();
             } else {
-                showErrorModal(`Retry ${currentEmailData.retryCount}/3 failed`);
+                showErrorModal(currentEmailData.retryCount);  // Just the number
             }
         } catch (err) {
             console.error('Retry error:', err);
-            showErrorModal(`Retry ${currentEmailData.retryCount}/3 failed`);
+            showErrorModal(currentEmailData.retryCount);  // Just the number
         }
     }
 
@@ -1546,12 +1546,20 @@ async function autoSyncFromGithub() {
         showLoadingModal();
 
         try {
-            // Call your existing email sending function with stored data
+            const users = await getAll('users');
+            const member = users.find(u => u.id === currentEmailData.memberId);
+            
+            // ADD THIS VALIDATION
+            if (!member || !member.email) {
+                hideLoadingModal();
+                showErrorModal(1);
+                return;
+            }
+
             const result = await sendEmail(
-                // Get member email from database
-                (await getAll('users')).find(u => u.id === currentEmailData.memberId)?.email,
-                currentEmailData.emailSubject,    // ← Use stored subject
-                currentEmailData.emailBody        // ← Use stored body
+                member.email,
+                currentEmailData.emailSubject,
+                currentEmailData.emailBody
             );
 
             if (result && result.success) {
@@ -1564,6 +1572,7 @@ async function autoSyncFromGithub() {
             handleEmailError();
         }
     }
+
 
 	function handleEmailError() {
 		const totalAttempts = currentEmailData.retryCount + 1;
