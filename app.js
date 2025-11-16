@@ -810,6 +810,8 @@ async function autoSyncFromGithub() {
                 const subject = `Asset Assigned: ${item.name}`;
                 const body = `Hi ${member.name},\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`;
 
+                console.log("Before Calling showConfirmEmailModal in openAssignModal");
+
                 showConfirmEmailModal(itemId, memberId, member.name, subject, body);
 				
 				autoSyncDatabaseToGithub();
@@ -856,6 +858,8 @@ async function autoSyncFromGithub() {
 
                 const subject = `Asset Unassigned: ${item.name}`;
                 const body = `Hi ${member.name},\n\nThe asset "${item.name}" has been unassigned.\n\nRegards,\n${currentUser.name}`;
+
+                console.log("Before Calling showConfirmEmailModal in confirmReturnItem");
 
                 showConfirmEmailModal(item.id, member.id, member.name, subject, body);
 
