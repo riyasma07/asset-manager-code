@@ -618,6 +618,7 @@ async function autoSyncFromGithub() {
             } catch (e) {
                 console.error('Render error:', e);
             }
+            autoSyncDatabaseToGithub();
         }
 
         // FIXED EDIT FUNCTION - NO QUERYSELECTOR ERROR
@@ -816,12 +817,8 @@ async function autoSyncFromGithub() {
 				
 				autoSyncDatabaseToGithub();
 				
-                closeModal('assignItemModal');
-                renderItems();
-            } catch (e) {
-                alert('Error: ' + e.message);
-            }
-        });
+                closeModal('assignItemModal'); renderItems(); } catch (e)
+                { alert('Error: ' + e.message); } });
 
         // ===== RETURN ITEM =====
         async function openReturnModal(itemId) {
@@ -854,20 +851,15 @@ async function autoSyncFromGithub() {
                 });
 
                 const users = await getAll('users');
-                const member = users.find(u => u.id === parseInt(item.holder));
+                const member = users.find(u => u.name === oldHolder);
 
                 const subject = `Asset Unassigned: ${item.name}`;
-                const body = `Hi ${member.name},\n\nThe asset "${item.name}" has been unassigned.\n\nRegards,\n${currentUser.name}`;
+                const body = `Hi ${oldHolder},\n\nThe asset "${item.name}" has been returned to inventory.\n\nRegards,\n${currentUser.name}`;
 
-                console.log("Before Calling showConfirmEmailModal in confirmReturnItem");
-
-                showConfirmEmailModal(item.id, member.id, member.name, subject, body);
-
-                console.log("confirmReturnItem triggered");
-                alert('Item returned!');
+                showConfirmEmailModal(returnItemId, member.id, oldHolder, subject, body);
                 closeModal('returnItemModal');
+
                 renderItems();
-				autoSyncDatabaseToGithub();
             } catch (e) {
                 alert('Error: ' + e.message);
             }
@@ -1042,7 +1034,7 @@ async function autoSyncFromGithub() {
                 const subject = `Consumable Assigned: ${cons.name}`;
                 const body = `Hi ${member.name},\n\nYou have been assigned ${qty} unit(s) of "${cons.name}".\n\nRegards,\n${currentUser.name}`;
 
-                showConfirmEmailModal(itemId, memberId, member.name, subject, body);
+                showConfirmEmailModal(consId, memberId, member.name, subject, body);
 
                 document.querySelector('.modal.show').remove();
                 document.getElementById('backdrop').classList.remove('show');
