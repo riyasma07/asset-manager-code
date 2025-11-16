@@ -353,7 +353,7 @@ async function clearAllData() {
         function updateRecord(storeName, data) {
             return new Promise((resolve, reject) => {
                 const tx = db.transaction(storeName, 'readwrite');
-                const req = tx.objectStore(storeName).add(data);
+                const req = tx.objectStore(storeName).put(data);
                 req.onsuccess = () => resolve(req.result);
                 req.onerror = () => reject(req.error);
             });
@@ -469,7 +469,7 @@ async function autoSyncFromGithub() {
 			}
 		}
 		
-		async function sendEmailNotification(itemId, memberId, memberName, contentId) {
+		async function sendEmailNotification(itemId, memberId, memberName) {
 			try {
 				// Get the item and member details
 				const items = await getAll('items');
@@ -484,22 +484,11 @@ async function autoSyncFromGithub() {
 				}
 				
 				// Send the email using your existing sendEmail function
-                if(EmailContentType.ASSIGN_A_MAIL == contentId)
-                {
-                    const result = await sendEmail(
-                        member.email,
-                        `Asset Assigned: ${item.name}`,
-                        `Hi ${member.name},\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`
-                    );
-                }
-                else
-                {
-                    const result = await sendEmail(
-                        member.email,
-                        `Asset Assigned: ${item.name}`,
-                        `Hi ${member.name},\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`
-                    );
-                }
+				const result = await sendEmail(
+					member.email,
+					`Asset Assigned: ${item.name}`,
+					`Hi ${member.name},\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`
+				);
 				
 				return result;
 			} catch (err) {
@@ -816,9 +805,14 @@ async function autoSyncFromGithub() {
                     date: new Date().toLocaleString(),
                     user: currentUser.name
                 });
+
+                const subject = `Asset Assigned: ${item.name}`;
+                const body = `Hi ${member.name},\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`;
+
+                showConfirmEmailModal(itemId, memberId, member.name, subject, body);
+                // showConfirmEmailModal(item.id, member.id, member.name, subject, body);
 				
 				autoSyncDatabaseToGithub();
-				showConfirmEmailModal(item.id, member.id, member.name, EmailContentType.ASSIGN_A_MAIL);
 				
                 closeModal('assignItemModal');
                 renderItems();
@@ -1032,7 +1026,12 @@ async function autoSyncFromGithub() {
                     user: currentUser.name
                 });
 
-                await sendEmail(member.email, `Consumable Assigned: ${cons.name}`, `Hi ${member.name},\n\nYou have been assigned ${qty} unit(s) of "${cons.name}".\n\nRegards,\n${currentUser.name}`);
+                const subject = `Consumable Assigned: ${cons.name}`;
+                const body = `Hi ${member.name},\n\nYou have been assigned ${qty} unit(s) of "${cons.name}".\n\nRegards,\n${currentUser.name}`;
+
+                showConfirmEmailModal(itemId, memberId, member.name, subject, body);
+
+                // await sendEmail(member.email, `Consumable Assigned: ${cons.name}`, `Hi ${member.name},\n\nYou have been assigned ${qty} unit(s) of "${cons.name}".\n\nRegards,\n${currentUser.name}`);
 
                 alert(`${qty} unit(s) assigned & email sent!`);
                 document.querySelector('.modal.show').remove();
@@ -1426,33 +1425,25 @@ async function autoSyncFromGithub() {
         })();
 		
 		// ===== ENHANCED EMAIL WORKFLOW =====
-    // Define enum for email content types
-    const EmailContentType = Object.freeze({
-        CUSTOM_MAIL: 0,
-        RETURN_MAIL: 1,
-        MEMADD_MAIL: 2,
-        MEMREM_MAIL: 3,
-        ASSIGN_A_MAIL: 4,
-        ASSIGN_B_MAIL: 5,
-        FAILED_MAIL: 6
-    });
+    let currentEmailData = {
+        itemId: null,
+        memberId: null,
+        memberName: null,
+        retryCount: 0,
+        emailSubject: '',      // ← NEW
+        emailBody: ''          // ← NEW
+    };
 
-	let currentEmailData = {
-		itemId: null,
-		memberId: null,
-		memberName: null,
-        contentId: EmailContentType.FAILED_MAIL,
-		retryCount: 0
-	};
 
 	// Show Confirmation Modal
-	function showConfirmEmailModal(itemId, memberId, memberName, contentId) {
+	function showConfirmEmailModal(itemId, memberId, memberName, emailSubject, emailBody) {
 		currentEmailData = {
 			itemId: itemId,
 			memberId: memberId,
 			memberName: memberName,
-            contentId: contentId,
-			retryCount: 0
+			retryCount: 0,
+            emailSubject: emailSubject,
+            emailBody: emailBody
 		};
 		
 		const confirmMessage = document.getElementById('confirmMessage');
@@ -1514,35 +1505,60 @@ async function autoSyncFromGithub() {
 	}
 
 	// Retry Email
-	function retryEmail() {
-		currentEmailData.retryCount++;
-		document.getElementById('emailErrorModal').classList.remove('show');
-		attemptSendEmail();
-	}
+	async function retryEmail() {
+        currentEmailData.retryCount++;
+
+        if (currentEmailData.retryCount >= 3) {
+            showFinalErrorModal();
+            return;
+        }
+
+        showLoadingModal();
+
+        try {
+            const users = await getAll('users');
+            const member = users.find(u => u.id === currentEmailData.memberId);
+
+            const result = await sendEmail(
+                member.email,
+                currentEmailData.emailSubject,    // ← Use stored subject
+                currentEmailData.emailBody        // ← Use stored body
+            );
+
+            if (result && result.success) {
+                showSuccessModal();
+            } else {
+                showErrorModal(`Retry ${currentEmailData.retryCount}/3 failed`);
+            }
+        } catch (err) {
+            console.error('Retry error:', err);
+            showErrorModal(`Retry ${currentEmailData.retryCount}/3 failed`);
+        }
+    }
 
 	// Attempt to Send Email with Retry Logic
 	async function attemptSendEmail() {
-		showLoadingModal();
-		
-		try {
-			// Call your existing email sending function
-			const response = await sendEmailNotification(
-				currentEmailData.itemId,
-				currentEmailData.memberId,
-				currentEmailData.memberName,
-                currentEmailData.contentId
-			);
-			
-			if (response && response.success) {
-				showSuccessModal();
-			} else {
-				handleEmailError();
-			}
-		} catch (error) {
-			console.error('Email send error:', error);
-			handleEmailError();
-		}
-	}
+        showLoadingModal();
+
+        try {
+            // Call your existing email sending function with stored data
+            const result = await sendEmail(
+                // Get member email from database
+                (await getAll('users')).find(u => u.id === currentEmailData.memberId)?.email,
+                currentEmailData.emailSubject,    // ← Use stored subject
+                currentEmailData.emailBody        // ← Use stored body
+            );
+
+            if (result && result.success) {
+                showSuccessModal();
+            } else {
+                handleEmailError();
+            }
+        } catch (error) {
+            console.error('Email send error:', error);
+            handleEmailError();
+        }
+    }
 
 	function handleEmailError() {
 		const totalAttempts = currentEmailData.retryCount + 1;
@@ -1569,7 +1585,6 @@ async function autoSyncFromGithub() {
 			itemId: null,
 			memberId: null,
 			memberName: null,
-            contentId: EmailContentType.FAILED_MAIL
 			retryCount: 0
 		};
 	}
