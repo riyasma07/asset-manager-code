@@ -851,6 +851,11 @@ async function autoSyncFromGithub() {
                     user: currentUser.name
                 });
 
+                const subject = `Asset Unassigned: ${item.name}`;
+                const body = `Hi ${member.name},\n\nThe asset "${item.name}" has been unassigned.\n\nRegards,\n${currentUser.name}`;
+
+                showConfirmEmailModal(itemId, memberId, member.name, subject, body);
+
                 alert('Item returned!');
                 closeModal('returnItemModal');
                 renderItems();
