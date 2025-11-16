@@ -810,7 +810,6 @@ async function autoSyncFromGithub() {
                 const body = `Hi ${member.name},\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`;
 
                 showConfirmEmailModal(itemId, memberId, member.name, subject, body);
-                // showConfirmEmailModal(item.id, member.id, member.name, subject, body);
 				
 				autoSyncDatabaseToGithub();
 				
@@ -1030,8 +1029,6 @@ async function autoSyncFromGithub() {
                 const body = `Hi ${member.name},\n\nYou have been assigned ${qty} unit(s) of "${cons.name}".\n\nRegards,\n${currentUser.name}`;
 
                 showConfirmEmailModal(itemId, memberId, member.name, subject, body);
-
-                // await sendEmail(member.email, `Consumable Assigned: ${cons.name}`, `Hi ${member.name},\n\nYou have been assigned ${qty} unit(s) of "${cons.name}".\n\nRegards,\n${currentUser.name}`);
 
                 alert(`${qty} unit(s) assigned & email sent!`);
                 document.querySelector('.modal.show').remove();
