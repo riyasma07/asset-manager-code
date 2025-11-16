@@ -1,4 +1,4 @@
-const GITHUBRAWURL = 'https://raw.githubusercontent.com/riyasma07/asset-manager-db/main/data.json';
+        const GITHUBRAWURL = 'https://raw.githubusercontent.com/riyasma07/asset-manager-db/main/data.json';
         const DBNAME = 'AssetManagerProDB';
         let db = null;
         let currentUser = null;
@@ -24,92 +24,101 @@ const GITHUBRAWURL = 'https://raw.githubusercontent.com/riyasma07/asset-manager-
 	// Optional: Auto-sync interval (every 5 minutes)
 	const AUTO_SYNC_INTERVAL = 5 * 60 * 1000; // milliseconds
 
+    // Define at the top of your app.js or before first use:
+    // const githubConfig = {
+    //   owner: GITHUB_OWNER,          // Your GitHub username or org
+    //   repo: GITHUB_REPO_DATA,   // Target repo
+    //   token: null, // GitHub PAT (Personal Access Token)
+    //   branch: GITHUB_BRANCH                 // Branch to work on (e.g. "Dev")
+    // };
+
+
 
 		// ===== PUSH DATABASE WITH FORCE REPLACE (NO HISTORY) =====
-async function pushDatabaseToGitHub(databaseObject, token, repoOwner, repoName, branchName) {
-    const filePath = 'data.json';
-    const maxRetries = 3;
-    let retryCount = 0;
+    async function pushDatabaseToGitHub(databaseObject, token, repoOwner, repoName, branchName) {
+        const filePath = 'data.json';
+        const maxRetries = 3;
+        let retryCount = 0;
 
-    async function attemptPush() {
-        try {
-            console.log(`Push attempt ${retryCount + 1}/${maxRetries}...`);
+        async function attemptPush() {
+            try {
+                console.log(`Push attempt ${retryCount + 1}/${maxRetries}...`);
 
-            // Get current file SHA (fresh fetch)
-            const getUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}?ref=${branchName}`;
-            const getRes = await fetch(getUrl, {
-                headers: {
-                    Authorization: `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json'
+                // Get current file SHA (fresh fetch)
+                const getUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}?ref=${branchName}`;
+                const getRes = await fetch(getUrl, {
+                    headers: {
+                        Authorization: `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!getRes.ok) {
+                    throw new Error(`Failed to fetch file from GitHub (HTTP ${getRes.status})`);
                 }
-            });
 
-            if (!getRes.ok) {
-                throw new Error(`Failed to fetch file from GitHub (HTTP ${getRes.status})`);
-            }
+                const getData = await getRes.json();
+                const fileSHA = getData.sha;
+                console.log('✓ Got current SHA from GitHub:', fileSHA.substring(0, 8) + '...');
 
-            const getData = await getRes.json();
-            const fileSHA = getData.sha;
-            console.log('✓ Got current SHA from GitHub:', fileSHA.substring(0, 8) + '...');
+                // Prepare content
+                const jsonString = JSON.stringify(databaseObject, null, 2);
+                const updatedContent = btoa(unescape(encodeURIComponent(jsonString)));
 
-            // Prepare content
-            const jsonString = JSON.stringify(databaseObject, null, 2);
-            const updatedContent = btoa(unescape(encodeURIComponent(jsonString)));
+                // Create commit with force push
+                const body = {
+                    message: 'Auto-sync: ' + new Date().toISOString(),
+                    content: updatedContent,
+                    sha: fileSHA,
+                    branch: branchName
+                };
 
-            // Create commit with force push
-            const body = {
-                message: 'Auto-sync: ' + new Date().toISOString(),
-                content: updatedContent,
-                sha: fileSHA,
-                branch: branchName
-            };
+                // PUT to GitHub
+                const putUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+                const putRes = await fetch(putUrl, {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `token ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify(body)
+                });
 
-            // PUT to GitHub
-            const putUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
-            const putRes = await fetch(putUrl, {
-                method: "PUT",
-                headers: {
-                    Authorization: `token ${token}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/vnd.github.v3+json'
-                },
-                body: JSON.stringify(body)
-            });
-
-            if (putRes.status === 409) {
-                // Conflict - retry
-                console.warn('⚠ SHA conflict (409) - retrying...');
-                retryCount++;
-                if (retryCount < maxRetries) {
-                    await new Promise(r => setTimeout(r, 1000));
-                    return attemptPush();
-                } else {
-                    throw new Error('Max retries reached (409 conflict)');
+                if (putRes.status === 409) {
+                    // Conflict - retry
+                    console.warn('⚠ SHA conflict (409) - retrying...');
+                    retryCount++;
+                    if (retryCount < maxRetries) {
+                        await new Promise(r => setTimeout(r, 1000));
+                        return attemptPush();
+                    } else {
+                        throw new Error('Max retries reached (409 conflict)');
+                    }
                 }
-            }
 
-            if (!putRes.ok) {
-                const errData = await putRes.json();
-                throw new Error(`GitHub update failed (${putRes.status}): ${errData.message || putRes.statusText}`);
-            }
+                if (!putRes.ok) {
+                    const errData = await putRes.json();
+                    throw new Error(`GitHub update failed (${putRes.status}): ${errData.message || putRes.statusText}`);
+                }
 
-            const result = await putRes.json();
-            console.log('✅ Database synced! File replaced (single commit kept)');
-            console.log('Commit:', result.commit.sha.substring(0, 8));
-            
-            // Optional: Clean up old commits using force push via GraphQL
-            // (Only works if you enable force-push in repo settings)
-            await cleanupOldCommits(token, repoOwner, repoName, branchName);
-            
-            return result;
-        } catch (error) {
-            console.error('❌ Sync error:', error.message);
-            throw error;
+                const result = await putRes.json();
+                console.log('✅ Database synced! File replaced (single commit kept)');
+                console.log('Commit:', result.commit.sha.substring(0, 8));
+                
+                // Optional: Clean up old commits using force push via GraphQL
+                // (Only works if you enable force-push in repo settings)
+                await cleanupOldCommits(token, repoOwner, repoName, branchName);
+                
+                return result;
+            } catch (error) {
+                console.error('❌ Sync error:', error.message);
+                throw error;
+            }
         }
-    }
 
-    return attemptPush();
-}
+        return attemptPush();
+    }
 
 // Optional: Clean up history to keep only latest commit
 async function cleanupOldCommits(token, repoOwner, repoName, branchName) {
@@ -214,26 +223,61 @@ async function exportFullDatabase() {
 // ===== AUTO SYNC WRAPPER (EASY TO CALL) =====
 async function autoSyncDatabaseToGithub() {
     try {
-        const localDataStr = JSON.stringify(db, null, 2);
-        const remoteFile = await getGitHubFile(githubConfig, 'contents/data.json');
-        
-        // Compare: only push if content actually changed
-        if (remoteFile.content !== btoa(localDataStr)) {
-            await updateGitHubFile(
-                githubConfig,
-                'contents/data.json',
-                localDataStr,
-                remoteFile.sha,
-                `Auto-sync: Data updated`
-            );
-            console.log('✓ Database synced to GitHub');
-        } else {
-            console.log('No changes - skipping sync');
-        }
-    } catch (e) {
-        console.warn('Auto-sync skipped:', e.message);
+        console.log('Starting auto-sync to GitHub...');
+
+        // Decrypt token
+        const token = await decryptToken(ENCRYPTED_TOKEN_STRING, ENCRYPTION_PASSWORD);
+
+        // Export database
+        const myDatabase = await exportFullDatabase();
+
+        // Push to GitHub
+        await pushDatabaseToGitHub(myDatabase, token, GITHUB_OWNER, GITHUB_REPO_DATA, GITHUB_BRANCH);
+
+        console.log('✅ Auto-sync completed!');
+    } catch (error) {
+        console.error('❌ Auto-sync failed:', error.message);
+        // Don't throw - let the app continue even if sync fails
     }
 }
+
+async function getGitHubFile(config, filePath) {
+  // Example: Fetch a file from GitHub using the REST API
+  const response = await fetch(
+    `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${filePath}?ref=${config.branch}`,
+    {
+      headers: {
+        Authorization: `token ${config.token}`,
+        Accept: "application/vnd.github.v3+json"
+      }
+    }
+  );
+  if (!response.ok) throw new Error("Failed to fetch from GitHub");
+  return await response.json();
+}
+
+async function updateGitHubFile(config, filePath, content, sha, message) {
+  // Example: Update a file in GitHub using the REST API
+  const response = await fetch(
+    `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${filePath}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `token ${config.token}`,
+        Accept: "application/vnd.github.v3+json"
+      },
+      body: JSON.stringify({
+        message: message,
+        content: btoa(unescape(encodeURIComponent(content))),
+        sha: sha,
+        branch: config.branch
+      })
+    }
+  );
+  if (!response.ok) throw new Error("Failed to update GitHub");
+  return await response.json();
+}
+
 
 
 // ===== LOAD DATABASE FROM GITHUB ON PAGE STARTUP =====
