@@ -469,7 +469,7 @@ async function autoSyncFromGithub() {
 			}
 		}
 		
-		async function sendEmailNotification(itemId, memberId, memberName) {
+		async function sendEmailNotification(itemId, memberId, memberName, contentId) {
 			try {
 				// Get the item and member details
 				const items = await getAll('items');
@@ -484,11 +484,22 @@ async function autoSyncFromGithub() {
 				}
 				
 				// Send the email using your existing sendEmail function
-				const result = await sendEmail(
-					member.email,
-					`Asset Assigned: ${item.name}`,
-					`Hi ${member.name},\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`
-				);
+                if(EmailContentType.ASSIGN_A_MAIL == contentId)
+                {
+                    const result = await sendEmail(
+                        member.email,
+                        `Asset Assigned: ${item.name}`,
+                        `Hi ${member.name},\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`
+                    );
+                }
+                else
+                {
+                    const result = await sendEmail(
+                        member.email,
+                        `Asset Assigned: ${item.name}`,
+                        `Hi ${member.name},\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`
+                    );
+                }
 				
 				return result;
 			} catch (err) {
@@ -807,7 +818,7 @@ async function autoSyncFromGithub() {
                 });
 				
 				autoSyncDatabaseToGithub();
-				showConfirmEmailModal(item.id, member.id, member.name);
+				showConfirmEmailModal(item.id, member.id, member.name, EmailContentType.ASSIGN_A_MAIL);
 				
                 closeModal('assignItemModal');
                 renderItems();
@@ -1415,19 +1426,32 @@ async function autoSyncFromGithub() {
         })();
 		
 		// ===== ENHANCED EMAIL WORKFLOW =====
+    // Define enum for email content types
+    const EmailContentType = Object.freeze({
+        CUSTOM_MAIL: 0,
+        RETURN_MAIL: 1,
+        MEMADD_MAIL: 2,
+        MEMREM_MAIL: 3,
+        ASSIGN_A_MAIL: 4,
+        ASSIGN_B_MAIL: 5,
+        FAILED_MAIL: 6
+    });
+
 	let currentEmailData = {
 		itemId: null,
 		memberId: null,
 		memberName: null,
+        contentId: EmailContentType.FAILED_MAIL,
 		retryCount: 0
 	};
 
 	// Show Confirmation Modal
-	function showConfirmEmailModal(itemId, memberId, memberName) {
+	function showConfirmEmailModal(itemId, memberId, memberName, contentId) {
 		currentEmailData = {
 			itemId: itemId,
 			memberId: memberId,
 			memberName: memberName,
+            contentId: contentId,
 			retryCount: 0
 		};
 		
@@ -1505,7 +1529,8 @@ async function autoSyncFromGithub() {
 			const response = await sendEmailNotification(
 				currentEmailData.itemId,
 				currentEmailData.memberId,
-				currentEmailData.memberName
+				currentEmailData.memberName,
+                currentEmailData.contentId
 			);
 			
 			if (response && response.success) {
@@ -1544,6 +1569,7 @@ async function autoSyncFromGithub() {
 			itemId: null,
 			memberId: null,
 			memberName: null,
+            contentId: EmailContentType.FAILED_MAIL
 			retryCount: 0
 		};
 	}
