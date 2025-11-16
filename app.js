@@ -353,7 +353,7 @@ async function clearAllData() {
         function updateRecord(storeName, data) {
             return new Promise((resolve, reject) => {
                 const tx = db.transaction(storeName, 'readwrite');
-                const req = tx.objectStore(storeName).put(data);
+                const req = tx.objectStore(storeName).add(data);
                 req.onsuccess = () => resolve(req.result);
                 req.onerror = () => reject(req.error);
             });
