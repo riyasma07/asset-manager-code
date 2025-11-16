@@ -859,6 +859,7 @@ async function autoSyncFromGithub() {
 
                 showConfirmEmailModal(item.id, member.id, member.name, subject, body);
 
+                console.log("confirmReturnItem triggered");
                 alert('Item returned!');
                 closeModal('returnItemModal');
                 renderItems();
@@ -1451,10 +1452,14 @@ async function autoSyncFromGithub() {
             emailBody: emailBody
 		};
 		
+        console.log("showConfirmEmailModal Called");
+
 		const confirmMessage = document.getElementById('confirmMessage');
 		confirmMessage.innerHTML = `Do you want to send an email notification to <strong>${memberName}</strong>?`;
 		
 		document.getElementById('emailConfirmModal').classList.add('show');
+
+        console.log("showConfirmEmailModal Ended");
 	}
 
 	function closeConfirmEmailModal() {
