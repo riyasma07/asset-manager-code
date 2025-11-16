@@ -717,6 +717,7 @@ async function autoSyncFromGithub() {
             } catch (e) {
                 console.error('Render error:', e);
             }
+            autoSyncDatabaseToGithub();
         }
 
         async function startEditConsumable(consId) {
@@ -1030,7 +1031,6 @@ async function autoSyncFromGithub() {
 
                 showConfirmEmailModal(itemId, memberId, member.name, subject, body);
 
-                alert(`${qty} unit(s) assigned & email sent!`);
                 document.querySelector('.modal.show').remove();
                 document.getElementById('backdrop').classList.remove('show');
                 renderConsumables();
