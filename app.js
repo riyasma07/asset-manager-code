@@ -329,7 +329,7 @@ async function loadDatabaseFromGithub() {
 // Helper function to clear all local data
 async function clearAllData() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DBNAME);
+        const request = indexedDB.open('AssetManager');
         
         request.onsuccess = (event) => {
             const db = event.target.result;
