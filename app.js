@@ -1277,6 +1277,8 @@ async function autoSyncFromGithub() {
                 
                 await addRecord('users', user);
 
+                // showConfirmEmailModal(itemId, memberId, member.name, subject, body);
+
                 await sendEmail(user.email, 'Welcome to Asset Manager Pro', `Hi ${user.name},\n\nYour account has been created!\n\nEmail: ${user.email}\nPassword: ${data.get('password')}\n\nPlease login to Asset Manager Pro.\n\nRegards,\n${currentUser.name}`);
 
                 alert('Member added & welcome email sent!');
