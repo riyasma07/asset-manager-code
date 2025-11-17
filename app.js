@@ -205,6 +205,7 @@ async function exportFullDatabase() {
     try {
         const users = await getAll('users');
         const items = await getAll('items');
+        const consumables = await getAll('consumables');
         const history = await getAll('history');
 
         return {
@@ -213,12 +214,14 @@ async function exportFullDatabase() {
             "exportedAt": new Date().toISOString(),
             "users": users,
             "items": items,
+            "consumables": consumables,
             "history": history
         };
     } catch (error) {
         throw new Error('Failed to export database: ' + error.message);
     }
 }
+
 
 // ===== AUTO SYNC WRAPPER (EASY TO CALL) =====
 async function autoSyncDatabaseToGithub() {
@@ -310,6 +313,13 @@ async function loadDatabaseFromGithub() {
                 await addRecord('items', item);
             }
         }
+
+        if (githubData.consumables && githubData.consumables.length > 0) {
+            for (let cons of githubData.consumables) {
+                await addRecord('consumables', cons);
+            }
+        }
+
         
         if (githubData.history && githubData.history.length > 0) {
             for (let record of githubData.history) {
@@ -329,7 +339,7 @@ async function loadDatabaseFromGithub() {
 // Helper function to clear all local data
 async function clearAllData() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('AssetManager');
+        const request = indexedDB.open(DBNAME);
         
         request.onsuccess = (event) => {
             const db = event.target.result;
@@ -766,7 +776,6 @@ async function autoSyncFromGithub() {
             } catch (e) {
                 console.error('Render error:', e);
             }
-            autoSyncDatabaseToGithub();
         }
 
         async function startEditConsumable(consId) {
@@ -797,6 +806,7 @@ async function autoSyncFromGithub() {
                 await updateRecord('consumables', cons);
                 alert('Consumable updated!');
                 editingConsumableId = null;
+                await autoSyncDatabaseToGithub();
                 renderConsumables();
             } catch (e) {
                 alert('Error: ' + e.message);
@@ -814,6 +824,7 @@ async function autoSyncFromGithub() {
             try {
                 await deleteRecord('consumables', consId);
                 alert('Consumable deleted!');
+                await autoSyncDatabaseToGithub();
                 renderConsumables();
             } catch (e) {
                 alert('Error: ' + e.message);
@@ -1000,6 +1011,7 @@ async function autoSyncFromGithub() {
                 alert('Quantity added!');
                 document.querySelector('.modal.show').remove();
                 document.getElementById('backdrop').classList.remove('show');
+                await autoSyncDatabaseToGithub();
                 renderConsumables();
             } catch (e) {
                 alert('Error: ' + e.message);
@@ -1086,6 +1098,7 @@ async function autoSyncFromGithub() {
 
                 document.querySelector('.modal.show').remove();
                 document.getElementById('backdrop').classList.remove('show');
+                await autoSyncDatabaseToGithub();
                 renderConsumables();
             } catch (e) {
                 alert('Error: ' + e.message);
