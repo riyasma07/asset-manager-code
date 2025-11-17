@@ -1276,12 +1276,9 @@ async function autoSyncFromGithub() {
                 };
                 
                 await addRecord('users', user);
+              
+                showEmailConfirmationModal(user.email, 'Welcome to Asset Manager Pro', `Hi ${user.name},\n\nYour account has been created!\n\nEmail: ${user.email}\nPassword: ${data.get('password')}\n\nPlease login to <a href="https://riyasma07.github.io/asset-manager-code/" target="_blank">Asset Manager Pro</a>.\n\nRegards,\n${currentUser.name}`);
 
-                // showConfirmEmailModal(itemId, memberId, member.name, subject, body);
-
-                await sendEmail(user.email, 'Welcome to Asset Manager Pro', `Hi ${user.name},\n\nYour account has been created!\n\nEmail: ${user.email}\nPassword: ${data.get('password')}\n\nPlease login to Asset Manager Pro.\n\nRegards,\n${currentUser.name}`);
-
-                alert('Member added & welcome email sent!');
                 e.target.reset();
                 closeModal('addMemberModal');
             } catch (e) {
@@ -1486,6 +1483,14 @@ async function autoSyncFromGithub() {
         emailBody: ''          // ← NEW
     };
 
+    let emailConfirmationState = {
+        recipient: null,
+        subject: null,
+        body: null,
+        retryCount: 0,
+        maxRetries: 3
+    };
+
 
 	// Show Confirmation Modal
 	function showConfirmEmailModal(itemId, memberId, memberName, emailSubject, emailBody) {
@@ -1654,6 +1659,204 @@ async function autoSyncFromGithub() {
 		};
 	}
 
+// ===== STANDALONE EMAIL CONFIRMATION MODAL =====
+    /**
+ * MAIN ENTRY POINT - Call this function with 3 arguments
+ * @param {string} recipient - Email address to send to
+ * @param {string} subject - Email subject line
+ * @param {string} body - Email body/message content
+ */
+function showEmailConfirmationModal(recipient, subject, body) {
+    emailConfirmationState.recipient = recipient;
+    emailConfirmationState.subject = subject;
+    emailConfirmationState.body = body;
+    emailConfirmationState.retryCount = 0;
+    
+    // Update confirmation message with recipient
+    document.getElementById('standaloneConfirmMessage').innerHTML = 
+        `Do you want to send an email to <strong>${recipient}</strong>?`;
+    
+    // Show confirmation modal
+    document.getElementById('standaloneEmailConfirmModal').classList.add('show');
+    console.log('✉️ Email confirmation modal opened for:', recipient);
+}
+
+/**
+ * User clicks "Yes, Send Email" button
+ * Closes confirmation modal and starts email sending process
+ */
+function standaloneProceedEmail() {
+    document.getElementById('standaloneEmailConfirmModal').classList.remove('show');
+    console.log('✅ User clicked: Yes, Send Email');
+    standaloneAttemptSendEmail();
+}
+
+/**
+ * User clicks "No, Skip" button
+ * Closes modal without sending email
+ */
+function standaloneSkipEmail() {
+    document.getElementById('standaloneEmailConfirmModal').classList.remove('show');
+    emailConfirmationState.retryCount = 0;
+    console.log('⏭️ User clicked: Skip Email');
+}
+
+// ===== LOADING MODAL FUNCTIONS =====
+
+/**
+ * Show loading spinner modal
+ * Called before attempting to send email
+ */
+function standaloneShowLoadingModal() {
+    document.getElementById('standaloneEmailLoadingModal').classList.add('show');
+    console.log('⏳ Showing loading modal...');
+}
+
+/**
+ * Hide loading spinner modal
+ * Called when email send attempt completes (success or failure)
+ */
+function standaloneHideLoadingModal() {
+    document.getElementById('standaloneEmailLoadingModal').classList.remove('show');
+    console.log('✓ Hiding loading modal');
+}
+
+// ===== SUCCESS MODAL FUNCTIONS =====
+
+/**
+ * Show success modal with checkmark
+ * Called when email is sent successfully
+ */
+function standaloneShowSuccessModal() {
+    standaloneHideLoadingModal();
+    document.getElementById('standaloneEmailSuccessModal').classList.add('show');
+    console.log('✅ Email sent successfully!');
+}
+
+/**
+ * Close success modal
+ * Called when user clicks "OK" on success modal
+ */
+function standaloneCloseSuccessModal() {
+    document.getElementById('standaloneEmailSuccessModal').classList.remove('show');
+    emailConfirmationState.retryCount = 0;
+    console.log('✓ Success modal closed');
+}
+
+// ===== ERROR MODAL FUNCTIONS =====
+
+/**
+ * Show error modal with retry option
+ * Called when email send fails but retries are available
+ */
+function standaloneShowErrorModal() {
+    standaloneHideLoadingModal();
+    const attemptNumber = emailConfirmationState.retryCount;
+    
+    document.getElementById('standaloneAttemptCount').textContent = attemptNumber;
+    document.getElementById('standaloneErrorMessage').innerHTML = 
+        `Failed to send email. Attempt <strong>${attemptNumber}</strong>/3`;
+    
+    document.getElementById('standaloneEmailErrorModal').classList.add('show');
+    console.log(`⚠️ Email failed. Attempt ${attemptNumber}/3`);
+}
+
+/**
+ * User clicks "Skip Email" on error modal
+ * Stops retrying and closes modal
+ */
+function standaloneSkipEmailFinal() {
+    document.getElementById('standaloneEmailErrorModal').classList.remove('show');
+    emailConfirmationState.retryCount = 0;
+    console.log('⏭️ User skipped email after error');
+}
+
+/**
+ * User clicks "Retry" on error modal
+ * Attempts to send email again
+ */
+function standaloneRetryEmail() {
+    document.getElementById('standaloneEmailErrorModal').classList.remove('show');
+    console.log('🔄 Retrying email send...');
+    standaloneAttemptSendEmail();
+}
+
+// ===== FINAL ERROR MODAL FUNCTIONS =====
+
+/**
+ * Show final error modal
+ * Called when all 3 retry attempts have failed
+ */
+function standaloneShowFinalErrorModal() {
+    standaloneHideLoadingModal();
+    document.getElementById('standaloneEmailFinalErrorModal').classList.add('show');
+    console.log('❌ Email failed after all 3 retry attempts');
+}
+
+/**
+ * Close final error modal
+ * Called when user clicks "OK" on final error modal
+ */
+function standaloneCloseFinalErrorModal() {
+    document.getElementById('standaloneEmailFinalErrorModal').classList.remove('show');
+    emailConfirmationState.retryCount = 0;
+    console.log('✓ Final error modal closed');
+}
+
+// ===== CORE EMAIL SENDING FUNCTION =====
+
+/**
+ * ATTEMPTS TO SEND EMAIL
+ * Shows loading modal, calls sendEmail(), handles success/failure
+ * Implements retry logic (max 3 attempts)
+ */
+async function standaloneAttemptSendEmail() {
+    // Show loading spinner
+    standaloneShowLoadingModal();
+    
+    // Increment retry counter
+    emailConfirmationState.retryCount++;
+    console.log(`📤 Attempt #${emailConfirmationState.retryCount} to send email...`);
+    
+    try {
+        // Call your existing sendEmail function
+        const result = await sendEmail(
+            emailConfirmationState.recipient,
+            emailConfirmationState.subject,
+            emailConfirmationState.body
+        );
+        
+        if (result.success) {
+            // ✅ Email sent successfully
+            console.log('✅ Email sent successfully on attempt', emailConfirmationState.retryCount);
+            standaloneShowSuccessModal();
+        } else {
+            // ❌ Email failed
+            console.warn('❌ Email send failed:', result.error);
+            
+            // Check if we can retry
+            if (emailConfirmationState.retryCount < emailConfirmationState.maxRetries) {
+                // Show error modal with retry option
+                standaloneShowErrorModal();
+            } else {
+                // All retries exhausted
+                standaloneShowFinalErrorModal();
+            }
+        }
+    } catch (error) {
+        // 🔴 Exception during email send
+        console.error('🔴 Email send exception:', error);
+        
+        // Check if we can retry
+        if (emailConfirmationState.retryCount < emailConfirmationState.maxRetries) {
+            // Show error modal with retry option
+            standaloneShowErrorModal();
+        } else {
+            // All retries exhausted
+            standaloneShowFinalErrorModal();
+        }
+    }
+}
 		
 // ===== PAGE LOAD INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', async function() {

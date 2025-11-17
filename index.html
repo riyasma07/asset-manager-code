@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset Manager Pro</title>
     <!-- Load CSS from GitHub repository via jsDelivr CDN -->
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/riyasma07/asset-manager-code@main/styles.css?v=1763366252"> -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/riyasma07/asset-manager-code@main/styles.css?v=1763400214">
+    <!-- <link rel="stylesheet" href="styles.css"> -->
 </head>
 <body>
 <!-- AUTH SCREEN (CENTERED) -->
@@ -577,11 +577,106 @@
 		</div>
 	</div>
 
-    
+    <!-- ========================================
+        STANDALONE EMAIL CONFIRMATION MODALS
+     ======================================== -->
+
+    <!-- CONFIRMATION MODAL: User decides Yes or No -->
+    <div class="modal-overlay" id="standaloneEmailConfirmModal">
+        <div class="email-modal">
+            <div class="email-modal-title">
+                <span class="email-modal-icon">📧</span>
+                Send Email Notification?
+            </div>
+            <div class="email-modal-message" id="standaloneConfirmMessage">
+                Do you want to send an email notification?
+            </div>
+            <div class="email-modal-buttons">
+                <button class="modal-btn btn-secondary" onclick="standaloneSkipEmail()">
+                    No, Skip
+                </button>
+                <button class="modal-btn btn-primary" onclick="standaloneProceedEmail()">
+                    Yes, Send Email
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADING MODAL: Shows spinner while email is being sent -->
+    <div class="modal-overlay" id="standaloneEmailLoadingModal">
+        <div class="email-modal">
+            <div class="email-modal-title">
+                <span class="email-modal-icon">⏳</span>
+                Sending Email...
+            </div>
+            <div class="spinner"></div>
+            <div class="email-modal-message" style="text-align: center;">
+                Please wait while we send the notification
+            </div>
+        </div>
+    </div>
+
+    <!-- SUCCESS MODAL: Email sent successfully -->
+    <div class="modal-overlay" id="standaloneEmailSuccessModal">
+        <div class="email-modal success">
+            <div class="success-checkmark">✅</div>
+            <div class="email-modal-title" style="justify-content: center;">
+                Success!
+            </div>
+            <div class="email-modal-message" id="standaloneSuccessMessage">
+                Email sent successfully!
+            </div>
+            <div class="email-modal-buttons" style="justify-content: center;">
+                <button class="modal-btn btn-primary" onclick="standaloneCloseSuccessModal()">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ERROR MODAL WITH RETRY: Email failed but retries available (attempt 1-2 of 3) -->
+    <div class="modal-overlay" id="standaloneEmailErrorModal">
+        <div class="email-modal error">
+            <div class="email-modal-title">
+                <span class="email-modal-icon">⚠️</span>
+                Email Failed
+            </div>
+            <div class="email-modal-message" id="standaloneErrorMessage">
+                Failed to send email. Attempt <strong id="standaloneAttemptCount">1</strong>/3
+            </div>
+            <div class="email-modal-buttons">
+                <button class="modal-btn btn-secondary" onclick="standaloneSkipEmailFinal()">
+                    Skip Email
+                </button>
+                <button class="modal-btn btn-primary" onclick="standaloneRetryEmail()">
+                    Retry
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINAL ERROR MODAL: All 3 retries exhausted -->
+    <div class="modal-overlay" id="standaloneEmailFinalErrorModal">
+        <div class="email-modal error">
+            <div class="email-modal-title">
+                <span class="email-modal-icon">❌</span>
+                Email Failed
+            </div>
+            <div class="email-modal-message">
+                Unable to send email after 3 attempts. Please try again later or contact support.
+            </div>
+            <div class="email-modal-buttons" style="justify-content: center;">
+                <button class="modal-btn btn-danger" onclick="standaloneCloseFinalErrorModal()">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Load JavaScript from GitHub repository via jsDelivr CDN -->
-    <!-- <script src="https://cdn.jsdelivr.net/gh/riyasma07/asset-manager-code@main/app.js?v=1763366252"></script> -->
-    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/riyasma07/asset-manager-code@main/app.js?v=1763400214"></script>
+    <!-- <script src="app.js"></script> -->
     
 </body>
 </html>
