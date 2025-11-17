@@ -1276,7 +1276,7 @@ async function autoSyncFromGithub() {
                 };
                 
                 await addRecord('users', user);
-
+              
                 showEmailConfirmationModal(user.email, 'Welcome to Asset Manager Pro', `Hi ${user.name},\n\nYour account has been created!\n\nEmail: ${user.email}\nPassword: ${data.get('password')}\n\nPlease login to <a href="https://riyasma07.github.io/asset-manager-code/" target="_blank">Asset Manager Pro</a>.\n\nRegards,\n${currentUser.name}`);
 
                 e.target.reset();
