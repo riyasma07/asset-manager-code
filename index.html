@@ -56,18 +56,25 @@
             <div class="card">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
                     <h2 style="font-size: 1.5rem; font-weight: 700;">📦 Inventory Items</h2>
-                    <span class="item-count-badge" id="itemsCount">0</span>
-                </div>
-                <!-- Search Bar for Assets -->
-                <div class="search-container">
-                    <input 
-                        type="text" 
-                        id="itemsSearchInput" 
-                        class="search-input" 
-                        placeholder="🔍 Search by name, serial, holder, status, or condition..." 
-                        onkeyup="searchItems()"
-                    />
-                    <button class="search-clear-btn" onclick="clearItemsSearch()" id="clearItemsBtn" style="display: none;">✕</button>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <!-- Search Icon and Expandable Input -->
+                        <div class="search-wrapper" id="itemsSearchWrapper">
+                            <button class="search-toggle-btn" onclick="toggleItemsSearch()" id="itemsSearchToggleBtn">
+                                🔍
+                            </button>
+                            <div class="search-expandable" id="itemsSearchExpandable">
+                                <input 
+                                    type="text" 
+                                    id="itemsSearchInput" 
+                                    class="search-input-expandable" 
+                                    placeholder="Search by name, serial, holder..." 
+                                    onkeyup="searchItems()"
+                                />
+                                <button class="search-clear-btn-inline" onclick="clearItemsSearch()" id="clearItemsBtn" style="display: none;">✕</button>
+                            </div>
+                        </div>
+                        <span class="item-count-badge" id="itemsCount">0</span>
+                    </div>
                 </div>
                 <div style="overflow-x: auto;">
                     <table id="itemsTable">
@@ -94,18 +101,25 @@
             <div class="card">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
                     <h2 style="font-size: 1.5rem; font-weight: 700;">🛒 Consumable Items</h2>
-                    <span class="item-count-badge" id="consumablesCount">0</span>
-                </div>
-                <!-- Search Bar for Consumables -->
-                <div class="search-container">
-                    <input 
-                        type="text" 
-                        id="consumablesSearchInput" 
-                        class="search-input" 
-                        placeholder="🔍 Search by name or part number..." 
-                        onkeyup="searchConsumables()"
-                    />
-                    <button class="search-clear-btn" onclick="clearConsumablesSearch()" id="clearConsumablesBtn" style="display: none;">✕</button>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <!-- Search Icon and Expandable Input -->
+                        <div class="search-wrapper" id="consumablesSearchWrapper">
+                            <button class="search-toggle-btn" onclick="toggleConsumablesSearch()" id="consumablesSearchToggleBtn">
+                                🔍
+                            </button>
+                            <div class="search-expandable" id="consumablesSearchExpandable">
+                                <input 
+                                    type="text" 
+                                    id="consumablesSearchInput" 
+                                    class="search-input-expandable" 
+                                    placeholder="Search by name or part number..." 
+                                    onkeyup="searchConsumables()"
+                                />
+                                <button class="search-clear-btn-inline" onclick="clearConsumablesSearch()" id="clearConsumablesBtn" style="display: none;">✕</button>
+                            </div>
+                        </div>
+                        <span class="item-count-badge" id="consumablesCount">0</span>
+                    </div>
                 </div>
                 <div style="overflow-x: auto;">
                     <table id="consumablesTable">

@@ -1898,6 +1898,48 @@ setInterval(() => {
     autoSyncDatabaseToGithub();
 }, 5 * 60 * 1000);
 
+// ===== ANIMATED SEARCH TOGGLE FUNCTIONS =====
+
+// Toggle Items Search Visibility
+function toggleItemsSearch() {
+    const expandable = document.getElementById('itemsSearchExpandable');
+    const toggleBtn = document.getElementById('itemsSearchToggleBtn');
+    const input = document.getElementById('itemsSearchInput');
+    
+    if (expandable.classList.contains('expanded')) {
+        // Close search
+        expandable.classList.remove('expanded');
+        toggleBtn.classList.remove('active');
+        input.value = '';
+        clearItemsSearch();
+    } else {
+        // Open search
+        expandable.classList.add('expanded');
+        toggleBtn.classList.add('active');
+        setTimeout(() => input.focus(), 300); // Focus after animation
+    }
+}
+
+// Toggle Consumables Search Visibility
+function toggleConsumablesSearch() {
+    const expandable = document.getElementById('consumablesSearchExpandable');
+    const toggleBtn = document.getElementById('consumablesSearchToggleBtn');
+    const input = document.getElementById('consumablesSearchInput');
+    
+    if (expandable.classList.contains('expanded')) {
+        // Close search
+        expandable.classList.remove('expanded');
+        toggleBtn.classList.remove('active');
+        input.value = '';
+        clearConsumablesSearch();
+    } else {
+        // Open search
+        expandable.classList.add('expanded');
+        toggleBtn.classList.add('active');
+        setTimeout(() => input.focus(), 300); // Focus after animation
+    }
+}
+
 // ===== SEARCH FUNCTIONALITY =====
 
 // Search Items (Assets)
@@ -1956,7 +1998,8 @@ function searchItems() {
 function clearItemsSearch() {
     const input = document.getElementById('itemsSearchInput');
     input.value = '';
-    document.getElementById('clearItemsBtn').style.display = 'none';
+    const clearBtn = document.getElementById('clearItemsBtn');
+    if (clearBtn) clearBtn.style.display = 'none';
     searchItems();
 }
 
@@ -2014,6 +2057,7 @@ function searchConsumables() {
 function clearConsumablesSearch() {
     const input = document.getElementById('consumablesSearchInput');
     input.value = '';
-    document.getElementById('clearConsumablesBtn').style.display = 'none';
+    const clearBtn = document.getElementById('clearConsumablesBtn');
+    if (clearBtn) clearBtn.style.display = 'none';
     searchConsumables();
 }
