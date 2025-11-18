@@ -639,9 +639,8 @@ async function autoSyncFromGithub() {
                 const items = await getAll('items');
                 document.getElementById('itemsCount').textContent = items.length;
                 const tbody = document.getElementById('itemsBody');
-
                 if (!items.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No items found</td></tr>';
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No items found</td></tr>`;
                     return;
                 }
 
@@ -655,10 +654,10 @@ async function autoSyncFromGithub() {
                     if (isAdmin) {
                         actions = `
                             <button class="btn-icon" onclick="startEditItem(${item.id})" title="Edit">✏️</button>
-                            <button class="btn-icon" onclick="openHistory(${item.id})" title="History">📜</button>
-                            ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">📤</button>` : ''}
-                            ${hasHolder ? `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">↩️</button>` : ''}
-                            <button class="btn-icon" onclick="openNotifyModal(${item.id})" title="Notify">🔔</button>
+                            <button class="btn-icon" onclick="openHistory(${item.id})" title="History">📋</button>
+                            ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">➕</button>` : ''}
+                            ${hasHolder ? `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">🔙</button>` : ''}
+                            ${hasHolder ? `<button class="btn-icon" onclick="notifyHolder(${item.id}, '${item.holder.replace(/'/g, "\\'")}')" title="Notify Holder">🔔</button>` : ''}
                         `;
                     }
 
@@ -677,6 +676,43 @@ async function autoSyncFromGithub() {
                 console.error('Render error:', e);
             }
             autoSyncDatabaseToGithub();
+        }
+
+        // ===== NOTIFY HOLDER - SMART EMAIL WITH FULL WORKFLOW =====
+        async function notifyHolder(itemId, holderName) {
+            try {
+                console.log(`Notifying holder: ${holderName} for item ID: ${itemId}`);
+                
+                // 1. Get the item details
+                const item = await getOne('items', itemId);
+                if (!item) {
+                    alert('Item not found!');
+                    return;
+                }
+                
+                // 2. Get all users to find the holder's email
+                const users = await getAll('users');
+                const holder = users.find(u => u.name === holderName);
+                
+                if (!holder || !holder.email) {
+                    alert(`Cannot find email for ${holderName}. Please check member database.`);
+                    return;
+                }
+                
+                console.log(`Found holder email: ${holder.email}`);
+                
+                // 3. Prepare email content
+                const subject = `Asset Notification: ${item.name}`;
+                const body = `Hi ${holder.name},\n\nThis is a friendly reminder that you currently have the following asset assigned to you:\n\n📦 Asset: ${item.name}\n🔢 Serial Number: ${item.serial}\n\nWe kindly request you to return this asset at your earliest convenience.\n\nThank you for your cooperation!\n\nRegards,\n${currentUser.name}`;
+                
+                // 4. Use the COMPLETE standalone email workflow
+                // This includes: confirmation modal, loading spinner, success/error, retry logic
+                showEmailConfirmationModal(holder.email, subject, body);
+                
+            } catch (error) {
+                console.error('Error in notifyHolder:', error);
+                alert('Failed to notify holder: ' + error.message);
+            }
         }
 
         // FIXED EDIT FUNCTION - NO QUERYSELECTOR ERROR
