@@ -1897,3 +1897,123 @@ document.addEventListener('DOMContentLoaded', async function() {
 setInterval(() => {
     autoSyncDatabaseToGithub();
 }, 5 * 60 * 1000);
+
+// ===== SEARCH FUNCTIONALITY =====
+
+// Search Items (Assets)
+function searchItems() {
+    const input = document.getElementById('itemsSearchInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('itemsTable');
+    const tbody = document.getElementById('itemsBody');
+    const rows = tbody.getElementsByTagName('tr');
+    const clearBtn = document.getElementById('clearItemsBtn');
+    
+    // Show/hide clear button
+    clearBtn.style.display = filter ? 'block' : 'none';
+    
+    let visibleCount = 0;
+    
+    // If search is empty, show all rows
+    if (!filter) {
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].classList.remove('table-row-hidden');
+            rows[i].classList.add('table-row-visible');
+        }
+        return;
+    }
+    
+    // Filter rows
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.getElementsByTagName('td');
+        
+        if (cells.length === 0) continue; // Skip empty rows
+        
+        // Search through: name, serial, holder, status, condition
+        const name = cells[0]?.textContent || '';
+        const serial = cells[1]?.textContent || '';
+        const holder = cells[2]?.textContent || '';
+        const status = cells[3]?.textContent || '';
+        const condition = cells[4]?.textContent || '';
+        
+        const searchText = `${name} ${serial} ${holder} ${status} ${condition}`.toLowerCase();
+        
+        if (searchText.includes(filter)) {
+            row.classList.remove('table-row-hidden');
+            row.classList.add('table-row-visible');
+            visibleCount++;
+        } else {
+            row.classList.add('table-row-hidden');
+            row.classList.remove('table-row-visible');
+        }
+    }
+    
+    console.log(`Search: ${visibleCount} items found for "${filter}"`);
+}
+
+// Clear Items Search
+function clearItemsSearch() {
+    const input = document.getElementById('itemsSearchInput');
+    input.value = '';
+    document.getElementById('clearItemsBtn').style.display = 'none';
+    searchItems();
+}
+
+// Search Consumables
+function searchConsumables() {
+    const input = document.getElementById('consumablesSearchInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('consumablesTable');
+    const tbody = document.getElementById('consumablesBody');
+    const rows = tbody.getElementsByTagName('tr');
+    const clearBtn = document.getElementById('clearConsumablesBtn');
+    
+    // Show/hide clear button
+    clearBtn.style.display = filter ? 'block' : 'none';
+    
+    let visibleCount = 0;
+    
+    // If search is empty, show all rows
+    if (!filter) {
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].classList.remove('table-row-hidden');
+            rows[i].classList.add('table-row-visible');
+        }
+        return;
+    }
+    
+    // Filter rows
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.getElementsByTagName('td');
+        
+        if (cells.length === 0) continue; // Skip empty rows
+        
+        // Search through: name, part number, quantity
+        const name = cells[0]?.textContent || '';
+        const partNumber = cells[1]?.textContent || '';
+        const quantity = cells[2]?.textContent || '';
+        
+        const searchText = `${name} ${partNumber} ${quantity}`.toLowerCase();
+        
+        if (searchText.includes(filter)) {
+            row.classList.remove('table-row-hidden');
+            row.classList.add('table-row-visible');
+            visibleCount++;
+        } else {
+            row.classList.add('table-row-hidden');
+            row.classList.remove('table-row-visible');
+        }
+    }
+    
+    console.log(`Search: ${visibleCount} consumables found for "${filter}"`);
+}
+
+// Clear Consumables Search
+function clearConsumablesSearch() {
+    const input = document.getElementById('consumablesSearchInput');
+    input.value = '';
+    document.getElementById('clearConsumablesBtn').style.display = 'none';
+    searchConsumables();
+}
