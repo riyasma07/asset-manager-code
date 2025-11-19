@@ -639,9 +639,8 @@ async function autoSyncFromGithub() {
                 const items = await getAll('items');
                 document.getElementById('itemsCount').textContent = items.length;
                 const tbody = document.getElementById('itemsBody');
-
                 if (!items.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No items found</td></tr>';
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No items found</td></tr>`;
                     return;
                 }
 
@@ -655,10 +654,10 @@ async function autoSyncFromGithub() {
                     if (isAdmin) {
                         actions = `
                             <button class="btn-icon" onclick="startEditItem(${item.id})" title="Edit">✏️</button>
-                            <button class="btn-icon" onclick="openHistory(${item.id})" title="History">📜</button>
-                            ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">📤</button>` : ''}
-                            ${hasHolder ? `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">↩️</button>` : ''}
-                            <button class="btn-icon" onclick="openNotifyModal(${item.id})" title="Notify">🔔</button>
+                            <button class="btn-icon" onclick="openHistory(${item.id})" title="History">📋</button>
+                            ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">➕</button>` : ''}
+                            ${hasHolder ? `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">🔙</button>` : ''}
+                            ${hasHolder ? `<button class="btn-icon" onclick="notifyHolder(${item.id}, '${item.holder.replace(/'/g, "\\'")}')" title="Notify Holder">🔔</button>` : ''}
                         `;
                     }
 
@@ -677,6 +676,43 @@ async function autoSyncFromGithub() {
                 console.error('Render error:', e);
             }
             autoSyncDatabaseToGithub();
+        }
+
+        // ===== NOTIFY HOLDER - SMART EMAIL WITH FULL WORKFLOW =====
+        async function notifyHolder(itemId, holderName) {
+            try {
+                console.log(`Notifying holder: ${holderName} for item ID: ${itemId}`);
+                
+                // 1. Get the item details
+                const item = await getOne('items', itemId);
+                if (!item) {
+                    alert('Item not found!');
+                    return;
+                }
+                
+                // 2. Get all users to find the holder's email
+                const users = await getAll('users');
+                const holder = users.find(u => u.name === holderName);
+                
+                if (!holder || !holder.email) {
+                    alert(`Cannot find email for ${holderName}. Please check member database.`);
+                    return;
+                }
+                
+                console.log(`Found holder email: ${holder.email}`);
+                
+                // 3. Prepare email content
+                const subject = `Asset Notification: ${item.name}`;
+                const body = `Hi ${holder.name},\n\nThis is a friendly reminder that you currently have the following asset assigned to you:\n\n📦 Asset: ${item.name}\n🔢 Serial Number: ${item.serial}\n\nWe kindly request you to return this asset at your earliest convenience.\n\nThank you for your cooperation!\n\nRegards,\n${currentUser.name}`;
+                
+                // 4. Use the COMPLETE standalone email workflow
+                // This includes: confirmation modal, loading spinner, success/error, retry logic
+                showEmailConfirmationModal(holder.email, subject, body);
+                
+            } catch (error) {
+                console.error('Error in notifyHolder:', error);
+                alert('Failed to notify holder: ' + error.message);
+            }
         }
 
         // FIXED EDIT FUNCTION - NO QUERYSELECTOR ERROR
@@ -1897,3 +1933,167 @@ document.addEventListener('DOMContentLoaded', async function() {
 setInterval(() => {
     autoSyncDatabaseToGithub();
 }, 5 * 60 * 1000);
+
+// ===== ANIMATED SEARCH TOGGLE FUNCTIONS =====
+
+// Toggle Items Search Visibility
+function toggleItemsSearch() {
+    const expandable = document.getElementById('itemsSearchExpandable');
+    const toggleBtn = document.getElementById('itemsSearchToggleBtn');
+    const input = document.getElementById('itemsSearchInput');
+    
+    if (expandable.classList.contains('expanded')) {
+        // Close search
+        expandable.classList.remove('expanded');
+        toggleBtn.classList.remove('active');
+        input.value = '';
+        clearItemsSearch();
+    } else {
+        // Open search
+        expandable.classList.add('expanded');
+        toggleBtn.classList.add('active');
+        setTimeout(() => input.focus(), 300); // Focus after animation
+    }
+}
+
+// Toggle Consumables Search Visibility
+function toggleConsumablesSearch() {
+    const expandable = document.getElementById('consumablesSearchExpandable');
+    const toggleBtn = document.getElementById('consumablesSearchToggleBtn');
+    const input = document.getElementById('consumablesSearchInput');
+    
+    if (expandable.classList.contains('expanded')) {
+        // Close search
+        expandable.classList.remove('expanded');
+        toggleBtn.classList.remove('active');
+        input.value = '';
+        clearConsumablesSearch();
+    } else {
+        // Open search
+        expandable.classList.add('expanded');
+        toggleBtn.classList.add('active');
+        setTimeout(() => input.focus(), 300); // Focus after animation
+    }
+}
+
+// ===== SEARCH FUNCTIONALITY =====
+
+// Search Items (Assets)
+function searchItems() {
+    const input = document.getElementById('itemsSearchInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('itemsTable');
+    const tbody = document.getElementById('itemsBody');
+    const rows = tbody.getElementsByTagName('tr');
+    const clearBtn = document.getElementById('clearItemsBtn');
+    
+    // Show/hide clear button
+    clearBtn.style.display = filter ? 'block' : 'none';
+    
+    let visibleCount = 0;
+    
+    // If search is empty, show all rows
+    if (!filter) {
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].classList.remove('table-row-hidden');
+            rows[i].classList.add('table-row-visible');
+        }
+        return;
+    }
+    
+    // Filter rows
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.getElementsByTagName('td');
+        
+        if (cells.length === 0) continue; // Skip empty rows
+        
+        // Search through: name, serial, holder, status, condition
+        const name = cells[0]?.textContent || '';
+        const serial = cells[1]?.textContent || '';
+        const holder = cells[2]?.textContent || '';
+        const status = cells[3]?.textContent || '';
+        const condition = cells[4]?.textContent || '';
+        
+        const searchText = `${name} ${serial} ${holder} ${status} ${condition}`.toLowerCase();
+        
+        if (searchText.includes(filter)) {
+            row.classList.remove('table-row-hidden');
+            row.classList.add('table-row-visible');
+            visibleCount++;
+        } else {
+            row.classList.add('table-row-hidden');
+            row.classList.remove('table-row-visible');
+        }
+    }
+    
+    console.log(`Search: ${visibleCount} items found for "${filter}"`);
+}
+
+// Clear Items Search
+function clearItemsSearch() {
+    const input = document.getElementById('itemsSearchInput');
+    input.value = '';
+    const clearBtn = document.getElementById('clearItemsBtn');
+    if (clearBtn) clearBtn.style.display = 'none';
+    searchItems();
+}
+
+// Search Consumables
+function searchConsumables() {
+    const input = document.getElementById('consumablesSearchInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('consumablesTable');
+    const tbody = document.getElementById('consumablesBody');
+    const rows = tbody.getElementsByTagName('tr');
+    const clearBtn = document.getElementById('clearConsumablesBtn');
+    
+    // Show/hide clear button
+    clearBtn.style.display = filter ? 'block' : 'none';
+    
+    let visibleCount = 0;
+    
+    // If search is empty, show all rows
+    if (!filter) {
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].classList.remove('table-row-hidden');
+            rows[i].classList.add('table-row-visible');
+        }
+        return;
+    }
+    
+    // Filter rows
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.getElementsByTagName('td');
+        
+        if (cells.length === 0) continue; // Skip empty rows
+        
+        // Search through: name, part number, quantity
+        const name = cells[0]?.textContent || '';
+        const partNumber = cells[1]?.textContent || '';
+        const quantity = cells[2]?.textContent || '';
+        
+        const searchText = `${name} ${partNumber} ${quantity}`.toLowerCase();
+        
+        if (searchText.includes(filter)) {
+            row.classList.remove('table-row-hidden');
+            row.classList.add('table-row-visible');
+            visibleCount++;
+        } else {
+            row.classList.add('table-row-hidden');
+            row.classList.remove('table-row-visible');
+        }
+    }
+    
+    console.log(`Search: ${visibleCount} consumables found for "${filter}"`);
+}
+
+// Clear Consumables Search
+function clearConsumablesSearch() {
+    const input = document.getElementById('consumablesSearchInput');
+    input.value = '';
+    const clearBtn = document.getElementById('clearConsumablesBtn');
+    if (clearBtn) clearBtn.style.display = 'none';
+    searchConsumables();
+}
