@@ -365,14 +365,17 @@ async function clearAllData() {
         // ===== DATABASE =====
         async function initDB() {
             return new Promise((resolve, reject) => {
-                const req = indexedDB.open(DBNAME, 2);
+                const req = indexedDB.open(DBNAME, 3);  // ← Changed from 2 to 3
+                
                 req.onerror = () => reject(req.error);
                 req.onsuccess = () => {
                     db = req.result;
                     resolve(db);
                 };
+                
                 req.onupgradeneeded = (e) => {
                     const database = e.target.result;
+                    
                     if (!database.objectStoreNames.contains('users')) {
                         database.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
                     }
@@ -384,6 +387,10 @@ async function clearAllData() {
                     }
                     if (!database.objectStoreNames.contains('history')) {
                         database.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
+                    }
+                    // ✅ NEW: Add session store
+                    if (!database.objectStoreNames.contains('session')) {
+                        database.createObjectStore('session', { keyPath: 'id' });
                     }
                 };
             });
@@ -442,6 +449,75 @@ async function clearAllData() {
                 req.onsuccess = () => resolve();
                 req.onerror = () => reject(req.error);
             });
+        }
+
+        // ===== SESSION MANAGEMENT =====
+
+        // Save current user session
+        async function saveSession(user) {
+            try {
+                const sessionData = {
+                    id: 'current',
+                    user: user,
+                    timestamp: Date.now(),  // ✅ Add timestamp
+                    expiresIn: 24 * 60 * 60 * 1000  // 24 hours in milliseconds
+                };
+                
+                const tx = db.transaction('session', 'readwrite');
+                const store = tx.objectStore('session');
+                await store.put(sessionData);
+                console.log('✅ Session saved (expires in 24h)');
+            } catch (error) {
+                console.error('Failed to save session:', error);
+            }
+        }
+
+        // Load saved session
+        async function loadSession() {
+            try {
+                const tx = db.transaction('session', 'readonly');
+                const store = tx.objectStore('session');
+                const request = store.get('current');
+                
+                return new Promise((resolve, reject) => {
+                    request.onsuccess = () => {
+                        if (request.result && request.result.user) {
+                            const sessionData = request.result;
+                            const now = Date.now();
+                            const elapsed = now - sessionData.timestamp;
+                            
+                            // ✅ Check if session expired
+                            if (elapsed > sessionData.expiresIn) {
+                                console.log('⚠️ Session expired');
+                                // Clear expired session
+                                clearSession();
+                                resolve(null);
+                            } else {
+                                console.log('✅ Session loaded (valid)');
+                                resolve(sessionData.user);
+                            }
+                        } else {
+                            resolve(null);
+                        }
+                    };
+                    request.onerror = () => reject(request.error);
+                });
+            } catch (error) {
+                console.error('Failed to load session:', error);
+                return null;
+            }
+        }
+
+        // Clear session (on logout)
+        async function clearSession() {
+            try {
+                const tx = db.transaction('session', 'readwrite');
+                const store = tx.objectStore('session');
+                await store.delete('current');
+                console.log('✅ Session cleared');
+            } catch (error) {
+                console.error('Failed to clear session:', error);
+            }
         }
 
         // ===== INTELLIGENT AUTO-SYNC (MERGES DATA - PRESERVES NEW LOCAL ITEMS) =====
@@ -905,8 +981,6 @@ async function autoSyncFromGithub() {
 
                 const subject = `Asset Assigned: ${item.name}`;
                 const body = `Hi ${member.name},\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`;
-
-                console.log("Before Calling showConfirmEmailModal in openAssignModal");
 
                 showConfirmEmailModal(itemId, memberId, member.name, subject, body);
 				
@@ -1455,7 +1529,9 @@ async function autoSyncFromGithub() {
             }
         }
 
-        function logout() {
+        async function logout() {
+            // Clear session
+            await clearSession();
             currentUser = null;
             isAdmin = false;
             document.getElementById('authScreen').classList.remove('hidden');
@@ -1505,6 +1581,10 @@ async function autoSyncFromGithub() {
                 
                 currentUser = user;
                 isAdmin = user.isAdmin || false;
+
+                // Save session
+                await saveSession(user);
+
                 showMainApp();
             } catch (e) {
                 alert('Error: ' + e.message);
@@ -1551,15 +1631,11 @@ async function autoSyncFromGithub() {
             emailSubject: emailSubject,
             emailBody: emailBody
 		};
-		
-        console.log("showConfirmEmailModal Called");
 
 		const confirmMessage = document.getElementById('confirmMessage');
 		confirmMessage.innerHTML = `Do you want to send an email notification to <strong>${memberName}</strong>?`;
 		
 		document.getElementById('emailConfirmModal').classList.add('show');
-
-        console.log("showConfirmEmailModal Ended");
 	}
 
 	function closeConfirmEmailModal() {
@@ -1912,20 +1988,43 @@ document.addEventListener('DOMContentLoaded', async function() {
     console.log('App starting...');
     
     try {
-        // Step 1: Load latest data from GitHub
+        // Step 1: Initialize database
+        console.log('Initializing database...');
+        await initDB();
+        
+        // Step 2: Load latest data from GitHub
         console.log('Loading database from GitHub...');
         await loadDatabaseFromGithub();
         
-        // Step 2: Refresh UI with loaded data
-        console.log('Rendering items...');
-        await renderItems();
-
+        // Step 3: Check for saved session
+        console.log('Checking for saved session...');
+        const savedUser = await loadSession();
+        
+        if (savedUser) {
+            // User was logged in before - auto-login
+            console.log('✅ Found saved session for:', savedUser.name);
+            currentUser = savedUser;
+            isAdmin = savedUser.isAdmin || false;
+            
+            // Show main app immediately
+            await showMainApp();
+            
+            console.log('✅ Auto-login successful!');
+        } else {
+            // No saved session - show login screen
+            console.log('No saved session. Showing login screen.');
+            document.getElementById('authScreen').classList.add('show');  // ← Changed: add 'show' class
+        }
+        
         console.log('✅ App ready!');
     } catch (error) {
         console.error('Startup error:', error);
-        // Fallback: still display UI with local data
-        await renderItems();
+        // Fallback: show login screen
+        document.getElementById('authScreen').classList.add('show');  // ← Changed: add 'show' class
     }
+    
+    // Optional: Auto-sync every 5 minutes
+    setInterval(autoSyncDatabaseToGithub, 5 * 60 * 1000);
 });
 
 
