@@ -24,7 +24,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            background: transparent;  /* ✅ Changed from gradient to transparent */
             padding: 2rem 1rem;
             overflow-y: auto;
         }

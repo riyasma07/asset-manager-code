@@ -1530,11 +1530,20 @@ async function autoSyncFromGithub() {
         }
 
         async function logout() {
-            // Clear session
             await clearSession();
             currentUser = null;
             isAdmin = false;
-            document.getElementById('authScreen').classList.remove('hidden');
+            
+            // Close settings panel
+            document.getElementById('settingsPanel').classList.remove('open');
+            document.getElementById('backdrop').classList.remove('show');
+            
+            // Show login screen
+            const authScreen = document.getElementById('authScreen');
+            authScreen.classList.remove('hidden');
+            authScreen.style.display = 'flex';
+            
+            // Hide main app
             document.getElementById('mainHeader').classList.add('hidden');
             document.getElementById('mainContent').classList.add('hidden');
         }
