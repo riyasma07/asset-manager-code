@@ -716,5 +716,24 @@
     <!-- <script src="https://cdn.jsdelivr.net/gh/riyasma07/asset-manager-code@mDev/app.js?v=1763405283"></script> -->
     <script src="app.js"></script>
     
+    <!-- Custom Alert Modal -->
+    <div id="customAlertModal" class="alert-overlay" style="display: none;">
+        <div class="custom-alert-modal">
+            <div class="custom-alert-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <div class="custom-alert-content">
+                <p id="customAlertMessage"></p>
+            </div>
+            <div class="custom-alert-actions">
+                <button id="customAlertOkBtn" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+    
 </body>
 </html>
