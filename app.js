@@ -872,7 +872,6 @@ async function autoSyncFromGithub() {
                             <button class="btn-icon" onclick="startEditConsumable(${cons.id})" title="Edit">✏️</button>
                             <button class="btn-icon" onclick="openAddQtyModal(${cons.id})" title="Add Qty">➕</button>
                             <button class="btn-icon" onclick="openAssignConsModal(${cons.id})" title="Assign">📤</button>
-                            <button class="btn-icon" onclick="deleteConsumable(${cons.id})" title="Delete">🗑️</button>
                         `;
                     }
 
@@ -901,6 +900,7 @@ async function autoSyncFromGithub() {
                 document.getElementById(`cons-actions-${consId}`).innerHTML = `
                     <button class="btn btn-sm btn-success" onclick="saveEditConsumable(${consId})">Save</button>
                     <button class="btn btn-sm btn-secondary" onclick="cancelEditConsumable()">Cancel</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteConsumable(${consId})">Delete</button>
                 `;
 
                 document.getElementById(`edit-cons-name-${consId}`).focus();
@@ -918,12 +918,11 @@ async function autoSyncFromGithub() {
                 await updateRecord('consumables', cons);
                 alert('Consumable updated!');
                 editingConsumableId = null;
-                await autoSyncDatabaseToGithub();
                 renderConsumables();
             } catch (e) {
                 alert('Error: ' + e.message);
             }
-			autoSyncDatabaseToGithub();
+			await autoSyncDatabaseToGithub();
         }
 
         function cancelEditConsumable() {
@@ -936,11 +935,11 @@ async function autoSyncFromGithub() {
             try {
                 await deleteRecord('consumables', consId);
                 alert('Consumable deleted!');
-                await autoSyncDatabaseToGithub();
                 renderConsumables();
             } catch (e) {
                 alert('Error: ' + e.message);
             }
+            await autoSyncDatabaseToGithub();
         }
 
         // ===== ASSIGN ITEM =====
