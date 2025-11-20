@@ -24,15 +24,98 @@
 	// Optional: Auto-sync interval (every 5 minutes)
 	const AUTO_SYNC_INTERVAL = 5 * 60 * 1000; // milliseconds
 
-    // Define at the top of your app.js or before first use:
-    // const githubConfig = {
-    //   owner: GITHUB_OWNER,          // Your GitHub username or org
-    //   repo: GITHUB_REPO_DATA,   // Target repo
-    //   token: null, // GitHub PAT (Personal Access Token)
-    //   branch: GITHUB_BRANCH                 // Branch to work on (e.g. "Dev")
-    // };
+    // Alert type constants
+    const SUCCESS_ALERT = 'success';
+    const FAILURE_ALERT = 'failure';
+    const NORMAL_ALERT = 'normal';
 
-
+        // ===== CUSTOM ALERT MODAL =====
+    function showAlert(message, type = NORMAL_ALERT) {
+        const modal = document.getElementById('customAlertModal');
+        
+        if (!modal) {
+            console.log('Alert:', message);
+            return;
+        }
+        
+        const messageEl = document.getElementById('customAlertMessage');
+        const okBtn = document.getElementById('customAlertOkBtn');
+        const iconEl = modal.querySelector('.custom-alert-icon');
+        const modalBox = modal.querySelector('.custom-alert-modal');
+        
+        // Set message
+        messageEl.textContent = message;
+        
+        // Remove all theme classes
+        modalBox.classList.remove('alert-success', 'alert-failure', 'alert-normal');
+        
+        // Apply theme based on type
+        let iconHTML = '';
+        
+        switch(type) {
+            case SUCCESS_ALERT:
+                modalBox.classList.add('alert-success');
+                iconHTML = `
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="9 11 12 14 15 10"></polyline>
+                    </svg>
+                `;
+                break;
+                
+            case FAILURE_ALERT:
+                modalBox.classList.add('alert-failure');
+                iconHTML = `
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                `;
+                break;
+                
+            case NORMAL_ALERT:
+            default:
+                modalBox.classList.add('alert-normal');
+                iconHTML = `
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                `;
+        }
+        
+        iconEl.innerHTML = iconHTML;
+        
+        // Show modal
+        modal.style.display = 'flex';
+        okBtn.focus();
+        
+        // Close handlers
+        const closeModal = () => {
+            modal.style.display = 'none';
+            okBtn.removeEventListener('click', closeModal);
+            modal.removeEventListener('click', outsideClick);
+            document.removeEventListener('keydown', escapeKey);
+        };
+        
+        const outsideClick = (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        };
+        
+        const escapeKey = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        };
+        
+        okBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', outsideClick);
+        document.addEventListener('keydown', escapeKey);
+    }
 
 		// ===== PUSH DATABASE WITH FORCE REPLACE (NO HISTORY) =====
     async function pushDatabaseToGitHub(databaseObject, token, repoOwner, repoName, branchName) {
@@ -762,7 +845,7 @@ async function autoSyncFromGithub() {
                 // 1. Get the item details
                 const item = await getOne('items', itemId);
                 if (!item) {
-                    alert('Item not found!');
+                    showAlert('Item not found!', FAILURE_ALERT);
                     return;
                 }
                 
@@ -771,7 +854,7 @@ async function autoSyncFromGithub() {
                 const holder = users.find(u => u.name === holderName);
                 
                 if (!holder || !holder.email) {
-                    alert(`Cannot find email for ${holderName}. Please check member database.`);
+                    showAlert(`Cannot find email for ${holderName}. Please check member database.`, FAILURE_ALERT);
                     return;
                 }
                 
@@ -787,7 +870,7 @@ async function autoSyncFromGithub() {
                 
             } catch (error) {
                 console.error('Error in notifyHolder:', error);
-                alert('Failed to notify holder: ' + error.message);
+                showAlert('Failed to notify holder: ' + error.message, FAILURE_ALERT);
             }
         }
 
@@ -815,7 +898,7 @@ async function autoSyncFromGithub() {
 
                 document.getElementById(`edit-name-${itemId}`).focus();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -827,12 +910,12 @@ async function autoSyncFromGithub() {
                 item.condition = document.getElementById(`edit-cond-${itemId}`).value;
                 
                 await updateRecord('items', item);
-                alert('Item updated!');
+                showAlert('Item updated!', SUCCESS_ALERT);
                 editingItemId = null;
                 renderItems();
 				autoSyncDatabaseToGithub();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -845,11 +928,11 @@ async function autoSyncFromGithub() {
             if (!confirm('Delete this item?')) return;
             try {
                 await deleteRecord('items', itemId);
-                alert('Item deleted!');
+                showAlert('Item deleted!', SUCCESS_ALERT);
                 renderItems();
 				autoSyncDatabaseToGithub();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -905,7 +988,7 @@ async function autoSyncFromGithub() {
 
                 document.getElementById(`edit-cons-name-${consId}`).focus();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -916,11 +999,11 @@ async function autoSyncFromGithub() {
                 cons.partNumber = document.getElementById(`edit-cons-part-${consId}`).value;
                 
                 await updateRecord('consumables', cons);
-                alert('Consumable updated!');
+                showAlert('Consumable updated!', SUCCESS_ALERT);
                 editingConsumableId = null;
                 renderConsumables();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
 			await autoSyncDatabaseToGithub();
         }
@@ -934,10 +1017,10 @@ async function autoSyncFromGithub() {
             if (!confirm('Delete this consumable?')) return;
             try {
                 await deleteRecord('consumables', consId);
-                alert('Consumable deleted!');
+                showAlert('Consumable deleted!', SUCCESS_ALERT);
                 renderConsumables();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
             await autoSyncDatabaseToGithub();
         }
@@ -951,7 +1034,7 @@ async function autoSyncFromGithub() {
                 select.innerHTML = '<option value="">Choose member</option>' + members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
                 openModal('assignItemModal');
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -960,7 +1043,7 @@ async function autoSyncFromGithub() {
             try {
                 const itemId = assignItemId;
                 const memberId = parseInt(document.getElementById('assignMember').value);
-                if (!memberId) { alert('Select member'); return; }
+                if (!memberId) { showAlert('Select member', NORMAL_ALERT); return; }
 
                 const item = await getOne('items', itemId);
                 const member = await getOne('users', memberId);
@@ -986,7 +1069,7 @@ async function autoSyncFromGithub() {
 				autoSyncDatabaseToGithub();
 				
                 closeModal('assignItemModal'); renderItems(); } catch (e)
-                { alert('Error: ' + e.message); } });
+                { showAlert('Error: ' + e.message, FAILURE_ALERT); } });
 
         // ===== RETURN ITEM =====
         async function openReturnModal(itemId) {
@@ -996,7 +1079,7 @@ async function autoSyncFromGithub() {
                 document.getElementById('returnItemInfo').textContent = `Item: ${item.name} | Holder: ${item.holder}`;
                 openModal('returnItemModal');
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -1029,7 +1112,7 @@ async function autoSyncFromGithub() {
 
                 renderItems();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -1056,7 +1139,7 @@ async function autoSyncFromGithub() {
 
                 openModal('historyModal');
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -1093,14 +1176,14 @@ async function autoSyncFromGithub() {
                 backdrop.classList.add('show');
                 document.getElementById('addQtyInput').focus();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
         async function confirmAddQty(consId) {
             try {
                 const qtyToAdd = parseInt(document.getElementById('addQtyInput').value);
-                if (!qtyToAdd || qtyToAdd < 1) { alert('Enter valid quantity'); return; }
+                if (!qtyToAdd || qtyToAdd < 1) { showAlert('Enter valid quantity', NORMAL_ALERT); return; }
 
                 const cons = await getOne('consumables', consId);
                 cons.quantity += qtyToAdd;
@@ -1117,13 +1200,13 @@ async function autoSyncFromGithub() {
                     user: currentUser.name
                 });
 
-                alert('Quantity added!');
+                showAlert('Quantity added!', SUCCESS_ALERT);
                 document.querySelector('.modal.show').remove();
                 document.getElementById('backdrop').classList.remove('show');
                 await autoSyncDatabaseToGithub();
                 renderConsumables();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -1170,7 +1253,7 @@ async function autoSyncFromGithub() {
                 document.body.appendChild(modal);
                 backdrop.classList.add('show');
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -1179,10 +1262,10 @@ async function autoSyncFromGithub() {
                 const memberId = parseInt(document.getElementById('assignConsMember').value);
                 const qty = parseInt(document.getElementById('assignConsQty').value);
 
-                if (!memberId) { alert('Select member'); return; }
+                if (!memberId) { showAlert('Select member', NORMAL_ALERT); return; }
                 
                 const cons = await getOne('consumables', consId);
-                if (qty > cons.quantity) { alert('Insufficient quantity!'); return; }
+                if (qty > cons.quantity) { showAlert('Insufficient quantity!', FAILURE_ALERT); return; }
 
                 const member = await getOne('users', memberId);
                 const oldQty = cons.quantity;
@@ -1210,14 +1293,14 @@ async function autoSyncFromGithub() {
                 await autoSyncDatabaseToGithub();
                 renderConsumables();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
         // ===== NOTIFICATION =====
         async function openNotifyModal(itemId) {
             try {
-                if (!isAdmin) { alert('Admin only'); return; }
+                if (!isAdmin) { showAlert('Admin only', NORMAL_ALERT); return; }
                 
                 notifyItemId = itemId;
                 const item = await getOne('items', itemId);
@@ -1229,7 +1312,7 @@ async function autoSyncFromGithub() {
                 
                 openModal('notificationModal');
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -1240,16 +1323,16 @@ async function autoSyncFromGithub() {
                 const subject = document.getElementById('notifySubject').value;
                 const message = document.getElementById('notifyContent').value;
                 
-                if (!memberId) { alert('Select member'); return; }
+                if (!memberId) { showAlert('Select member', NORMAL_ALERT); return; }
                 
                 const member = await getOne('users', memberId);
                 await sendEmail(member.email, subject, message);
                 
-                alert('Email sent!');
+                showAlert('Email sent!', SUCCESS_ALERT);
                 document.getElementById('notificationForm').reset();
                 closeModal('notificationModal');
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         });
 
@@ -1265,13 +1348,13 @@ async function autoSyncFromGithub() {
                     holder: ''
                 };
                 await addRecord('items', item);
-                alert('Asset added!');
+                showAlert('Asset added!', SUCCESS_ALERT);
                 e.target.reset();
                 closeModal('addAssetModal');
                 renderItems();
 				autoSyncDatabaseToGithub();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         });
 
@@ -1286,12 +1369,12 @@ async function autoSyncFromGithub() {
                     quantity: parseInt(data.get('quantity'))
                 };
                 await addRecord('consumables', consumable);
-                alert('Consumable added!');
+                showAlert('Consumable added!', SUCCESS_ALERT);
                 e.target.reset();
                 closeModal('addConsumableModal');
                 renderConsumables();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         });
 
@@ -1337,7 +1420,7 @@ async function autoSyncFromGithub() {
                 
                 openModal('membersModal');
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -1347,12 +1430,12 @@ async function autoSyncFromGithub() {
                 const user = await getOne('users', userId);
                 user.isAdmin = true;
                 await updateRecord('users', user);
-                alert('Promoted!');
+                showAlert('Promoted!', SUCCESS_ALERT);
                 viewMembers();
                 updateRemoveAccountBtn();
 				autoSyncDatabaseToGithub();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -1364,17 +1447,17 @@ async function autoSyncFromGithub() {
                 const user = await getOne('users', userId);
                 
                 if (user.isAdmin && adminCount === 1) {
-                    alert('Cannot remove last admin!');
+                    showAlert('Cannot remove last admin!', FAILURE_ALERT);
                     return;
                 }
                 
                 await deleteRecord('users', userId);
-                alert('Member removed!');
+                showAlert('Member removed!', SUCCESS_ALERT);
                 viewMembers();
                 updateRemoveAccountBtn();
 				autoSyncDatabaseToGithub();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -1385,7 +1468,7 @@ async function autoSyncFromGithub() {
                 const data = new FormData(e.target);
                 const email = data.get('email').toLowerCase();
                 const users = await getAll('users');
-                if (users.some(u => u.email === email)) { alert('Email exists'); return; }
+                if (users.some(u => u.email === email)) { showAlert('Email exists', NORMAL_ALERT); return; }
 
                 const user = {
                     name: data.get('name'),
@@ -1404,7 +1487,7 @@ async function autoSyncFromGithub() {
                 e.target.reset();
                 closeModal('addMemberModal');
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         });
 
@@ -1428,10 +1511,10 @@ async function autoSyncFromGithub() {
                 currentUser.department = document.getElementById('editDepartment').value;
                 
                 await updateRecord('users', currentUser);
-                alert('Profile updated!');
+                showAlert('Profile updated!', SUCCESS_ALERT);
                 closeModal('editProfileModal');
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         });
 
@@ -1442,17 +1525,17 @@ async function autoSyncFromGithub() {
                 const newPwd = document.getElementById('newPassword').value;
                 const confirmPwd = document.getElementById('confirmNewPassword').value;
                 
-                if (currentPwd !== currentUser.password) { alert('Wrong password'); return; }
-                if (newPwd !== confirmPwd) { alert('Passwords dont match'); return; }
-                if (newPwd.length < 6) { alert('Min 6 chars'); return; }
+                if (currentPwd !== currentUser.password) { showAlert('Wrong password', FAILURE_ALERT); return; }
+                if (newPwd !== confirmPwd) { showAlert('Passwords dont match', FAILURE_ALERT); return; }
+                if (newPwd.length < 6) { showAlert('Min 6 chars', NORMAL_ALERT); return; }
                 
                 currentUser.password = btoa(newPwd);
                 await updateRecord('users', currentUser);
-                alert('Password changed!');
+                showAlert('Password changed!', SUCCESS_ALERT);
                 document.getElementById('changePasswordForm').reset();
                 closeModal('changePasswordModal');
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         });
 
@@ -1491,20 +1574,20 @@ async function autoSyncFromGithub() {
                 a.download = `asset-manager-backup-${new Date().getTime()}.json`;
                 a.click();
                 URL.revokeObjectURL(url);
-                alert('Exported!');
+                showAlert('Exported!', SUCCESS_ALERT);
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
         async function syncFromGithub() {
             try {
                 await autoSyncFromGithub();
-                alert('Synced from GitHub!');
+                showAlert('Synced from GitHub!', SUCCESS_ALERT);
                 renderItems();
                 renderConsumables();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -1515,16 +1598,16 @@ async function autoSyncFromGithub() {
                 const adminCount = users.filter(u => u.isAdmin).length;
                 
                 if (currentUser.isAdmin && adminCount === 1) {
-                    alert('Cannot remove last admin!');
+                    showAlert('Cannot remove last admin!', FAILURE_ALERT);
                     return;
                 }
                 
                 await deleteRecord('users', currentUser.id);
-                alert('Account removed!');
+                showAlert('Account removed!', SUCCESS_ALERT);
                 logout();
 				autoSyncDatabaseToGithub();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         }
 
@@ -1585,7 +1668,7 @@ async function autoSyncFromGithub() {
                 const users = await getAll('users');
                 const user = users.find(u => u.email === email && u.password === password);
                 
-                if (!user) { alert('Invalid credentials'); return; }
+                if (!user) { showAlert('Invalid credentials', FAILURE_ALERT); return; }
                 
                 currentUser = user;
                 isAdmin = user.isAdmin || false;
@@ -1595,7 +1678,7 @@ async function autoSyncFromGithub() {
 
                 showMainApp();
             } catch (e) {
-                alert('Error: ' + e.message);
+                showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
         });
 

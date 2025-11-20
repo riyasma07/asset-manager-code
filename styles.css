@@ -446,3 +446,177 @@
                 width: 200px;
             }
         }
+
+        /* ===== CUSTOM ALERT MODAL ===== */
+
+        .alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .custom-alert-modal {
+            background: var(--color-surface, #ffffff);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            padding: 2rem;
+            animation: slideUp 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .custom-alert-icon {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #3b82f6;
+        }
+
+        .custom-alert-icon svg {
+            width: 48px;
+            height: 48px;
+        }
+
+        .custom-alert-content {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .custom-alert-content p {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--color-text, #1f2937);
+            margin: 0;
+            word-wrap: break-word;
+        }
+
+        .custom-alert-actions {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .custom-alert-actions .btn {
+            min-width: 100px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .custom-alert-actions .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border: none;
+        }
+
+        .custom-alert-actions .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .custom-alert-actions .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Dark mode support */
+        html.dark .custom-alert-modal {
+            background: #1f2937;
+        }
+
+        html.dark .custom-alert-content p {
+            color: #e5e7eb;
+        }
+
+        html.dark .custom-alert-icon {
+            color: #60a5fa;
+        }
+
+                /* Alert type themes */
+
+        /* Success theme (Green) */
+        .custom-alert-modal.alert-success .custom-alert-icon {
+            color: #10b981;
+        }
+
+        .custom-alert-modal.alert-success .btn-primary {
+            background: #10b981;
+        }
+
+        .custom-alert-modal.alert-success .btn-primary:hover {
+            background: #059669;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Failure theme (Red) */
+        .custom-alert-modal.alert-failure .custom-alert-icon {
+            color: #ef4444;
+        }
+
+        .custom-alert-modal.alert-failure .btn-primary {
+            background: #ef4444;
+        }
+
+        .custom-alert-modal.alert-failure .btn-primary:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Normal theme (Blue) - Default */
+        .custom-alert-modal.alert-normal .custom-alert-icon {
+            color: #3b82f6;
+        }
+
+        .custom-alert-modal.alert-normal .btn-primary {
+            background: #3b82f6;
+        }
+
+        .custom-alert-modal.alert-normal .btn-primary:hover {
+            background: #2563eb;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Dark mode adjustments */
+        html.dark .custom-alert-modal.alert-success .custom-alert-icon {
+            color: #34d399;
+        }
+
+        html.dark .custom-alert-modal.alert-failure .custom-alert-icon {
+            color: #f87171;
+        }
+
+        html.dark .custom-alert-modal.alert-normal .custom-alert-icon {
+            color: #60a5fa;
+        }
