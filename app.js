@@ -950,13 +950,22 @@ async function autoSyncFromGithub() {
                 
                 tbody.innerHTML = consumables.map(cons => {
                     let actions = '';
+                    
                     if (isAdmin) {
+                        // Admin sees all buttons
                         actions = `
                             <button class="btn-icon" onclick="startEditConsumable(${cons.id})" title="Edit">✏️</button>
                             <button class="btn-icon" onclick="openAddQtyModal(${cons.id})" title="Add Qty">➕</button>
                             <button class="btn-icon" onclick="openAssignConsModal(${cons.id})" title="Assign">📤</button>
                             ${cons.link ? `<button class="btn-icon" onclick="openConsumableLink('${cons.link.replace(/'/g, "\\'")}')" title="Product Link">🔗</button>` : ''}
                         `;
+                    } else {
+                        // Members see ONLY the link button (if link exists)
+                        if (cons.link) {
+                            actions = `
+                                <button class="btn-icon" onclick="openConsumableLink('${cons.link.replace(/'/g, "\\'")}')" title="Product Link">🔗</button>
+                            `;
+                        }
                     }
                     
                     return `<tr id="cons-row-${cons.id}">
