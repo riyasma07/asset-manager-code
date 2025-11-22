@@ -941,34 +941,42 @@ async function autoSyncFromGithub() {
             try {
                 const consumables = await getAll('consumables');
                 document.getElementById('consumablesCount').textContent = consumables.length;
+                
                 const tbody = document.getElementById('consumablesBody');
-
                 if (!consumables.length) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No consumables found</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">No consumables found</td></tr>';
                     return;
                 }
-
+                
                 tbody.innerHTML = consumables.map(cons => {
                     let actions = '';
+                    
                     if (isAdmin) {
+                        // Admin sees all buttons
                         actions = `
                             <button class="btn-icon" onclick="startEditConsumable(${cons.id})" title="Edit">✏️</button>
                             <button class="btn-icon" onclick="openAddQtyModal(${cons.id})" title="Add Qty">➕</button>
                             <button class="btn-icon" onclick="openAssignConsModal(${cons.id})" title="Assign">📤</button>
+                            ${cons.link ? `<button class="btn-icon" onclick="openConsumableLink('${cons.link.replace(/'/g, "\\'")}')" title="Product Link">🔗</button>` : ''}
                         `;
+                    } else {
+                        // Members see ONLY the link button (if link exists)
+                        if (cons.link) {
+                            actions = `
+                                <button class="btn-icon" onclick="openConsumableLink('${cons.link.replace(/'/g, "\\'")}')" title="Product Link">🔗</button>
+                            `;
+                        }
                     }
-
-                    return `
-                        <tr id="cons-row-${cons.id}">
-                            <td id="cons-name-${cons.id}">${cons.name}</td>
-                            <td id="cons-part-${cons.id}">${cons.partNumber}</td>
-                            <td id="cons-qty-${cons.id}"><span class="badge badge-green">${cons.quantity}</span></td>
-                            <td id="cons-actions-${cons.id}"><div class="action-buttons">${actions}</div></td>
-                        </tr>
-                    `;
+                    
+                    return `<tr id="cons-row-${cons.id}">
+                        <td id="cons-name-${cons.id}">${cons.name}</td>
+                        <td id="cons-part-${cons.id}">${cons.partNumber}</td>
+                        <td id="cons-qty-${cons.id}"><span class="badge badge-green">${cons.quantity}</span></td>
+                        <td id="cons-actions-${cons.id}"><div class="action-buttons">${actions}</div></td>
+                    </tr>`;
                 }).join('');
             } catch (e) {
-                console.error('Render error:', e);
+                console.error('Render error', e);
             }
         }
 
@@ -976,16 +984,24 @@ async function autoSyncFromGithub() {
             try {
                 editingConsumableId = consId;
                 const cons = await getOne('consumables', consId);
-
-                document.getElementById(`cons-name-${consId}`).innerHTML = `<input type="text" id="edit-cons-name-${consId}" value="${cons.name}" style="width: 100%; padding: 0.5rem;">`;
-                document.getElementById(`cons-part-${consId}`).innerHTML = `<input type="text" id="edit-cons-part-${consId}" value="${cons.partNumber}" style="width: 100%; padding: 0.5rem;">`;
-
+                
+                document.getElementById(`cons-name-${consId}`).innerHTML = `
+                    <input type="text" id="edit-cons-name-${consId}" value="${cons.name}" 
+                        style="width:100%; padding:0.5rem">
+                `;
+                
+                document.getElementById(`cons-part-${consId}`).innerHTML = `
+                    <input type="text" id="edit-cons-part-${consId}" value="${cons.partNumber}" 
+                        style="width:100%; padding:0.5rem">
+                `;
+                
                 document.getElementById(`cons-actions-${consId}`).innerHTML = `
                     <button class="btn btn-sm btn-success" onclick="saveEditConsumable(${consId})">Save</button>
                     <button class="btn btn-sm btn-secondary" onclick="cancelEditConsumable()">Cancel</button>
+                    <button class="btn btn-sm btn-info" onclick="openConsumableLinkModal(${consId})" title="Add/Edit Link">Link</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteConsumable(${consId})">Delete</button>
                 `;
-
+                
                 document.getElementById(`edit-cons-name-${consId}`).focus();
             } catch (e) {
                 showAlert('Error: ' + e.message, FAILURE_ALERT);
@@ -1366,13 +1382,15 @@ async function autoSyncFromGithub() {
                 const consumable = {
                     name: data.get('name'),
                     partNumber: data.get('partNumber'),
-                    quantity: parseInt(data.get('quantity'))
+                    quantity: parseInt(data.get('quantity')),
+                    link: data.get('link') || ''  // NEW: Add link field (empty string if not provided)
                 };
                 await addRecord('consumables', consumable);
                 showAlert('Consumable added!', SUCCESS_ALERT);
                 e.target.reset();
                 closeModal('addConsumableModal');
                 renderConsumables();
+                autoSyncDatabaseToGithub();
             } catch (e) {
                 showAlert('Error: ' + e.message, FAILURE_ALERT);
             }
@@ -1874,6 +1892,98 @@ async function autoSyncFromGithub() {
 			retryCount: 0
 		};
 	}
+
+    // ==== CONSUMABLE LINK MANAGEMENT ====
+
+    // Global variable to track which consumable is being edited
+    let editingConsumableLinkId = null;
+
+    /**
+     * Open consumable link in new window
+     * @param {string} url - The URL to open
+     */
+    function openConsumableLink(url) {
+        if (!url) {
+            showAlert('No link available for this consumable', NORMAL_ALERT);
+            return;
+        }
+        
+        // Ensure URL has protocol
+        const fullUrl = url.startsWith('http://') || url.startsWith('https://') 
+            ? url 
+            : 'https://' + url;
+        
+        // Open in new window
+        window.open(fullUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    /**
+     * Open link management modal
+     * @param {number} consId - Consumable ID
+     */
+    async function openConsumableLinkModal(consId) {
+        try {
+            editingConsumableLinkId = consId;
+            const cons = await getOne('consumables', consId);
+            
+            // Pre-fill input with existing link (if any)
+            const linkInput = document.getElementById('consumableLinkInput');
+            linkInput.value = cons.link || '';
+            
+            // Open modal
+            openModal('consumableLinkModal');
+            
+            // Focus input after modal animation
+            setTimeout(() => linkInput.focus(), 300);
+        } catch (e) {
+            showAlert('Error: ' + e.message, FAILURE_ALERT);
+        }
+    }
+
+    /**
+     * Save consumable link from modal
+     */
+    async function saveConsumableLink() {
+        try {
+            if (!editingConsumableLinkId) {
+                showAlert('No consumable selected', FAILURE_ALERT);
+                return;
+            }
+            
+            const linkInput = document.getElementById('consumableLinkInput');
+            let linkValue = linkInput.value.trim();
+            
+            // Validate URL if provided
+            if (linkValue && !linkValue.match(/^https?:\/\/.+/)) {
+                showAlert('Please enter a valid URL starting with http:// or https://', NORMAL_ALERT);
+                return;
+            }
+            
+            // Get consumable and update link
+            const cons = await getOne('consumables', editingConsumableLinkId);
+            cons.link = linkValue;
+            
+            await updateRecord('consumables', cons);
+            
+            // Show success message
+            if (linkValue) {
+                showAlert('Product link updated!', SUCCESS_ALERT);
+            } else {
+                showAlert('Product link removed!', SUCCESS_ALERT);
+            }
+            
+            // Clear and close
+            editingConsumableLinkId = null;
+            linkInput.value = '';
+            closeModal('consumableLinkModal');
+            
+            // Re-render to show/hide link button
+            await renderConsumables();
+            await autoSyncDatabaseToGithub();
+        } catch (e) {
+            showAlert('Error: ' + e.message, FAILURE_ALERT);
+        }
+    }
 
 // ===== STANDALONE EMAIL CONFIRMATION MODAL =====
     /**
