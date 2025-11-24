@@ -855,8 +855,8 @@ async function autoSyncFromGithub() {
                             <td id="item-name-${item.id}">${item.name}</td>
                             <td id="item-serial-${item.id}">${item.serial}</td>
                             <td>${item.holder || '-'}</td>
-                            <td><span class="badge ${statusClass}">${statusDisplay}</span></td>
-                            <td id="item-cond-${item.id}"><span class="badge badge-${item.condition === 'working' ? 'green' : 'orange'}">${condDisplay}</span></td>
+                            <td><span class="pill-status ${hasHolder ? 'out' : 'available'}">${statusDisplay}</span></td>
+                            <td id="item-cond-${item.id}"><span class="pill-condition ${item.condition === 'working' ? 'working' : 'not-working'}">${condDisplay}</span></td>
                             <td id="item-actions-${item.id}"><div class="action-buttons">${actions}</div></td>
                         </tr>
                     `;
@@ -1001,7 +1001,7 @@ async function autoSyncFromGithub() {
                     return `<tr id="cons-row-${cons.id}">
                         <td id="cons-name-${cons.id}">${cons.name}</td>
                         <td id="cons-part-${cons.id}">${cons.partNumber}</td>
-                        <td id="cons-qty-${cons.id}"><span class="badge badge-green">${cons.quantity}</span></td>
+                        <td id="cons-qty-${cons.id}"><span class="pill-qty">${cons.quantity}</span></td>
                         <td id="cons-actions-${cons.id}"><div class="action-buttons">${actions}</div></td>
                     </tr>`;
                 }).join('');
