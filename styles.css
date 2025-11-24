@@ -846,4 +846,208 @@
         color: #7f1d1d;
         box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
         }
-        
+
+        /* ========================================
+        SCROLLABLE TABLE CONTAINER WITH FIXED HEADERS
+        ======================================== */
+
+        /* Table scroll container */
+        .table-scroll-container {
+        position: relative;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        }
+
+        html.dark .table-scroll-container {
+        border-color: #30363d;
+        }
+
+        /* Fixed table header */
+        .table-scroll-container thead {
+        display: table;
+        width: calc(100% - 10px); /* Account for scrollbar width */
+        table-layout: fixed;
+        }
+
+        .table-scroll-container thead th {
+        background: #f8fafc;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 2px solid #e2e8f0;
+        box-sizing: border-box;
+        }
+
+        html.dark .table-scroll-container thead th {
+        background: #0d1117;
+        border-bottom-color: #30363d;
+        }
+
+        html.dark .table-scroll-container table thead {
+        background: #161b22;
+        }
+
+        /* Fix for header border visibility when scrolling */
+        .table-scroll-container table thead tr {
+        border-bottom: 2px solid #e2e8f0;
+        }
+
+        html.dark .table-scroll-container table thead tr {
+        border-bottom-color: #30363d;
+        }
+
+        /* Make table take full width */
+        .table-scroll-container table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 0;
+        }
+
+        /* Scrollable table body */
+        .table-scroll-container tbody {
+        display: block;
+        max-height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 100%;
+        }
+
+        .table-scroll-container tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+        }
+
+        .table-scroll-container tbody td {
+        box-sizing: border-box;
+        }
+
+        /* Ensure both thead and tbody have same border handling */
+        .table-scroll-container th,
+        .table-scroll-container td {
+        border-right: 1px solid #e2e8f0;
+        }
+
+        .table-scroll-container th:last-child,
+        .table-scroll-container td:last-child {
+        border-right: none;
+        }
+
+        html.dark .table-scroll-container th,
+        html.dark .table-scroll-container td {
+        border-right-color: #30363d;
+        }
+
+        /* Custom scrollbar */
+        .table-scroll-container tbody::-webkit-scrollbar {
+        width: 10px;
+        }
+
+        .table-scroll-container tbody::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+        }
+
+        .table-scroll-container tbody::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+        }
+
+        .table-scroll-container tbody::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+        }
+
+        html.dark .table-scroll-container tbody::-webkit-scrollbar-track {
+        background: #0d1117;
+        }
+
+        html.dark .table-scroll-container tbody::-webkit-scrollbar-thumb {
+        background: #30363d;
+        }
+
+        html.dark .table-scroll-container tbody::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+        }
+        /* ========================================
+        BIGGER AND BOLDER TABLE HEADERS
+        ======================================== */
+
+        /* Make table headers bigger and bold */
+        th {
+            font-size: 1rem !important;  /* Increased from 0.875rem */
+            font-weight: 700 !important; /* Extra bold */
+            padding: 1rem 0.75rem !important; /* More vertical padding */
+            text-align: center !important; /* Center align all headers */
+            }
+
+        /* ========================================
+        SCROLLBAR STYLING FOR TABLE CONTAINERS
+        ======================================== */
+
+        /* Custom scrollbar for table containers */
+        .table-scroll-container::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+        }
+
+        /* Dark mode scrollbar */
+        html.dark .table-scroll-container::-webkit-scrollbar-track {
+        background: #0d1117;
+        }
+
+        html.dark .table-scroll-container::-webkit-scrollbar-thumb {
+        background: #30363d;
+        }
+
+        html.dark .table-scroll-container::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+        }
+
+        /* ========================================
+        STICKY SECTION TITLES
+        ======================================== */
+
+        /* Make section titles stick above their tables */
+        .section-header {
+        position: sticky;
+        top: 0;
+        z-index: 20; /* Higher than table headers */
+        background: #f8fafc;
+        padding: 1rem 0;
+        margin-bottom: 0;
+        }
+
+        html.dark .section-header {
+        background: #0d1117;
+        }
+
+        /* Add slight shadow when scrolling */
+        .section-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e2e8f0 20%, #e2e8f0 80%, transparent);
+        }
+
+        html.dark .section-header::after {
+        background: linear-gradient(90deg, transparent, #30363d 20%, #30363d 80%, transparent);
+        }
