@@ -308,21 +308,27 @@ async function exportFullDatabase() {
 
 // ===== AUTO SYNC WRAPPER (EASY TO CALL) =====
 async function autoSyncDatabaseToGithub() {
+    // ✋ NEW: Only sync if user is admin
+    if (!isAdmin) {
+        console.log('⏭️ Sync skipped: Member session');
+        return;
+    }
+    
     try {
         console.log('Starting auto-sync to GitHub...');
-
+        
         // Decrypt token
         const token = await decryptToken(ENCRYPTED_TOKEN_STRING, ENCRYPTION_PASSWORD);
-
+        
         // Export database
         const myDatabase = await exportFullDatabase();
-
+        
         // Push to GitHub
         await pushDatabaseToGitHub(myDatabase, token, GITHUB_OWNER, GITHUB_REPO_DATA, GITHUB_BRANCH);
-
+        
         console.log('✅ Auto-sync completed!');
     } catch (error) {
-        console.error('❌ Auto-sync failed:', error.message);
+        console.error('Auto-sync failed:', error.message);
         // Don't throw - let the app continue even if sync fails
     }
 }
@@ -814,7 +820,7 @@ async function autoSyncFromGithub() {
                         actions = `
                             <button class="btn-icon" onclick="startEditItem(${item.id})" title="Edit">✏️</button>
                             <button class="btn-icon" onclick="openHistory(${item.id})" title="History">📋</button>
-                            ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">➕</button>` : ''}
+                            ${!hasHolder ? `<button class="btn-icon" onclick="openAssignModal(${item.id})" title="Assign">📤</button>` : ''}
                             ${hasHolder ? `<button class="btn-icon" onclick="openReturnModal(${item.id})" title="Return">🔙</button>` : ''}
                             ${hasHolder ? `<button class="btn-icon" onclick="notifyHolder(${item.id}, '${item.holder.replace(/'/g, "\\'")}')" title="Notify Holder">🔔</button>` : ''}
                         `;
@@ -2231,7 +2237,11 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 // Optional: Auto-sync every 5 minutes
 setInterval(() => {
-    autoSyncDatabaseToGithub();
+    if (isAdmin) {
+        autoSyncDatabaseToGithub();
+    } else {
+        console.log('⏭️ Periodic sync skipped: Member session');
+    }
 }, 5 * 60 * 1000);
 
 // ===== ANIMATED SEARCH TOGGLE FUNCTIONS =====
