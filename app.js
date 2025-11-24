@@ -1,3 +1,5 @@
+        // ==== APP VERSION ====
+        const APP_VERSION = 'v1.0.0';
         const GITHUBRAWURL = 'https://raw.githubusercontent.com/riyasma07/asset-manager-db/main/data.json';
         const DBNAME = 'AssetManagerProDB';
         let db = null;
@@ -777,8 +779,8 @@ async function autoSyncFromGithub() {
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('mainHeader').classList.remove('hidden');
             document.getElementById('mainContent').classList.remove('hidden');
-            document.getElementById('userRole').textContent = isAdmin ? 'Admin' : 'Member';
-
+            
+            // Show admin buttons
             if (isAdmin) {
                 document.getElementById('openManage').style.display = 'flex';
                 document.getElementById('addItemBtn').style.display = 'flex';
@@ -792,11 +794,33 @@ async function autoSyncFromGithub() {
                 document.getElementById('addItemBtn').style.display = 'none';
                 document.getElementById('addMemberBtn').style.display = 'none';
             }
-
+            
+            // WAIT for DOM to be ready, THEN update version and role
+            setTimeout(() => {
+                const appVersionEl = document.getElementById('appVersion');
+                const userRoleTextEl = document.getElementById('userRoleText');
+                
+                if (appVersionEl) {
+                    appVersionEl.textContent = APP_VERSION;
+                    console.log('✅ Version Updated:', APP_VERSION);
+                } else {
+                    console.error('❌ appVersion element not found');
+                }
+                
+                if (userRoleTextEl) {
+                    userRoleTextEl.textContent = isAdmin ? 'Admin' : 'Member';
+                    userRoleTextEl.className = isAdmin ? 'admin' : 'member';
+                    console.log('✅ Role Updated:', isAdmin ? 'Admin' : 'Member');
+                } else {
+                    console.error('❌ userRoleText element not found');
+                }
+            }, 50);  // 50ms delay ensures DOM is ready
+            
             renderItems();
             renderConsumables();
             updateRemoveAccountBtn();
         }
+
 
         // ===== RENDER ITEMS =====
         async function renderItems() {

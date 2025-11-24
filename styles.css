@@ -679,3 +679,56 @@
             background-color: rgba(96, 165, 250, 0.25);
             color: #93c5fd;
         }
+
+        /* ==== HEADER VERSION AND ROLE STYLING ==== */
+
+        /* Version and role info line */
+        #userRole {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        /* Version text */
+        #appVersion {
+            font-weight: 500;
+            color: #3b82f6;
+        }
+
+        /* Role text */
+        #userRoleText {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Admin role color */
+        #userRoleText.admin {
+            color: #3b82f6;
+        }
+
+        /* Member role color */
+        #userRoleText.member {
+            color: #64748b;
+        }
+
+        /* Dark mode adjustments */
+        html.dark #appVersion {
+            color: #60a5fa;
+        }
+
+        html.dark #userRole {
+            color: #94a3b8;
+        }
+
+        html.dark #userRoleText.admin {
+            color: #60a5fa;
+        }
+
+        html.dark #userRoleText.member {
+            color: #94a3b8;
+        }

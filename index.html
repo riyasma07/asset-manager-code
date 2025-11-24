@@ -34,10 +34,13 @@
 
     <!-- HEADER -->
     <header class="hidden" id="mainHeader">
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <h1 style="font-size: 1.25rem; font-weight: 700;">Asset Manager Pro</h1>
-            <p id="userRole" style="color: #64748b; font-size: 0.875rem;">Admin</p>
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem;">
+            <h1 style="font-size: 1.25rem; font-weight: 700; margin: 0;">Asset Manager Pro</h1>
+            <p id="userRole" style="color: #64748b; font-size: 0.75rem; margin: 0;">
+                <span id="appVersion"></span> | <span id="userRoleText"></span>
+            </p>
         </div>
+        
         <div style="display: flex; gap: 1rem; align-items: center;">
             <button id="openManage" class="btn btn-primary" style="display: none; width: auto;">📋 Menu</button>
             <button id="settingsBtn" class="btn-icon">⚙️</button>
