@@ -1,5 +1,5 @@
         // ==== APP VERSION ====
-        const APP_VERSION = 'v4.1.0';
+        const APP_VERSION = 'v4.1.1';
         const GITHUBRAWURL = 'https://raw.githubusercontent.com/riyasma07/asset-manager-db/main/data.json';
         const DBNAME = 'AssetManagerProDB';
         let db = null;
@@ -789,6 +789,7 @@ async function autoSyncFromGithub() {
                 document.getElementById('syncBtn').style.display = 'flex';
             } else {
                 // MEMBER: HIDE EXPORT, SYNC, ADD ITEM, ADD MEMBER
+                document.getElementById('openManage').style.display = 'flex'; // 
                 document.getElementById('exportBtn').style.display = 'none';
                 document.getElementById('syncBtn').style.display = 'none';
                 document.getElementById('addItemBtn').style.display = 'none';
