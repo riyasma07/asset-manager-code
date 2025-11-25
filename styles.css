@@ -679,3 +679,565 @@
             background-color: rgba(96, 165, 250, 0.25);
             color: #93c5fd;
         }
+
+        /* ==== HEADER VERSION AND ROLE STYLING ==== */
+
+        /* Version and role info line */
+        #userRole {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        /* Version text */
+        #appVersion {
+            font-weight: 500;
+            color: #3b82f6;
+        }
+
+        /* Role text */
+        #userRoleText {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Admin role color */
+        #userRoleText.admin {
+            color: #3b82f6;
+        }
+
+        /* Member role color */
+        #userRoleText.member {
+            color: #64748b;
+        }
+
+        /* Dark mode adjustments */
+        html.dark #appVersion {
+            color: #60a5fa;
+        }
+
+        html.dark #userRole {
+            color: #94a3b8;
+        }
+
+        html.dark #userRoleText.admin {
+            color: #60a5fa;
+        }
+
+        html.dark #userRoleText.member {
+            color: #94a3b8;
+        }
+
+        /* ========================================
+        TABLE COLUMN CENTER ALIGNMENT
+        ======================================== */
+
+        /* Center align specific columns in Asset Items table */
+        #itemsTable th:nth-child(1),  /* Serial Number header */
+        #itemsTable td:nth-child(1),  /* Serial Number cells */
+        #itemsTable th:nth-child(3),  /* Holder header */
+        #itemsTable td:nth-child(3),  /* Holder cells */
+        #itemsTable th:nth-child(4),  /* Status header */
+        #itemsTable td:nth-child(4),  /* Status cells */
+        #itemsTable th:nth-child(5),  /* Condition header */
+        #itemsTable td:nth-child(5) {  /* Condition cells */
+        text-align: center !important;
+        vertical-align: middle;
+        }
+
+        /* Center align specific columns in Consumables table */
+        #consumablesTable th:nth-child(2),  /* Part Number header */
+        #consumablesTable td:nth-child(2),  /* Part Number cells */
+        #consumablesTable th:nth-child(3),  /* Quantity header */
+        #consumablesTable td:nth-child(3) {  /* Quantity cells */
+        text-align: center !important;
+        vertical-align: middle;
+        }
+
+        /* ========================================
+        MODERN PILL STYLES
+        ======================================== */
+
+        /* Quantity Pill Style (Consumables) */
+        .pill-qty {
+        display: inline-block;
+        min-width: 2.8em;
+        background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+        color: #fff;
+        font-weight: 700;
+        border-radius: 18px;
+        padding: 0.35em 1.1em;
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+        border: none;
+        margin: 0 auto;
+        transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .pill-qty:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+        }
+
+        /* Status Pill Styles (Asset Items) */
+        .pill-status {
+        display: inline-block;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 0.35em 1.3em;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        border: none;
+        text-transform: uppercase;
+        margin: 0 0.15em;
+        transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .pill-status:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .pill-status.available {
+        background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+        color: #064e3b;
+        }
+
+        .pill-status.out {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: #78350f;
+        }
+
+        /* Condition Pill Styles (Asset Items) */
+        .pill-condition {
+        display: inline-block;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 0.35em 1.3em;
+        letter-spacing: 0.5px;
+        border: none;
+        margin: 0 0.15em;
+        text-transform: capitalize;
+        transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .pill-condition:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .pill-condition.working {
+        background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+        color: #14532d;
+        box-shadow: 0 2px 8px rgba(74, 222, 128, 0.25);
+        }
+
+        .pill-condition.not-working {
+        background: linear-gradient(135deg, #fca5a5 0%, #ef4444 100%);
+        color: #7f1d1d;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
+        }
+
+        /* ========================================
+        SCROLLABLE TABLE CONTAINER WITH FIXED HEADERS
+        ======================================== */
+
+        /* Table scroll container */
+        .table-scroll-container {
+        position: relative;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        }
+
+        html.dark .table-scroll-container {
+        border-color: #30363d;
+        }
+
+        /* Fixed table header */
+        .table-scroll-container thead {
+        display: table;
+        width: calc(100% - 10px); /* Account for scrollbar width */
+        table-layout: fixed;
+        }
+
+        .table-scroll-container thead th {
+        background: #f8fafc;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 2px solid #e2e8f0;
+        box-sizing: border-box;
+        }
+
+        html.dark .table-scroll-container thead th {
+        background: #0d1117;
+        border-bottom-color: #30363d;
+        }
+
+        html.dark .table-scroll-container table thead {
+        background: #161b22;
+        }
+
+        /* Fix for header border visibility when scrolling */
+        .table-scroll-container table thead tr {
+        border-bottom: 2px solid #e2e8f0;
+        }
+
+        html.dark .table-scroll-container table thead tr {
+        border-bottom-color: #30363d;
+        }
+
+        /* Make table take full width */
+        .table-scroll-container table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 0;
+        }
+
+        /* Scrollable table body */
+        .table-scroll-container tbody {
+        display: block;
+        max-height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 100%;
+        }
+
+        .table-scroll-container tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+        }
+
+        .table-scroll-container tbody td {
+        box-sizing: border-box;
+        }
+
+        /* Ensure both thead and tbody have same border handling */
+        .table-scroll-container th,
+        .table-scroll-container td {
+        border-right: 1px solid #e2e8f0;
+        }
+
+        .table-scroll-container th:last-child,
+        .table-scroll-container td:last-child {
+        border-right: none;
+        }
+
+        html.dark .table-scroll-container th,
+        html.dark .table-scroll-container td {
+        border-right-color: #30363d;
+        }
+
+        /* Custom scrollbar */
+        .table-scroll-container tbody::-webkit-scrollbar {
+        width: 10px;
+        }
+
+        .table-scroll-container tbody::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+        }
+
+        .table-scroll-container tbody::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+        }
+
+        .table-scroll-container tbody::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+        }
+
+        html.dark .table-scroll-container tbody::-webkit-scrollbar-track {
+        background: #0d1117;
+        }
+
+        html.dark .table-scroll-container tbody::-webkit-scrollbar-thumb {
+        background: #30363d;
+        }
+
+        html.dark .table-scroll-container tbody::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+        }
+        /* ========================================
+        BIGGER AND BOLDER TABLE HEADERS
+        ======================================== */
+
+        /* Make table headers bigger and bold */
+        th {
+            font-size: 1rem !important;  /* Increased from 0.875rem */
+            font-weight: 700 !important; /* Extra bold */
+            padding: 1rem 0.75rem !important; /* More vertical padding */
+            text-align: center !important; /* Center align all headers */
+            }
+
+        /* ========================================
+        SCROLLBAR STYLING FOR TABLE CONTAINERS
+        ======================================== */
+
+        /* Custom scrollbar for table containers */
+        .table-scroll-container::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+        }
+
+        /* Dark mode scrollbar */
+        html.dark .table-scroll-container::-webkit-scrollbar-track {
+        background: #0d1117;
+        }
+
+        html.dark .table-scroll-container::-webkit-scrollbar-thumb {
+        background: #30363d;
+        }
+
+        html.dark .table-scroll-container::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+        }
+
+        /* ========================================
+        STICKY SECTION TITLES
+        ======================================== */
+
+        /* Make section titles stick above their tables */
+        .section-header {
+        position: sticky;
+        top: 0;
+        z-index: 20; /* Higher than table headers */
+        background: #f8fafc;
+        padding: 1rem 0;
+        margin-bottom: 0;
+        }
+
+        html.dark .section-header {
+        background: #0d1117;
+        }
+
+        /* Add slight shadow when scrolling */
+        .section-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e2e8f0 20%, #e2e8f0 80%, transparent);
+        }
+
+        html.dark .section-header::after {
+        background: linear-gradient(90deg, transparent, #30363d 20%, #30363d 80%, transparent);
+        }
+
+        /* ========================================
+        HOLDER INFO TOOLTIP - COMPACT GOOGLE CONTACTS STYLE
+        ======================================== */
+
+        /* Tooltip container */
+        .holder-tooltip {
+        position: fixed;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                    visibility 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(-4px);
+        }
+
+        .holder-tooltip.show {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto; /* FIXED: Allow interaction with tooltip */
+        transform: translateY(0);
+        }
+
+        /* Tooltip card - Compact size */
+        .holder-tooltip-card {
+        background: rgba(30, 37, 48, 0.95); /* Semi-transparent dark */
+        backdrop-filter: blur(12px); /* Glass effect */
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 
+                    0 2px 8px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        min-width: 280px;
+        max-width: 320px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        }
+
+        html.dark .holder-tooltip-card {
+        background: rgba(30, 37, 48, 0.95);
+        border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Header: Horizontal layout (Avatar left, Info right, Copy button) */
+        .holder-tooltip-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        }
+
+        /* Profile Avatar Circle - Smaller */
+        .holder-tooltip-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: #ffffff;
+        text-transform: uppercase;
+        flex-shrink: 0;
+        }
+
+        /* Info section (Name + Email) */
+        .holder-tooltip-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0; /* Allow text truncation */
+        }
+
+        /* Name - White, medium size */
+        .holder-tooltip-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: #ffffff;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        }
+
+        /* Email - Smaller, gray, below name */
+        .holder-tooltip-email {
+        font-size: 12px;
+        font-weight: 400;
+        color: #94a3b8;
+        line-height: 1.4;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        }
+
+        /* Copy Email Button - Smaller, in header */
+        .holder-copy-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        color: #cbd5e1;
+        }
+
+        .holder-copy-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: #ffffff;
+        }
+
+        .holder-copy-btn:active {
+        transform: scale(0.95);
+        }
+
+        /* Contact Details Section - Below header */
+        .holder-tooltip-details {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Each row with icon + text */
+        .holder-tooltip-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        }
+
+        /* Icons - Smaller */
+        .holder-tooltip-icon {
+        width: 16px;
+        height: 16px;
+        color: #94a3b8;
+        flex-shrink: 0;
+        }
+
+        /* Text content */
+        .holder-tooltip-text {
+        flex: 1;
+        font-size: 13px;
+        line-height: 1.4;
+        color: #cbd5e1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        }
+
+        /* Separator for inline text (designation • department) */
+        .holder-tooltip-separator {
+        color: #64748b;
+        margin: 0 4px;
+        }
+
+        /* Make holder names in table look clickable/hoverable */
+        .holder-name {
+        cursor: pointer;
+        color: #2563eb;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        }
+
+        .holder-name:hover {
+        color: #1d4ed8;
+        text-decoration: none;
+        }
+
+        html.dark .holder-name {
+        color: #60a5fa;
+        }
+
+        html.dark .holder-name:hover {
+        color: #93c5fd;
+        }

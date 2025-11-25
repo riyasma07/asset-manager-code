@@ -34,10 +34,13 @@
 
     <!-- HEADER -->
     <header class="hidden" id="mainHeader">
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <h1 style="font-size: 1.25rem; font-weight: 700;">Asset Manager Pro</h1>
-            <p id="userRole" style="color: #64748b; font-size: 0.875rem;">Admin</p>
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 700; margin: 0;">Asset Manager Pro</h1>
+            <p id="userRole" style="color: #64748b; font-size: 0.75rem; margin: 0;">
+                <span id="appVersion"></span> | <span id="userRoleText"></span>
+            </p>
         </div>
+        
         <div style="display: flex; gap: 1rem; align-items: center;">
             <button id="openManage" class="btn btn-primary" style="display: none; width: auto;">📋 Menu</button>
             <button id="settingsBtn" class="btn-icon">⚙️</button>
@@ -76,7 +79,7 @@
                         <span class="item-count-badge" id="itemsCount">0</span>
                     </div>
                 </div>
-                <div style="overflow-x: auto;">
+                <div class="table-scroll-container">
                     <table id="itemsTable">
                         <thead>
                             <tr>
@@ -121,7 +124,7 @@
                         <span class="item-count-badge" id="consumablesCount">0</span>
                     </div>
                 </div>
-                <div style="overflow-x: auto;">
+                <div class="table-scroll-container">
                     <table id="consumablesTable">
                         <thead>
                             <tr>
@@ -766,6 +769,59 @@
             </div>
         </div>
     </div>
+
+        <!-- Holder Info Tooltip - Compact Google Contacts Style -->
+    <div id="holderTooltip" class="holder-tooltip">
+        <div class="holder-tooltip-card">
+            <!-- Horizontal Layout: Avatar Left, Info Right -->
+            <div class="holder-tooltip-header">
+                <!-- Profile Picture Circle -->
+                <div class="holder-tooltip-avatar">
+                    <span id="tooltipInitial"></span>
+                </div>
+                
+                <!-- Name and Email on Right -->
+                <div class="holder-tooltip-info">
+                    <div class="holder-tooltip-name" id="tooltipHolderName"></div>
+                    <div class="holder-tooltip-email" id="tooltipEmail"></div>
+                </div>
+                
+                <!-- Copy Email Button -->
+                <button class="holder-copy-btn" id="copyEmailBtn" title="Copy email">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Contact Details Below -->
+            <div class="holder-tooltip-details">
+                <!-- Designation & Department -->
+                <div class="holder-tooltip-row">
+                    <svg class="holder-tooltip-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                    <div class="holder-tooltip-text">
+                        <span id="tooltipDesignation"></span>
+                        <span class="holder-tooltip-separator"> • </span>
+                        <span id="tooltipDepartment"></span>
+                    </div>
+                </div>
+                
+                <!-- Mobile -->
+                <div class="holder-tooltip-row">
+                    <svg class="holder-tooltip-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                    <div class="holder-tooltip-text" id="tooltipMobile"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     
 </body>
 </html>
