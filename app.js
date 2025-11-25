@@ -1,5 +1,5 @@
         // ==== APP VERSION ====
-        const APP_VERSION = 'v1.0.0';
+        const APP_VERSION = 'v4.0.0';
         const GITHUBRAWURL = 'https://raw.githubusercontent.com/riyasma07/asset-manager-db/main/data.json';
         const DBNAME = 'AssetManagerProDB';
         let db = null;
