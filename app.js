@@ -808,7 +808,7 @@ async function autoSyncFromGithub() {
                 }
                 
                 if (userRoleTextEl) {
-                    userRoleTextEl.textContent = isAdmin ? 'Admin' : 'Member';
+                    userRoleTextEl.textContent = isAdmin ? 'Admin 👑' : 'Member';
                     userRoleTextEl.className = isAdmin ? 'admin' : 'member';
                     console.log('✅ Role Updated:', isAdmin ? 'Admin' : 'Member');
                 } else {
@@ -854,13 +854,14 @@ async function autoSyncFromGithub() {
                         <tr id="item-row-${item.id}">
                             <td id="item-name-${item.id}">${item.name}</td>
                             <td id="item-serial-${item.id}">${item.serial}</td>
-                            <td>${item.holder || '-'}</td>
+                            <td>${item.holder ? `<span class="holder-name" data-holder-name="${item.holder.replace(/"/g, '&quot;')}">${item.holder}</span>` : "-"}</td>
                             <td><span class="pill-status ${hasHolder ? 'out' : 'available'}">${statusDisplay}</span></td>
                             <td id="item-cond-${item.id}"><span class="pill-condition ${item.condition === 'working' ? 'working' : 'not-working'}">${condDisplay}</span></td>
                             <td id="item-actions-${item.id}"><div class="action-buttons">${actions}</div></td>
                         </tr>
                     `;
                 }).join('');
+                initHolderTooltips();
             } catch (e) {
                 console.error('Render error:', e);
             }
@@ -2430,4 +2431,271 @@ function clearConsumablesSearch() {
     const clearBtn = document.getElementById('clearConsumablesBtn');
     if (clearBtn) clearBtn.style.display = 'none';
     searchConsumables();
+}
+
+// ========================================
+// HOLDER INFO TOOLTIP
+// ========================================
+
+let currentTooltipTimeout = null;
+
+/**
+ * Get tooltip elements (with null checks)
+ */
+function getTooltipElements() {
+  return {
+    holderTooltip: document.getElementById('holderTooltip'),
+    tooltipInitial: document.getElementById('tooltipInitial'),
+    tooltipHolderName: document.getElementById('tooltipHolderName'),
+    tooltipDesignation: document.getElementById('tooltipDesignation'),
+    tooltipDepartment: document.getElementById('tooltipDepartment'),
+    tooltipEmail: document.getElementById('tooltipEmail'),
+    tooltipMobile: document.getElementById('tooltipMobile'),
+    copyEmailBtn: document.getElementById('copyEmailBtn')
+  };
+}
+
+/**
+ * Show tooltip with member information
+ * @param {HTMLElement} element - The holder name element being hovered
+ * @param {string} holderName - Name of the holder
+ */
+async function showHolderTooltip(element, holderName) {
+  // Clear any existing timeout
+  if (currentTooltipTimeout) {
+    clearTimeout(currentTooltipTimeout);
+    currentTooltipTimeout = null;
+  }
+
+  try {
+    // Get tooltip elements
+    const els = getTooltipElements();
+    
+    // Check if tooltip exists
+    if (!els.holderTooltip) {
+      console.error('Tooltip HTML not found! Did you add the HTML to index.html?');
+      return;
+    }
+
+    // Get all users from database
+    const users = await getAll('users');
+    
+    // Find the member by name
+    const member = users.find(u => u.name === holderName);
+    
+    if (!member) {
+      console.warn('Member not found:', holderName);
+      return;
+    }
+
+    // Populate tooltip content
+    // Get initials (first letter of first and last name)
+    const nameParts = (member.name || '').trim().split(' ');
+    const initials = nameParts.length >= 2 
+      ? nameParts[0][0] + nameParts[nameParts.length - 1][0]
+      : nameParts[0] ? nameParts[0].substring(0, 2) : '?';
+    
+    els.tooltipInitial.textContent = initials.toUpperCase();
+    els.tooltipHolderName.textContent = member.name || '-';
+    els.tooltipDesignation.textContent = member.designation || '-';
+    els.tooltipDepartment.textContent = member.department || '-';
+    els.tooltipEmail.textContent = member.email || '-';
+    els.tooltipMobile.textContent = member.mobile || '-';
+    
+    // Setup copy email button
+    els.copyEmailBtn.onclick = (e) => {
+      e.stopPropagation();
+      copyToClipboard(member.email);
+    };
+
+    // Position tooltip near the element
+    positionTooltip(element);
+
+    // Show tooltip with fade-in
+    els.holderTooltip.classList.add('show');
+  } catch (error) {
+    console.error('Error showing tooltip:', error);
+  }
+}
+
+/**
+ * Hide tooltip with fade-out
+ */
+function hideHolderTooltip() {
+  // Add small delay before hiding
+  currentTooltipTimeout = setTimeout(() => {
+    const els = getTooltipElements();
+    if (els.holderTooltip) {
+      els.holderTooltip.classList.remove('show');
+    }
+  }, 150);
+}
+/**
+ * Position tooltip near the hovered element
+ * @param {HTMLElement} element - The element being hovered
+ */
+function positionTooltip(element) {
+  const els = getTooltipElements();
+  if (!els.holderTooltip) return;
+  
+  const rect = element.getBoundingClientRect();
+  const tooltipRect = els.holderTooltip.getBoundingClientRect();
+  
+  const scrollY = window.scrollY || window.pageYOffset;
+  const scrollX = window.scrollX || window.pageXOffset;
+  
+  // Calculate position
+  let top = rect.bottom + scrollY + 8; // 8px gap below element
+  let left = rect.left + scrollX;
+  
+  // Check if tooltip would go off-screen (bottom)
+  if (top + tooltipRect.height > window.innerHeight + scrollY) {
+    // Position above the element instead
+    top = rect.top + scrollY - tooltipRect.height - 8;
+    els.holderTooltip.classList.remove('tooltip-bottom');
+    els.holderTooltip.classList.add('tooltip-top');
+  } else {
+    els.holderTooltip.classList.remove('tooltip-top');
+    els.holderTooltip.classList.add('tooltip-bottom');
+  }
+  
+  // Check if tooltip would go off-screen (right)
+  if (left + tooltipRect.width > window.innerWidth + scrollX) {
+    left = window.innerWidth + scrollX - tooltipRect.width - 16;
+  }
+  
+  // Check if tooltip would go off-screen (left)
+  if (left < scrollX + 16) {
+    left = scrollX + 16;
+  }
+  
+  // Apply position
+  els.holderTooltip.style.top = `${top}px`;
+  els.holderTooltip.style.left = `${left}px`;
+}
+
+/**
+ * Initialize holder tooltip event listeners
+ * Should be called after renderItems()
+ */
+function initHolderTooltips() {
+  // Remove existing listeners if any
+  document.querySelectorAll('.holder-name').forEach(el => {
+    el.removeEventListener('mouseenter', handleHolderMouseEnter);
+    el.removeEventListener('mouseleave', handleHolderMouseLeave);
+  });
+
+  // Add listeners to all holder name elements
+  document.querySelectorAll('.holder-name').forEach(el => {
+    el.addEventListener('mouseenter', handleHolderMouseEnter);
+    el.addEventListener('mouseleave', handleHolderMouseLeave);
+  });
+  
+  // FIXED: Add hover listeners to tooltip itself to prevent disappearing
+  const els = getTooltipElements();
+  if (els.holderTooltip) {
+    els.holderTooltip.removeEventListener('mouseenter', handleTooltipMouseEnter);
+    els.holderTooltip.removeEventListener('mouseleave', handleTooltipMouseLeave);
+    els.holderTooltip.addEventListener('mouseenter', handleTooltipMouseEnter);
+    els.holderTooltip.addEventListener('mouseleave', handleTooltipMouseLeave);
+  }
+}
+
+// Event handlers
+function handleHolderMouseEnter(e) {
+  const holderName = e.target.dataset.holderName;
+  if (holderName) {
+    showHolderTooltip(e.target, holderName);
+  }
+}
+
+function handleHolderMouseLeave() {
+  hideHolderTooltip();
+}
+
+// Hide tooltip when scrolling
+window.addEventListener('scroll', () => {
+  const els = getTooltipElements();
+  if (els.holderTooltip && els.holderTooltip.classList.contains('show')) {
+    hideHolderTooltip();
+  }
+}, { passive: true });
+
+// Tooltip hover handlers (prevent disappearing when hovering tooltip)
+function handleTooltipMouseEnter() {
+  // Cancel any pending hide timeout
+  if (currentTooltipTimeout) {
+    clearTimeout(currentTooltipTimeout);
+    currentTooltipTimeout = null;
+  }
+}
+
+function handleTooltipMouseLeave() {
+  // Hide tooltip when mouse leaves tooltip itself
+  hideHolderTooltip();
+}
+
+/**
+ * Copy text to clipboard with visual feedback
+ */
+function copyToClipboard(text) {
+  // Modern clipboard API
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showCopyFeedback();
+    }).catch(err => {
+      console.error('Failed to copy:', err);
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+/**
+ * Fallback copy method for older browsers
+ */
+function fallbackCopy(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  document.body.appendChild(textArea);
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    showCopyFeedback();
+  } catch (err) {
+    console.error('Fallback copy failed:', err);
+  }
+  document.body.removeChild(textArea);
+}
+
+/**
+ * Show "Copied!" feedback
+ */
+function showCopyFeedback() {
+  const els = getTooltipElements();
+  if (!els.copyEmailBtn) return;
+  
+  // Save original content
+  const originalHTML = els.copyEmailBtn.innerHTML;
+  
+  // Show checkmark
+  els.copyEmailBtn.innerHTML = `
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+  `;
+  els.copyEmailBtn.style.background = '#10b981';
+  els.copyEmailBtn.style.borderColor = '#10b981';
+  els.copyEmailBtn.style.color = '#ffffff';
+  
+  // Reset after 2 seconds
+  setTimeout(() => {
+    els.copyEmailBtn.innerHTML = originalHTML;
+    els.copyEmailBtn.style.background = '';
+    els.copyEmailBtn.style.borderColor = '';
+    els.copyEmailBtn.style.color = '';
+  }, 2000);
 }
