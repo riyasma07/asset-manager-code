@@ -1,5 +1,5 @@
         // ==== APP VERSION ====
-        const APP_VERSION = 'v4.0.0';
+        const APP_VERSION = 'v4.1.2';
         const GITHUBRAWURL = 'https://raw.githubusercontent.com/riyasma07/asset-manager-db/main/data.json';
         const DBNAME = 'AssetManagerProDB';
         let db = null;
@@ -789,6 +789,7 @@ async function autoSyncFromGithub() {
                 document.getElementById('syncBtn').style.display = 'flex';
             } else {
                 // MEMBER: HIDE EXPORT, SYNC, ADD ITEM, ADD MEMBER
+                document.getElementById('openManage').style.display = 'flex'; // 
                 document.getElementById('exportBtn').style.display = 'none';
                 document.getElementById('syncBtn').style.display = 'none';
                 document.getElementById('addItemBtn').style.display = 'none';
@@ -1547,6 +1548,7 @@ async function autoSyncFromGithub() {
             document.getElementById('editMobile').value = currentUser.mobile || '';
             document.getElementById('editDesignation').value = currentUser.designation || '';
             document.getElementById('editDepartment').value = currentUser.department || '';
+            loadProfilePictureInEditForm(currentUser);
             openModal('editProfileModal');
         }
 
@@ -1559,6 +1561,8 @@ async function autoSyncFromGithub() {
                 currentUser.designation = document.getElementById('editDesignation').value;
                 currentUser.department = document.getElementById('editDepartment').value;
                 
+                currentUser.profilePicture = getCurrentProfilePicture();
+
                 await updateRecord('users', currentUser);
                 showAlert('Profile updated!', SUCCESS_ALERT);
                 closeModal('editProfileModal');
@@ -2439,6 +2443,14 @@ function clearConsumablesSearch() {
 
 let currentTooltipTimeout = null;
 
+// ========================================
+// PROFILE PICTURE MANAGEMENT
+// ========================================
+
+let currentCropper = null;
+let tempImageFile = null;
+let currentEditingMemberId = null;
+
 /**
  * Get tooltip elements (with null checks)
  */
@@ -2495,7 +2507,14 @@ async function showHolderTooltip(element, holderName) {
       ? nameParts[0][0] + nameParts[nameParts.length - 1][0]
       : nameParts[0] ? nameParts[0].substring(0, 2) : '?';
     
-    els.tooltipInitial.textContent = initials.toUpperCase();
+    // Check if member has profile picture
+    if (member.profilePicture) {
+        // Show profile picture
+        els.tooltipInitial.innerHTML = `<img src="${member.profilePicture}" alt="${member.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+    } else {
+        // Show initials
+        els.tooltipInitial.textContent = initials.toUpperCase();
+    }
     els.tooltipHolderName.textContent = member.name || '-';
     els.tooltipDesignation.textContent = member.designation || '-';
     els.tooltipDepartment.textContent = member.department || '-';
@@ -2699,3 +2718,253 @@ function showCopyFeedback() {
     els.copyEmailBtn.style.color = '';
   }, 2000);
 }
+
+// ========================================
+// PROFILE PICTURE FUNCTIONALITY
+// ========================================
+
+/**
+ * Initialize profile picture functionality
+ */
+function initProfilePicture() {
+  const fileInput = document.getElementById('profilePicFileInput');
+  const editBtn = document.getElementById('editProfilePicBtn');
+  const removeBtn = document.getElementById('removeProfilePicBtn');
+  
+  // Edit/Add Photo button
+  if (editBtn) {
+    editBtn.onclick = () => {
+      fileInput.click();
+    };
+  }
+  
+  // File input change
+  if (fileInput) {
+    fileInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        openImageCropper(file);
+      }
+      // Reset file input
+      fileInput.value = '';
+    };
+  }
+  
+  // Remove Photo button
+  if (removeBtn) {
+    removeBtn.onclick = async () => {
+      if (confirm('Remove profile picture?')) {
+        await removeProfilePicture();
+      }
+    };
+  }
+  
+  // Initialize cropper modal buttons
+  initCropperModal();
+}
+
+/**
+ * Open image cropper modal
+ */
+function openImageCropper(file) {
+  tempImageFile = file;
+  const reader = new FileReader();
+  
+  reader.onload = (e) => {
+    const modal = document.getElementById('imageCropperModal');
+    const image = document.getElementById('cropperImage');
+    
+    // Set image source
+    image.src = e.target.result;
+    
+    // Show modal
+    modal.style.display = 'flex';
+    
+    // Initialize Cropper.js
+    setTimeout(() => {
+      if (currentCropper) {
+        currentCropper.destroy();
+      }
+      
+      currentCropper = new Cropper(image, {
+        aspectRatio: 1, // Square crop
+        viewMode: 1,
+        dragMode: 'move',
+        autoCropArea: 1,
+        restore: false,
+        guides: true,
+        center: true,
+        highlight: false,
+        cropBoxMovable: false,
+        cropBoxResizable: false,
+        toggleDragModeOnDblclick: false,
+      });
+      
+      // Setup zoom slider
+      const zoomSlider = document.getElementById('cropperZoom');
+      zoomSlider.value = 0;
+      zoomSlider.oninput = (e) => {
+        currentCropper.zoomTo(parseFloat(e.target.value));
+      };
+    }, 100);
+  };
+  
+  reader.readAsDataURL(file);
+}
+
+/**
+ * Initialize cropper modal buttons
+ */
+function initCropperModal() {
+  // Close button
+  document.getElementById('closeCropperModal').onclick = closeCropperModal;
+  
+  // Cancel button
+  document.getElementById('cancelCropper').onclick = closeCropperModal;
+  
+  // Rotate left
+  document.getElementById('rotateLeft').onclick = () => {
+    if (currentCropper) {
+      currentCropper.rotate(-90);
+    }
+  };
+  
+  // Rotate right
+  document.getElementById('rotateRight').onclick = () => {
+    if (currentCropper) {
+      currentCropper.rotate(90);
+    }
+  };
+  
+  // Reset
+  document.getElementById('resetCropper').onclick = () => {
+    if (currentCropper) {
+      currentCropper.reset();
+      document.getElementById('cropperZoom').value = 0;
+    }
+  };
+  
+  // Save cropped image
+  document.getElementById('saveCroppedImage').onclick = saveCroppedImage;
+}
+
+/**
+ * Close cropper modal
+ */
+function closeCropperModal() {
+  const modal = document.getElementById('imageCropperModal');
+  modal.style.display = 'none';
+  
+  if (currentCropper) {
+    currentCropper.destroy();
+    currentCropper = null;
+  }
+  
+  tempImageFile = null;
+}
+
+/**
+ * Save cropped image
+ */
+async function saveCroppedImage() {
+  if (!currentCropper) return;
+  
+  try {
+    // Get cropped canvas
+    const canvas = currentCropper.getCroppedCanvas({
+      width: 200,
+      height: 200,
+      imageSmoothingEnabled: true,
+      imageSmoothingQuality: 'high',
+    });
+    
+    // Convert to Base64
+    const base64Image = canvas.toDataURL('image/jpeg', 0.9);
+    
+    // Update preview
+    updateProfilePicPreview(base64Image);
+    
+    // Close modal
+    closeCropperModal();
+    
+    showAlert('Profile picture updated! Remember to click Save to keep changes.', SUCCESS_ALERT);
+  } catch (error) {
+    console.error('Error saving cropped image:', error);
+    showAlert('Failed to crop image. Please try again.', FAILURE_ALERT);
+  }
+}
+
+/**
+ * Update profile picture preview
+ */
+function updateProfilePicPreview(base64Image) {
+  const preview = document.getElementById('editProfilePicPreview');
+  const initials = document.getElementById('editProfilePicInitials');
+  const image = document.getElementById('editProfilePicImage');
+  const btnText = document.getElementById('editProfilePicBtnText');
+  const removeBtn = document.getElementById('removeProfilePicBtn');
+  
+  if (base64Image) {
+    // Show image
+    image.src = base64Image;
+    image.style.display = 'block';
+    initials.style.display = 'none';
+    
+    // Update button text
+    btnText.textContent = 'Change Photo';
+    
+    // Show remove button
+    removeBtn.style.display = 'inline-flex';
+  } else {
+    // Show initials
+    image.style.display = 'none';
+    initials.style.display = 'flex';
+    
+    // Update button text
+    btnText.textContent = 'Add Photo';
+    
+    // Hide remove button
+    removeBtn.style.display = 'none';
+  }
+}
+
+/**
+ * Remove profile picture
+ */
+async function removeProfilePicture() {
+  updateProfilePicPreview(null);
+  showAlert('Profile picture removed! Click Save to keep changes.', SUCCESS_ALERT);
+}
+
+/**
+ * Load profile picture in edit form
+ */
+function loadProfilePictureInEditForm(member) {
+  const initials = document.getElementById('editProfilePicInitials');
+  
+  // Set initials
+  const nameParts = (member.name || '').trim().split(' ');
+  const initialText = nameParts.length >= 2 
+    ? nameParts[0][0] + nameParts[nameParts.length - 1][0]
+    : nameParts[0] ? nameParts[0].substring(0, 2) : '?';
+  initials.textContent = initialText.toUpperCase();
+  
+  // Load profile picture if exists
+  updateProfilePicPreview(member.profilePicture || null);
+  
+  // Store member ID for later
+  currentEditingMemberId = member.id;
+}
+
+/**
+ * Get current profile picture from preview
+ */
+function getCurrentProfilePicture() {
+  const image = document.getElementById('editProfilePicImage');
+  return image.style.display === 'block' ? image.src : null;
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+  initProfilePicture();
+});

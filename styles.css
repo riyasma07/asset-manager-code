@@ -847,129 +847,135 @@
         box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
         }
 
-        /* ========================================
-        SCROLLABLE TABLE CONTAINER WITH FIXED HEADERS
-        ======================================== */
+        /* ===== SCROLLABLE TABLE CONTAINER - PERFECT BORDER ALIGNMENT ===== */
 
         /* Table scroll container */
         .table-scroll-container {
-        position: relative;
-        border: 1px solid #e2e8f0;
-        border-radius: 0.5rem;
-        overflow: hidden;
+            position: relative;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            overflow: hidden;
         }
 
         html.dark .table-scroll-container {
-        border-color: #30363d;
+            border-color: #30363d;
         }
 
-        /* Fixed table header */
+        /* Fixed table header - FORCE SCROLLBAR SPACE */
         .table-scroll-container thead {
-        display: table;
-        width: calc(100% - 10px); /* Account for scrollbar width */
-        table-layout: fixed;
+            display: block;
+            width: 100%;
+            overflow-y: scroll; /* CRITICAL: Always show scrollbar space */
+        }
+
+        /* Hide the actual scrollbar in thead (but keep the space) */
+        .table-scroll-container thead::-webkit-scrollbar {
+            width: 10px;
+            background: transparent;
+        }
+
+        .table-scroll-container thead::-webkit-scrollbar-thumb {
+            background: transparent;
+        }
+
+        .table-scroll-container thead tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
         }
 
         .table-scroll-container thead th {
-        background: #f8fafc;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        border-bottom: 2px solid #e2e8f0;
-        box-sizing: border-box;
+            background: #f8fafc;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 2px solid #e2e8f0;
+            box-sizing: border-box;
         }
 
         html.dark .table-scroll-container thead th {
-        background: #0d1117;
-        border-bottom-color: #30363d;
+            background: #0d1117;
+            border-bottom-color: #30363d;
         }
 
         html.dark .table-scroll-container table thead {
-        background: #161b22;
-        }
-
-        /* Fix for header border visibility when scrolling */
-        .table-scroll-container table thead tr {
-        border-bottom: 2px solid #e2e8f0;
-        }
-
-        html.dark .table-scroll-container table thead tr {
-        border-bottom-color: #30363d;
+            background: #161b22;
         }
 
         /* Make table take full width */
         .table-scroll-container table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        margin: 0;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 0;
         }
 
-        /* Scrollable table body */
+        /* Scrollable table body - ACTUAL SCROLLBAR */
         .table-scroll-container tbody {
-        display: block;
-        max-height: 500px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        width: 100%;
+            display: block;
+            max-height: 500px;
+            overflow-y: scroll; /* Visible scrollbar */
+            overflow-x: hidden;
+            width: 100%;
         }
 
         .table-scroll-container tbody tr {
-        display: table;
-        width: 100%;
-        table-layout: fixed;
+            display: table;
+            width: 100%;
+            table-layout: fixed;
         }
 
         .table-scroll-container tbody td {
-        box-sizing: border-box;
+            box-sizing: border-box;
         }
 
         /* Ensure both thead and tbody have same border handling */
         .table-scroll-container th,
         .table-scroll-container td {
-        border-right: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
         }
 
         .table-scroll-container th:last-child,
         .table-scroll-container td:last-child {
-        border-right: none;
+            border-right: none;
         }
 
         html.dark .table-scroll-container th,
         html.dark .table-scroll-container td {
-        border-right-color: #30363d;
+            border-right-color: #30363d;
         }
 
-        /* Custom scrollbar */
+        /* Style the tbody scrollbar */
         .table-scroll-container tbody::-webkit-scrollbar {
-        width: 10px;
+            width: 10px;
         }
 
         .table-scroll-container tbody::-webkit-scrollbar-track {
-        background: #f1f5f9;
-        border-radius: 4px;
+            background: #f1f5f9;
+            border-radius: 4px;
         }
 
         .table-scroll-container tbody::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
+            background: #cbd5e1;
+            border-radius: 4px;
         }
 
         .table-scroll-container tbody::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
+            background: #94a3b8;
         }
 
         html.dark .table-scroll-container tbody::-webkit-scrollbar-track {
-        background: #0d1117;
+            background: #0d1117;
         }
 
         html.dark .table-scroll-container tbody::-webkit-scrollbar-thumb {
-        background: #30363d;
+            background: #30363d;
         }
 
         html.dark .table-scroll-container tbody::-webkit-scrollbar-thumb:hover {
-        background: #484f58;
+            background: #484f58;
         }
+        
         /* ========================================
         BIGGER AND BOLDER TABLE HEADERS
         ======================================== */
@@ -1240,4 +1246,277 @@
 
         html.dark .holder-name:hover {
         color: #93c5fd;
+        }
+
+        /* ========================================
+        PROFILE PICTURE SECTION
+        ======================================== */
+
+        /* Profile Picture Section in Edit Form */
+        .profile-pic-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        padding: 24px 0;
+        margin-bottom: 24px;
+        border-bottom: 1px solid #e2e8f0;
+        }
+
+        html.dark .profile-pic-section {
+        border-bottom-color: #334155;
+        }
+
+        .profile-pic-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        }
+
+        /* Profile Picture Preview Circle */
+        .profile-pic-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        border: 3px solid #e2e8f0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        html.dark .profile-pic-preview {
+        border-color: #334155;
+        }
+
+        /* Initials (shown when no photo) */
+        .profile-pic-initials {
+        font-size: 48px;
+        font-weight: 600;
+        color: #ffffff;
+        text-transform: uppercase;
+        user-select: none;
+        }
+
+        /* Actual Profile Picture */
+        .profile-pic-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        }
+
+        /* Action Buttons */
+        .profile-pic-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        }
+
+        /* Hint Text */
+        .profile-pic-hint {
+        font-size: 12px;
+        color: #94a3b8;
+        margin: 0;
+        text-align: center;
+        }
+
+        /* ========================================
+        IMAGE CROPPER MODAL
+        ======================================== */
+
+        /* Large modal for cropper */
+        .modal-content--large {
+        max-width: 800px;
+        width: 90vw;
+        }
+
+        /* Cropper Container */
+        .cropper-container-wrapper {
+        background: #000000;
+        border-radius: 8px;
+        overflow: hidden;
+        max-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        }
+
+        #cropperImage {
+        display: block;
+        max-width: 100%;
+        }
+
+        /* Cropper Controls */
+        .cropper-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 20px;
+        padding: 16px;
+        background: #f8fafc;
+        border-radius: 8px;
+        }
+
+        html.dark .cropper-controls {
+        background: #1e293b;
+        }
+
+        .cropper-control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        }
+
+        .cropper-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 4px;
+        }
+
+        html.dark .cropper-label {
+        color: #cbd5e1;
+        }
+
+        .cropper-label svg {
+        color: #64748b;
+        }
+
+        html.dark .cropper-label svg {
+        color: #94a3b8;
+        }
+
+        /* Zoom Slider */
+        .cropper-slider {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: #e2e8f0;
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        }
+
+        html.dark .cropper-slider {
+        background: #334155;
+        }
+
+        .cropper-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #2563eb;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .cropper-slider::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #2563eb;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Button Group (for rotate buttons) */
+        .cropper-button-group {
+        display: flex;
+        gap: 8px;
+        }
+
+        /* Cropper Buttons */
+        .cropper-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 6px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        }
+
+        html.dark .cropper-btn {
+        background: #334155;
+        border-color: #475569;
+        color: #cbd5e1;
+        }
+
+        .cropper-btn:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        }
+
+        html.dark .cropper-btn:hover {
+        background: #475569;
+        border-color: #64748b;
+        }
+
+        .cropper-btn:active {
+        transform: scale(0.98);
+        }
+
+        .cropper-btn--secondary {
+        background: #f8fafc;
+        }
+
+        html.dark .cropper-btn--secondary {
+        background: #1e293b;
+        }
+
+        /* Cropper.js custom styling */
+        .cropper-view-box,
+        .cropper-face {
+        border-radius: 50%;
+        }
+
+        .cropper-view-box {
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5);
+        outline: 0;
+        }
+
+        /* ========================================
+        TOOLTIP PROFILE PICTURE
+        ======================================== */
+
+        /* Update tooltip avatar to show actual photo */
+        .holder-tooltip-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        }
+
+        /* Keep initials as fallback */
+        .holder-tooltip-avatar .tooltip-initials {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        }
+
+        /* Hide initials when image is present */
+        .holder-tooltip-avatar.has-image .tooltip-initials {
+        display: none;
         }
