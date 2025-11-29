@@ -894,7 +894,7 @@ async function autoSyncFromGithub() {
                 
                 // 3. Prepare email content
                 const subject = `Asset Notification: ${item.name}`;
-                const body = `Hi ${holder.name},\n\nThis is a friendly reminder that you currently have the following asset assigned to you:\n\n📦 Asset: ${item.name}\n🔢 Serial Number: ${item.serial}\n\nWe kindly request you to return this asset at your earliest convenience.\n\nThank you for your cooperation!\n\nRegards,\n${currentUser.name}`;
+                const body = `Hi ${holder.name},***** THIS IS AN AUTOMATED MESSAGE *****\n\nThis is a friendly reminder that you currently have the following asset assigned to you:\n\n📦 Asset: ${item.name}\n🔢 Serial Number: ${item.serial}\n\nWe kindly request you to return this asset at your earliest convenience.\n\nThank you for your cooperation!\n\nRegards,\n${currentUser.name}`;
                 
                 // 4. Use the COMPLETE standalone email workflow
                 // This includes: confirmation modal, loading spinner, success/error, retry logic
@@ -1109,10 +1109,14 @@ async function autoSyncFromGithub() {
                     user: currentUser.name
                 });
 
-                const subject = `Asset Assigned: ${item.name}`;
-                const body = `Hi ${member.name},\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nRegards,\n${currentUser.name}`;
+                const users = await getAll('users');
+                const holder = users.find(u => u.name === member.name);
 
-                showConfirmEmailModal(itemId, memberId, member.name, subject, body);
+                const subject = `Asset Assigned: ${item.name}`;
+                const body = `Hi ${member.name},\n\n***** THIS IS AN AUTOMATED MESSAGE *****\n\nThe asset "${item.name}" (SN: ${item.serial}) has been assigned to you.\n\nThis is an automated response. Please do not reply to this email`;
+
+                // showConfirmEmailModal(itemId, memberId, member.name, subject, body);
+                showEmailConfirmationModal(holder.email, subject, body);
 				
 				autoSyncDatabaseToGithub();
 				
@@ -1150,12 +1154,13 @@ async function autoSyncFromGithub() {
                 });
 
                 const users = await getAll('users');
-                const member = users.find(u => u.name === oldHolder);
+                const holder = users.find(u => u.name === oldHolder);
 
                 const subject = `Asset Unassigned: ${item.name}`;
-                const body = `Hi ${oldHolder},\n\nThe asset "${item.name}" has been returned to inventory.\n\nRegards,\n${currentUser.name}`;
+                const body = `Hi ${oldHolder},\n\n***** THIS IS AN AUTOMATED MESSAGE *****\n\nThe asset "${item.name}" has been returned to inventory.\n\nThis is an automated response. Please do not reply to this email.`;
 
-                showConfirmEmailModal(returnItemId, member.id, oldHolder, subject, body);
+                showEmailConfirmationModal(holder.email, subject, body);
+
                 closeModal('returnItemModal');
 
                 renderItems();
@@ -1331,10 +1336,13 @@ async function autoSyncFromGithub() {
                     user: currentUser.name
                 });
 
-                const subject = `Consumable Assigned: ${cons.name}`;
-                const body = `Hi ${member.name},\n\nYou have been assigned ${qty} unit(s) of "${cons.name}".\n\nRegards,\n${currentUser.name}`;
+                const users = await getAll('users');
+                const holder = users.find(u => u.name === member.name);
 
-                showConfirmEmailModal(consId, memberId, member.name, subject, body);
+                const subject = `Consumable Assigned: ${cons.name}`;
+                const body = `Hi ${member.name},\n\n***** THIS IS AN AUTOMATED MESSAGE *****\n\nYou have been assigned ${qty} unit(s) of "${cons.name}".\n\nThis is an automated response. Please do not reply to this email.`;
+
+                showEmailConfirmationModal(holder.email, subject, body);
 
                 document.querySelector('.modal.show').remove();
                 document.getElementById('backdrop').classList.remove('show');
@@ -1532,7 +1540,7 @@ async function autoSyncFromGithub() {
                 
                 await addRecord('users', user);
               
-                showEmailConfirmationModal(user.email, 'Welcome to Asset Manager Pro', `Hi ${user.name},\n\nYour account has been created!\n\nEmail: ${user.email}\nPassword: ${data.get('password')}\n\nPlease login to <a href="https://riyasma07.github.io/asset-manager-code/" target="_blank">Asset Manager Pro</a>.\n\nRegards,\n${currentUser.name}`);
+                showEmailConfirmationModal(user.email, 'Welcome to Asset Manager Pro', `***** THIS IS AN AUTOMATED MESSAGE *****\n\nHi ${user.name},\n\nYour account has been created!\n\nEmail: ${user.email}\nPassword: ${data.get('password')}\n\nPlease login to <a href="https://riyasma07.github.io/asset-manager-code/" target="_blank">Asset Manager Pro</a>.\n\nThis is an automated response. Please do not reply to this email.\n\n`);
 
                 e.target.reset();
                 closeModal('addMemberModal');
