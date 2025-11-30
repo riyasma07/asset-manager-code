@@ -124,88 +124,80 @@ function showAlert(message, type = NORMAL_ALERT) {
 // ===== PUSH DATABASE WITH FORCE REPLACE (NO HISTORY) =====
 async function pushDatabaseToGitHub(databaseObject, token, repoOwner, repoName, branchName) {
     const filePath = 'data.json';
-    const maxRetries = 3;
+    const maxRetries = 5;
     let retryCount = 0;
 
     async function attemptPush() {
         try {
-            console.log(`Push attempt ${retryCount + 1}/${maxRetries}...`);
+            retryCount++;
+            console.log(`Push attempt ${retryCount}/${maxRetries}...`);
 
-            // Get current file SHA (fresh fetch)
+            // Always fetch *fresh* SHA before each PUT
             const getUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}?ref=${branchName}`;
             const getRes = await fetch(getUrl, {
                 headers: {
                     Authorization: `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json'
+                    Accept: 'application/vnd.github.v3+json'
                 }
             });
 
             if (!getRes.ok) {
-                throw new Error(`Failed to fetch file from GitHub (HTTP ${getRes.status})`);
+                throw new Error(`Failed to fetch file from GitHub. HTTP ${getRes.status}`);
             }
 
             const getData = await getRes.json();
             const fileSHA = getData.sha;
-            console.log('✓ Got current SHA from GitHub:', fileSHA.substring(0, 8) + '...');
+            console.log('Got current SHA from GitHub:', fileSHA.substring(0, 8));
 
-            // Prepare content
             const jsonString = JSON.stringify(databaseObject, null, 2);
             const updatedContent = btoa(unescape(encodeURIComponent(jsonString)));
 
-            // Create commit with force push
             const body = {
-                message: 'Auto-sync: ' + new Date().toISOString(),
+                message: `Auto-sync ${new Date().toISOString()}`,
                 content: updatedContent,
                 sha: fileSHA,
                 branch: branchName
             };
 
-            // PUT to GitHub
             const putUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
             const putRes = await fetch(putUrl, {
-                method: "PUT",
+                method: 'PUT',
                 headers: {
                     Authorization: `token ${token}`,
                     'Content-Type': 'application/json',
-                    'Accept': 'application/vnd.github.v3+json'
+                    Accept: 'application/vnd.github.v3+json'
                 },
                 body: JSON.stringify(body)
             });
 
             if (putRes.status === 409) {
-                // Conflict - retry
-                console.warn('⚠ SHA conflict (409) - retrying...');
-                retryCount++;
-                if (retryCount < maxRetries) {
-                    await new Promise(r => setTimeout(r, 1000));
-                    return attemptPush();
-                } else {
+                console.warn('SHA conflict (409) – retrying...');
+                if (retryCount >= maxRetries) {
                     throw new Error('Max retries reached (409 conflict)');
                 }
+                // Exponential backoff: 0.5s, 1s, 2s, 4s...
+                const delay = 500 * Math.pow(2, retryCount - 1);
+                await new Promise(r => setTimeout(r, delay));
+                return attemptPush();
             }
 
             if (!putRes.ok) {
                 const errData = await putRes.json();
-                throw new Error(`GitHub update failed (${putRes.status}): ${errData.message || putRes.statusText}`);
+                throw new Error(`GitHub update failed: ${putRes.status} ${errData.message || putRes.statusText}`);
             }
 
             const result = await putRes.json();
-            console.log('✅ Database synced! File replaced (single commit kept)');
-            console.log('Commit:', result.commit.sha.substring(0, 8));
-
-            // Optional: Clean up old commits using force push via GraphQL
-            // (Only works if you enable force-push in repo settings)
-            await cleanupOldCommits(token, repoOwner, repoName, branchName);
-
+            console.log('Database synced! Commit:', result.commit.sha.substring(0, 8));
             return result;
         } catch (error) {
-            console.error('❌ Sync error:', error.message);
+            console.error('Sync error:', error.message);
             throw error;
         }
     }
 
     return attemptPush();
 }
+
 
 // Optional: Clean up history to keep only latest commit
 async function cleanupOldCommits(token, repoOwner, repoName, branchName) {
@@ -295,14 +287,25 @@ async function exportFullDatabase() {
         const consumables = await getAll('consumables');
         const history = await getAll('history');
 
+        const isEmpty =
+            (!users || users.length === 0) &&
+            (!items || items.length === 0) &&
+            (!consumables || consumables.length === 0) &&
+            (!history || history.length === 0);
+
+        if (isEmpty) {
+            console.warn('exportFullDatabase: DB is empty, skipping GitHub sync');
+            return null;
+        }
+
         return {
-            "__schema__": "asset-manager-pro",
-            "version": 1,
-            "exportedAt": new Date().toISOString(),
-            "users": users,
-            "items": items,
-            "consumables": consumables,
-            "history": history
+            schema: 'asset-manager-pro',
+            version: 1,
+            exportedAt: new Date().toISOString(),
+            users,
+            items,
+            consumables,
+            history,
         };
     } catch (error) {
         throw new Error('Failed to export database: ' + error.message);
@@ -310,40 +313,45 @@ async function exportFullDatabase() {
 }
 
 
+
 // ===== AUTO SYNC WRAPPER (EASY TO CALL) =====
+let isSyncInProgress = false;
+
 async function autoSyncDatabaseToGithub() {
-    // NEW: Admins always allowed, Members allowed only if rule is enabled
-    const isMember =
-        currentUser && !currentUser.isAdmin && currentUser.role === 'member';
-
-    const memberCanAutoSync =
-        isMember &&
-        currentRules &&
-        currentRules.rules &&
-        currentRules.rules.member &&
-        currentRules.rules.member.canMemberAutoSync;
-
-    if (!isAdmin && !memberCanAutoSync) {
-        console.log('⏭️ Sync skipped: session not allowed to auto-sync');
+    if (isSyncInProgress) {
+        console.log('Sync skipped: another sync is already running');
         return;
     }
+    isSyncInProgress = true;
 
     try {
+        const isMember = currentUser && !currentUser.isAdmin && currentUser.role === 'member';
+        const memberCanAutoSync =
+            isMember &&
+            currentRules &&
+            currentRules.rules &&
+            currentRules.rules.member &&
+            currentRules.rules.member.canMemberAutoSync;
+        if (!isAdmin && !memberCanAutoSync) {
+            console.log('Sync skipped: session not allowed to auto-sync');
+            isSyncInProgress = false;
+            return;
+        }
+
         console.log('Starting auto-sync to GitHub...');
-
-        // Decrypt token
         const token = await decryptToken(ENCRYPTED_TOKEN_STRING, ENCRYPTION_PASSWORD);
-
-        // Export database
         const myDatabase = await exportFullDatabase();
-
-        // Push to GitHub
+        if (!myDatabase) {
+            console.log('Nothing to sync (DB empty), aborting push');
+            isSyncInProgress = false;
+            return;
+        }
         await pushDatabaseToGitHub(myDatabase, token, GITHUB_OWNER, GITHUB_REPO_DATA, GITHUB_BRANCH);
-
-        console.log('✅ Auto-sync completed!');
+        console.log('Auto-sync completed!');
     } catch (error) {
         console.error('Auto-sync failed:', error.message);
-        // Don't throw - let the app continue even if sync fails
+    } finally {
+        isSyncInProgress = false;
     }
 }
 
@@ -442,19 +450,21 @@ async function loadDatabaseFromGithub() {
 // Helper function to clear all local data
 async function clearAllData() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DBNAME);
+        const request = indexedDB.open(DB_NAME);
 
         request.onsuccess = (event) => {
             const db = event.target.result;
-            const stores = ['users', 'items', 'history']; // Adjust to your store names
 
-            stores.forEach(storeName => {
+            // MUST match initDB(): users, items, consumables, history
+            const stores = ['users', 'items', 'consumables', 'history'];
+
+            stores.forEach((storeName) => {
                 try {
                     const tx = db.transaction(storeName, 'readwrite');
                     const store = tx.objectStore(storeName);
                     store.clear();
                 } catch (e) {
-                    console.warn(`Could not clear ${storeName}:`, e);
+                    console.warn('Could not clear', storeName, e);
                 }
             });
 
@@ -464,6 +474,7 @@ async function clearAllData() {
         request.onerror = () => reject('Failed to open DB');
     });
 }
+
 
 // ===== DATABASE =====
 async function initDB() {
@@ -775,48 +786,48 @@ function switchTab(tab) {
 
 // ITEM TYPE SELECTION
 async function openAddItemTypeModal() {
-  openModal('itemTypeModal');
+    openModal('itemTypeModal');
 
-  // RESET: Always enable both buttons initially
-  const consumableBtn = document.querySelector('[onclick="selectItemType(\'consumable\')"]');
-  const assetBtn = document.querySelector('[onclick="selectItemType(\'asset\')"]');
+    // RESET: Always enable both buttons initially
+    const consumableBtn = document.querySelector('[onclick="selectItemType(\'consumable\')"]');
+    const assetBtn = document.querySelector('[onclick="selectItemType(\'asset\')"]');
 
-  if (consumableBtn) {
-    consumableBtn.style.opacity = '1';
-    consumableBtn.style.pointerEvents = 'auto';
-    consumableBtn.style.cursor = 'pointer';
-    consumableBtn.title = '';
-  }
-
-  if (assetBtn) {
-    assetBtn.style.opacity = '1';
-    assetBtn.style.pointerEvents = 'auto';
-    assetBtn.style.cursor = 'pointer';
-    assetBtn.title = '';
-  }
-
-  // NOW apply restrictions only for members
-  if (!isAdmin && currentUser && currentUser.role === 'member') {
-    // Member: check rules for CONSUMABLE
     if (consumableBtn) {
-      if (!currentRules || !currentRules.rules.member || !currentRules.rules.member.canAddConsumables) {
-        consumableBtn.style.opacity = '0.5';
-        consumableBtn.style.pointerEvents = 'none';
-        consumableBtn.style.cursor = 'not-allowed';
-        consumableBtn.title = "You don't have permission to add consumables";
-      }
+        consumableBtn.style.opacity = '1';
+        consumableBtn.style.pointerEvents = 'auto';
+        consumableBtn.style.cursor = 'pointer';
+        consumableBtn.title = '';
     }
 
-    // Member: check rules for ASSET
     if (assetBtn) {
-      if (!currentRules || !currentRules.rules.member || !currentRules.rules.member.canAddAssets) {
-        assetBtn.style.opacity = '0.5';
-        assetBtn.style.pointerEvents = 'none';
-        assetBtn.style.cursor = 'not-allowed';
-        assetBtn.title = "You don't have permission to add assets";
-      }
+        assetBtn.style.opacity = '1';
+        assetBtn.style.pointerEvents = 'auto';
+        assetBtn.style.cursor = 'pointer';
+        assetBtn.title = '';
     }
-  }
+
+    // NOW apply restrictions only for members
+    if (!isAdmin && currentUser && currentUser.role === 'member') {
+        // Member: check rules for CONSUMABLE
+        if (consumableBtn) {
+            if (!currentRules || !currentRules.rules.member || !currentRules.rules.member.canAddConsumables) {
+                consumableBtn.style.opacity = '0.5';
+                consumableBtn.style.pointerEvents = 'none';
+                consumableBtn.style.cursor = 'not-allowed';
+                consumableBtn.title = "You don't have permission to add consumables";
+            }
+        }
+
+        // Member: check rules for ASSET
+        if (assetBtn) {
+            if (!currentRules || !currentRules.rules.member || !currentRules.rules.member.canAddAssets) {
+                assetBtn.style.opacity = '0.5';
+                assetBtn.style.pointerEvents = 'none';
+                assetBtn.style.cursor = 'not-allowed';
+                assetBtn.title = "You don't have permission to add assets";
+            }
+        }
+    }
 }
 
 
@@ -964,7 +975,6 @@ async function renderItems() {
     } catch (e) {
         console.error('Render error:', e);
     }
-    autoSyncDatabaseToGithub();
 }
 
 // ===== NOTIFY HOLDER - SMART EMAIL WITH FULL WORKFLOW =====
@@ -1263,6 +1273,7 @@ async function confirmReturnItem() {
         closeModal('returnItemModal');
 
         renderItems();
+        await autoSyncDatabaseToGithub();
     } catch (e) {
         showAlert('Error: ' + e.message, FAILURE_ALERT);
     }
@@ -3065,18 +3076,18 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     // Optional: Auto-sync every 5 minutes
-    setInterval(autoSyncDatabaseToGithub, 5 * 60 * 1000);
+    // setInterval(autoSyncDatabaseToGithub, 5 * 60 * 1000);
 });
 
 
 // Optional: Auto-sync every 5 minutes
-setInterval(() => {
-    if (isAdmin) {
-        autoSyncDatabaseToGithub();
-    } else {
-        console.log('⏭️ Periodic sync skipped: Member session');
-    }
-}, 5 * 60 * 1000);
+// setInterval(() => {
+//     if (isAdmin) {
+//         autoSyncDatabaseToGithub();
+//     } else {
+//         console.log('⏭️ Periodic sync skipped: Member session');
+//     }
+// }, 5 * 60 * 1000);
 
 // ===== ANIMATED SEARCH TOGGLE FUNCTIONS =====
 
