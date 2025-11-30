@@ -1,5 +1,5 @@
 // ==== APP VERSION ====
-const APP_VERSION = 'v4.2.1';
+const APP_VERSION = 'v4.2.2';
 const GITHUBRAWURL = 'https://raw.githubusercontent.com/riyasma07/asset-manager-db/main/data.json';
 const DBNAME = 'AssetManagerProDB';
 let db = null;
@@ -407,6 +407,10 @@ async function loadDatabaseFromGithub() {
         }
 
         const githubData = await response.json();
+        if (!githubData) {
+        showAlert('Could not load data from GitHub. Check network/VPN and try reloading.', 'failure');
+        }
+
         console.log('GitHub data loaded:', githubData);
 
         // Clear local IndexedDB and repopulate with GitHub data
@@ -450,7 +454,7 @@ async function loadDatabaseFromGithub() {
 // Helper function to clear all local data
 async function clearAllData() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME);
+        const request = indexedDB.open(DBNAME);
 
         request.onsuccess = (event) => {
             const db = event.target.result;
@@ -2513,6 +2517,12 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
         const email = e.target.email.value.toLowerCase();
         const password = btoa(e.target.password.value);
         const users = await getAll('users');
+
+        if (!users || users.length === 0) {
+            showAlert('No user database loaded. Please reload the page so data can sync from GitHub.', 'failure');
+        return;
+        }
+
 
         const user = users.find(u => u.email === email && u.password === password);
         if (!user) {
